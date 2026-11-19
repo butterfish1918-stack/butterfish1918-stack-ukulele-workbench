@@ -1,0 +1,100 @@
+{
+  "format": "ukulele-workbench-arrangement",
+  "schemaVersion": 1,
+  "id": "first-melody-study",
+  "revision": 1,
+  "title": "First Melody — Notation Study",
+  "artist": "Ukulele Workbench",
+  "difficulty": "beginner",
+  "tags": [
+    "notation",
+    "melody",
+    "original"
+  ],
+  "key": "C",
+  "bpm": 84,
+  "tuning": "highG",
+  "description": "An original two-measure score to practise reading pitches, rests, quarter and half notes.",
+  "body": "",
+  "notes": "Read the staff before revealing tablature. Begin at 60–84 BPM and practise accurate note lengths.",
+  "score": {
+    "schema": 1,
+    "id": "3a25cfac-f041-4845-a89e-bfd4cd465f7a",
+    "title": "First Melody — Notation Study",
+    "tuning": "highG",
+    "meter": "4/4",
+    "key": "C",
+    "tempo": 84,
+    "measures": [
+      {
+        "events": [
+          {
+            "id": "77c35d9f-f767-4dd7-b4c2-e0e8f0ea861b",
+            "type": "note",
+            "midi": 60,
+            "spelling": "C",
+            "duration": 1,
+            "position": null
+          },
+          {
+            "id": "31ad994a-80ed-49ef-83ef-fc0a38b8c946",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": null
+          },
+          {
+            "id": "90677713-a4d3-4cbc-b434-ec52e9757fa9",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": null
+          },
+          {
+            "id": "faa2c093-1c0e-4913-be79-c40482850a0b",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 1,
+            "position": null
+          },
+          {
+            "id": "b1301a13-6206-4afd-957b-78e6329cf940",
+            "type": "rest",
+            "duration": 1
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "fa1301bc-79fa-4efd-82f1-aea12fbe94bc",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 2,
+            "position": null
+          },
+          {
+            "id": "7db1bd3a-cd9a-45ed-a3dd-4a8abc6fed95",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 1,
+            "position": null
+          },
+          {
+            "id": "4f7b2118-dff5-438c-be34-57659fddeadf",
+            "type": "note",
+            "midi": 60,
+            "spelling": "C",
+            "duration": 1,
+            "position": null
+          }
+        ]
+      }
+    ]
+  }
+}

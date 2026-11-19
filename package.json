@@ -1,0 +1,16 @@
+{
+  "name": "ukulele-workbench",
+  "private": true,
+  "version": "1.6.0-preview",
+  "type": "module",
+  "description": "Offline-first, notation-first ukulele learning and practice prototype",
+  "scripts": {
+    "start": "node scripts/dev-server.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "qa:http": "node --test tests/server-v14.test.mjs",
+    "qa:library": "node scripts/validate-song-library.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#101315"><meta name="description" content="Learn ukulele through notation, scales, chords, fingerings, rhythm, and your own songs.">
+  <link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./assets/icon.svg" type="image/svg+xml">
+  <title>Ukulele Workbench // Underground Edition</title>
+  <link rel="stylesheet" href="./styles.css">
+</head><body>
+<div class="app-shell" data-edition="underground-racing">
+  <aside class="sidebar">
+    <div class="brand"><div class="brand-mark" aria-hidden="true"><svg viewBox="0 0 72 80" width="52" height="62"><path d="M11 75L45 12" stroke="#B9F700" stroke-width="7" stroke-linecap="round"/><path d="M43 17c-3-12 13-20 19-8 6 12-8 20-19 8Z" fill="#B9F700"/><path d="M17 46c-12-5-22 8-14 19 4 6 15 5 19 0 8 6 19 1 18-9-1-11-13-16-23-10Z" fill="#B9F700"/><circle cx="23" cy="54" r="6" fill="#171A1D"/><path d="M33 31l10 5M37 25l10 5" stroke="#1B1D1F" stroke-width="3"/><path d="M24 42l19-32" stroke="#1B1D1F" stroke-width="1.5"/></svg></div><div><div class="brand-small">GARAGE LAB // 001</div><div class="brand-name">UKULELE<br>WORKBENCH</div></div></div>
+    <div class="nav-label">/// SELECT YOUR MODE</div>
+    <nav id="sideNav" aria-label="Main navigation">
+      <button data-page="score" class="nav-item active"><span class="nav-ico">♫</span><span>Score Studio</span></button>
+      <button data-page="practice" class="nav-item"><span class="nav-ico">◎</span><span>Practice Room</span></button>
+      <button data-page="notation" class="nav-item"><span class="nav-ico">♯</span><span>Notation Academy</span></button>
+      <button data-page="technique" class="nav-item"><span class="nav-ico">⚒</span><span>Technique Academy</span></button>
+      <button data-page="explorer" class="nav-item"><span class="nav-ico">⌁</span><span>Fretboard & Theory</span></button>
+      <button data-page="progression" class="nav-item"><span class="nav-ico">▤</span><span>Progression Builder</span></button>
+      <button data-page="rhythm" class="nav-item"><span class="nav-ico">◷</span><span>Rhythm Studio</span></button>
+      <button data-page="songbook" class="nav-item"><span class="nav-ico">▥</span><span>Songbook</span></button>
+    </nav>
+    <div class="sidebar-bottom"><div class="garage-id">EST. 2006 / REBUILT 2026</div><div class="garage-meter" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="garage-status">● SYSTEM READY <span>LOCAL / NO ACCOUNT</span></div><div class="app-version">UNDERGROUND EDITION <b>1.6.0</b></div></div>
+  </aside>
+  <div class="app-main">
+    <header class="topbar">
+      <div class="breadcrumb"><span>WORKBENCH // MODE</span><span class="slash">///</span><strong id="currentPage">Score Studio</strong></div>
+      <div class="top-actions"><span class="offline-pill" id="storageStatus">● OFFLINE FIRST</span><button class="tool-button" id="openMetronome" title="Metronome">◷ <span>METRONOME</span></button><button class="tool-button gold" id="openTuner" title="Chromatic tuner">◉ <span>TUNER</span></button></div>
+    </header>
+    <main id="mainContent" tabindex="-1">
+      <div id="pageContent"></div>
+    </main>
+    <nav class="mobile-nav" aria-label="Mobile navigation">
+      <button data-page="score" class="active"><span>♫</span>Score</button>
+      <button data-page="practice"><span>◎</span>Practice</button>
+      <button data-page="notation"><span>♯</span>Read</button>
+      <button data-page="technique"><span>⚒</span>Technique</button>
+      <button data-page="explorer"><span>⌁</span>Explore</button>
+      <button data-page="progression"><span>▤</span>Chords</button>
+      <button data-page="rhythm"><span>◷</span>Rhythm</button>
+      <button data-page="songbook"><span>▥</span>Songs</button>
+    </nav>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<dialog id="toolDialog" class="tool-dialog"><div id="dialogContent"></div></dialog>
+<script type="module" src="./src/app.js"></script>
+</body></html>

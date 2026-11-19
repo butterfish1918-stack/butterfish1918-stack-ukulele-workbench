@@ -1,0 +1,223 @@
+{
+  "format": "ukulele-workbench-arrangement",
+  "schemaVersion": 1,
+  "id": "primary-chord-changes",
+  "revision": 1,
+  "title": "I–IV–V–I Chord Changes",
+  "artist": "Ukulele Workbench",
+  "difficulty": "beginner",
+  "tags": [
+    "chords",
+    "strumming",
+    "original"
+  ],
+  "key": "C",
+  "bpm": 80,
+  "tuning": "highG",
+  "description": "Original four-bar C–F–G–C progression with playable tuning-aware chord voicings.",
+  "body": "",
+  "notes": "Count four quarter beats per measure. Practise slow and even changes before increasing tempo.",
+  "score": {
+    "schema": 1,
+    "id": "d03c58e6-9240-4f1f-b74d-f34a00120a18",
+    "title": "I–IV–V–I Chord Changes",
+    "tuning": "highG",
+    "meter": "4/4",
+    "key": "C",
+    "tempo": 80,
+    "measures": [
+      {
+        "events": [
+          {
+            "id": "c5437e74-3fb6-4c70-83af-44f1232ec295",
+            "type": "chord",
+            "duration": 4,
+            "symbol": "C",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 67,
+                "spelling": "G",
+                "position": {
+                  "string": 0,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 60,
+                "spelling": "C",
+                "position": {
+                  "string": 1,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 2,
+                  "fret": 0
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              0,
+              4,
+              7
+            ],
+            "spellings": [
+              "C",
+              "E",
+              "G"
+            ]
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "5780b5e0-fe23-46a6-9feb-5058c6eeb7f6",
+            "type": "chord",
+            "duration": 4,
+            "symbol": "F",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 60,
+                "spelling": "C",
+                "position": {
+                  "string": 1,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 65,
+                "spelling": "F",
+                "position": {
+                  "string": 2,
+                  "fret": 1
+                }
+              },
+              {
+                "midi": 69,
+                "spelling": "A",
+                "position": {
+                  "string": 3,
+                  "fret": 0
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              5,
+              9,
+              0
+            ],
+            "spellings": [
+              "F",
+              "A",
+              "C"
+            ]
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "54c2bd31-e802-4e0e-a402-9224d8ce612a",
+            "type": "chord",
+            "duration": 4,
+            "symbol": "G",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 67,
+                "spelling": "G",
+                "position": {
+                  "string": 0,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 62,
+                "spelling": "D",
+                "position": {
+                  "string": 1,
+                  "fret": 2
+                }
+              },
+              {
+                "midi": 71,
+                "spelling": "B",
+                "position": {
+                  "string": 3,
+                  "fret": 2
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              7,
+              11,
+              2
+            ],
+            "spellings": [
+              "G",
+              "B",
+              "D"
+            ]
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "2ef39187-cfd4-46bc-be07-ff906c435353",
+            "type": "chord",
+            "duration": 4,
+            "symbol": "C",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 67,
+                "spelling": "G",
+                "position": {
+                  "string": 0,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 60,
+                "spelling": "C",
+                "position": {
+                  "string": 1,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 2,
+                  "fret": 0
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              0,
+              4,
+              7
+            ],
+            "spellings": [
+              "C",
+              "E",
+              "G"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

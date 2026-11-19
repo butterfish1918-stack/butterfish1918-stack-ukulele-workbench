@@ -1,3 +1,260 @@
-# Ukulele Workbench
+# Ukulele Workbench v1.6.0 Preview — Connected Song Repository
 
-Private source repository for the personal ukulele-learning application. The full v1.6.0 source tree follows in the initial import.
+Songbook now includes **Repository Library** with two bundled original notation-first studies, score previews, search/difficulty filters and **Sync Library**. A song copied to **My Songbook** is independent and is never overwritten by an upstream update. The app's existing editable Score Studio, Technique Academy, MusicXML support and local JSON backup remain available.
+
+**Play instantly:** open `demo.html`. To test repository sync over HTTP, install Node.js 20+, run `npm start` and visit `http://127.0.0.1:4173/`. You can use the default `./library/catalog.json` on a served app or configure an HTTPS catalog URL. To validate the on-disk library, run `npm run qa:library`, `npm test`, and `npm run qa:http`. Full workflow and future ChatGPT song submission instructions: **`SONG_REPOSITORY.md`**.
+
+**Not deployed:** No dedicated GitHub repository exists yet. Live song delivery will work when the source and catalog are published to a static host that supports browser fetches. Do not put GitHub authentication tokens in a browser-accessible URL.
+
+---
+
+## v1.5.0 Underground Garage × Industrial Racing UI
+
+The approved 2000s-style design is implemented in the original app (not a separate concept). Start in Score Studio, with a large high-contrast standard-notation canvas, selected-note inspector, synced fretboard, and racing-HUD rehearsal transport. The remaining modes share an industrial visual system with differentiated activity layouts. See **DESIGN_SYSTEM.md** for design tokens and responsive rules. Run `npm start` with Node.js 20+ or open `demo.html` for a self-contained preview. All musical data formats and functionality are unchanged. VexFlow CDN, true PWA offline reload and physical tuner calibration are still unverified.
+
+# Previous release: v1.4.0 Preview — Offline Foundation and Safe PWA Caches
+
+**Tested local source release; not a certified installed PWA.** This release corrects two installation defects and adds reproducible service-worker lifecycle tests without changing the music/score model or other projects.
+
+- **Safe cache migration:** The service worker now deletes **only older `uke-workbench-*` caches**, preserving caches belonging to unrelated tools hosted on the same site. It updates its offline shell after all required local assets have cached successfully and keeps requests scoped to the app's own directory.
+- **Offline behavior:** A cache-first shell, query-string asset lookup, offline-navigation fallback to `index.html`, and opportunistic caching of only local static files are covered by Node-simulated service-worker event tests. This is not a successful browser offline reload or installability certification.
+- **Install icons repaired:** The old icon depended on a missing music-character glyph. The replacement uses pure SVG geometry plus 192×192 and 512×512 PNGs, listed in the PWA manifest and precached for offline use.
+- **Practice Room checks:** The existing device-readiness report now checks whether five required offline-shell assets can be read from CacheStorage. A positive result means **present in cache**, not that offline reload was tested. It does not request microphone permission.
+- **Real HTTP check:** Run `npm run qa:http` (Node only) to launch an isolated localhost server and verify HTTP status, content types and nonempty response bodies for the actual app entrypoint, service worker, manifest, source modules, and icons. It does not launch a browser.
+- **Tests:** `npm test` runs the full theory/notation/backup suite plus service-worker lifecycle tests. `python browser-v14.py` runs a browser-injected UI smoke test. For an actual offline reload and tuner calibration, follow `REAL_DEVICE_QA.md` on a normal HTTPS/localhost origin and a real instrument.
+
+### Run locally
+
+```sh
+npm test
+npm run qa:http
+npm start
+```
+
+Then open `http://127.0.0.1:4173/` on that machine. The server is built into Node 20+ and does not require Python or external packages. In a normal browser, use DevTools → Application → Service Workers and Cache Storage. Toggle network Offline and reload twice to verify the installed app. **Do not test the PWA using `file://` or the standalone demo.**
+
+---
+
+# Ukulele Workbench v1.3.0 Preview — Data Safety and Device Readiness
+
+**Local prototype.** This release builds on v1.2.0, with no changes to existing guitar projects and no GitHub deployment. All music/notation features from v1.2.0 remain available.
+
+## New in v1.3
+
+- **Practice Room → Device & data safety → Run device checks.** Reports whether the current browser is served via HTTP(S), is a secure context, can write/read a temporary local-storage value, has an active service worker, exposes the microphone API and has persistent storage permission. **The check never requests microphone permission, records sound, uploads anything or asserts that an offline reload has passed.** In standalone HTML the PWA-related checks are expected to say *TO TEST*.
+- **Backup restore preflight:** Before confirmation, every included song score and current score/progression, reading results, rhythm data and supported display/tuning settings is validated. Invalid files do not overwrite previous songs or scores.
+- **Storage failure recovery:** Validated backup fields are written with read-after-write verification. If any write fails, the app attempts to roll back the affected keys to their previous values and warns explicitly if recovery cannot be verified. **This is not an ACID database transaction. Keep exported JSON backups**, especially before restoring a different collection.
+- **Bug fix:** A restored `dual` (notation + tab) view and tuning are retained; a restored score draft clears the old Songbook identity so subsequent saves do not accidentally overwrite an unrelated song.
+
+## Run / inspect
+
+Open the standalone `demo.html` in a browser for a file-based demo. For real device testing, start the source app on an HTTP(S) origin (see `REAL_DEVICE_QA.md`). The browser here blocks navigation to localhost, so PWA install, actual persistent origin storage, VexFlow online rendering and physical microphone accuracy are **not** certified.
+
+```sh
+npm test
+python browser-v13.py
+```
+
+The browser script requires Python Playwright and a local Chromium executable, and uses **injected HTML + simulated localStorage**, not an unrestricted browser origin. Five older browser regressions (v0.8, v0.9 backup, v1.0 backup, v1.1 MusicXML, v1.2 MusicXML/offline fallback) were re-run successfully.
+
+---
+
+# Ukulele Workbench v1.2.0 Preview — Optional VexFlow, MusicXML compatibility and tuner testing
+
+**Not a certified production release.** This version extends v1.1.0 in the same source tree. The original browser-native notation remains the offline and editable default; the VexFlow 5 professional engraving **preview** is optional and loads its pinned library from a CDN **only after the user requests it**. In this build environment CDN/npm downloads were blocked, so the integration code and fallback were tested, but the actual third-party renderer could not be exercised. No third-party font files or binary packages are included.
+
+- In **Score Studio**, use **Professional engraving preview (online)** to request formatted staff engraving. The rendered score can be clicked to select corresponding canonical note events. The regular edit surface, tablature, fingering and Songbook remain below the preview. If disconnected or blocked, the editable classic score continues working.
+- **MusicXML** now imports a broader, still bounded group of single-part XML scores: repeated unchanged attributes, omitted optional note types, and nonmusical print/page layout. Any actual score changes (new meter/key/divisions/clef), polyphony, tuplets and MXL remain explicitly rejected rather than discarded. Import errors do not overwrite the draft.
+- **Tuner** fundamental detection has been replaced by a testable YIN-style local DSP module. Open-string tests on synthetic 44.1/48-kHz data pass. Actual instrument, microphone and latency acceptance have **not** been carried out.
+- **Offline/PWA** core assets are covered by static pre-cache checks; see `REAL_DEVICE_QA.md` for a reproducible real-device and browser-origin test procedure. Running `npm start` uses Python 3 on localhost.
+- **Verification:** `npm test` runs Node theory/music/engraving-adapter/tuner/PWA checks, `python browser-v12.py` covers XML compatibility, offline renderer failure and mobile. `python browser-v11.py` covers the older MusicXML round-trip.
+
+# Ukulele Workbench v1.1.0 Preview — MusicXML interchange
+
+**Stage (historical v1.1 description):** local development preview, not a production release or a professionally engraved score editor. This build extends the existing v1.0.0 preview and leaves the original guitar projects untouched.
+
+## New in v1.1.0 — First MusicXML 4.0 interchange
+
+- Score Studio has **Download MusicXML** and **Import MusicXML** controls. Downloads are uncompressed `.musicxml` `score-partwise` XML. Browser import requires a native XML parser and explicit confirmation before replacing the working score. A failed import leaves the draft unchanged.
+- The exporter writes the authored title, one ukulele part in treble clef, divisions/durations (including dotted values), 3/4, 4/4 or 6/8, key signatures, tempo, rests, written pitch spelling and octave, ties, slurs, articulation, chord symbols, chord stacks and chosen string/fret positions. The export uses sounding pitches; it does not quietly transpose high-G ukulele notation.
+- The **intentionally restricted importer** accepts one part, one rhythmic voice, unchanged key/time, treble clef, supported values/accidentals, supported fixed/generated chord voicings, and 1–200 measures. It rejects additional voices, repeats, tuplets, unsupported directions, fingering markup, complex chord structures, DTDs/entities and compressed `.mxl` files; it does **not** claim to import arbitrary professional scores. The importer uses ukulele tuning metadata when available, otherwise the current Score Studio tuning.
+- For a **complete lossless backup** of original drafts, technique progress, rhythm results and songs, continue using the existing app JSON backup. MusicXML is for score interchange, not a replacement for your full library backup.
+- Pure Node export tests and a browser test cover written enharmonic octaves, dotted rhythms, pitches and frets, chord stacks, ties/slurs, XML parsing, browser download/upload, input rejection and responsive layout.
+
+### Try MusicXML
+
+1. Open the standalone `demo.html` or the server-based app. Go to **Score Studio**.
+2. Compose notes or chords. Select **↓ MusicXML** to download an interoperable single-part score.
+3. Select **↑ Import MusicXML** to reopen a supported XML file. Confirm replacing the active score; save the original to Songbook first when appropriate.
+4. Use **Songbook → Backup** to preserve all app content in JSON, since importing another musical score does not restore the entire practice history.
+
+**Current limitations:** no MusicXML layout/page engraving, transposition, multiple voices, independently moving chord notes, tuplets, repeats, ornaments, lyrics or complex imported measures. The existing SVG score remains a simplified notation display. Physical tuner calibration, PWA installation on a served origin and GitHub deployment remain unverified.
+
+---
+
+# Ukulele Workbench — v1.0.0 Preview: Key & Pitch Reading Academy
+
+A **notation-first ukulele learning, instrument practice and personal music app**, built from browser-native modules. This is an **early runnable prototype**, not a hosted application or full notation engraver.
+
+## New in v1.0.0 Preview — Key signatures and graded melodic sight-reading
+
+- **Key Signature Lab:** 15 conventional major-key signatures, with switches between naming the major key and its relative minor. Every question displays an actual treble-clef key signature on the stave, offers four distinct choices, reveals an explanation after answering, and saves practice counts locally.
+- **Pitch Sight-Reading Lab:** eight two-bar, eight-note études in C, G, F, D, B-flat, A and E-flat major, plus an additional G-major phrase. The player reads one highlighted note at a time and selects its **written pitch and octave**. Accidentals from the key signature are part of the printed exercise; the answer checks the written spelling instead of merely the same-sounding chromatic pitch.
+- **Instrument-specific fingerings:** a lesson selects only notes playable within the first 12 frets on GCEA high-G, GCEA low-G and baritone DGBE. The learner can reveal the exact string/fret hint, hear the sounding note, change tuning or copy a study to Score Studio. Standard notation remains the default: tablature is not revealed automatically.
+- **Local practice record:** correct/attempted answers for each key mode and each melodic étude are saved locally and included in JSON schema-v2 backup. Import also supports earlier backups lacking the optional `notationReadingProgress` field.
+- **Testing:** **81/81 Node tests pass**, including eight new tests across all signatures, relative minors, written-pitch octave edge cases, 24 tuning-specific study builds, note-answer validation and immutable progress storage. The new desktop/mobile UI and backup round-trip checks pass; previous browser regressions through v0.9 also pass.
+- **Not a production 1.0 release:** the app remains a local, simplified-engraving preview. Actual browser-origin PWA installation, persistent IndexedDB (the prototype uses localStorage), live microphone tuner calibration and device audio latency are **not verified**. The app is not yet published on GitHub.
+
+### Try the new notation course
+
+1. Open **Notation Academy** and scroll to **Key signatures · identify the key**. Identify major keys or relative minors from the notated key signatures; answers remain hidden until selected.
+2. Continue to **Read a melody · pitch by pitch**. Choose a study (`SR-01` to `SR-08`), read the highlighted note and select its written pitch and octave.
+3. Reveal the fingering or hear the note only when you need help. Change ukulele tuning to compare playable positions. Optionally copy the complete exercise into Score Studio.
+4. Export a JSON backup from **My Songbook** to preserve your reading statistics. No cloud account is required.
+
+## New in v0.9.0 — Read, hear, and tap the score
+
+- **Eight graded, two-measure rhythm études** in the Notation Academy: steady quarter pulse; written rests; pairs of eighths; upbeats; dotted-quarter phrasing; dotted-eighth/sixteenth; waltz in 3/4; and compound 6/8.
+- Read **standard notation** as the primary representation. A one-measure audible count-in is followed by synthetic reference-note playback. Press **Space** or the **Tap the rhythm** button only for notated attacks; leave rests silent. 6/8 is counted in two dotted-quarter pulses.
+- After each attempt, see matched, missed and extra attacks, an approximate match percentage, and average timing error for matched taps. The matching window is tempo-dependent (85–220 ms). **This measures browser taps, not audio recorded from the ukulele**, and latency makes it unsuitable as a precise musicianship examination.
+- Save attempts and best performance locally per lesson. The existing JSON schema-v2 backup includes the new optional `rhythmLabProgress` record, preserving compatibility with older backups without that field.
+- The existing score renderer now uses **rhythm-aware horizontal event spacing**, blending actual onset positions with minimum separation for legibility. This is still simplified SVG notation, not professional engraving.
+- **73 of 73 Node tests passed** (64 earlier + 9 new). New desktop/mobile browser workflow and backup round-trip passed; **all seven earlier browser regression suites passed**. Chrome refused navigation to `http://127.0.0.1` with `ERR_BLOCKED_BY_ADMINISTRATOR` in this environment, so service-worker installation and origin-backed browser storage remain unverified.
+
+### Try the new lesson
+
+1. Open **Notation Academy**, scroll to **Read and perform a rhythm**, then choose an étude from `RT-01` through `RT-08`.
+2. Read the two-bar score. Choose **Count in & play** and listen to the one-measure preparatory pulse.
+3. Starting when the score begins, tap the button or press Space at each written note onset. **Do not tap during a rest**. You can abort using Stop; aborted attempts are not recorded.
+4. Review matched and missed attacks and your locally saved best result. If you want a durable copy of your results, export the backup from **My Songbook**.
+
+## New in v0.8.0 — Minor-key harmony and rhythmic arranging
+
+- The Progression Builder now supports **major, natural minor and harmonic minor** in all 15 conventional key-signature families, across high-G, low-G and baritone tunings. Minor-mode tonic selection uses its **relative-major signature**; harmonic minor raises the leading tone with an accidental. For example, A minor has a C-major key signature, while the harmonic-minor dominant is E major rather than E minor.
+- Meter options are **4/4, 3/4 and 6/8**. Chords can last half a beat, one beat, one and a half, two, three or four beats (subject to the meter). Several chord attacks now fit in the same measure; the UI shows bar/beat placement and the score shows the individual rhythmic values. Chords that do not fit start a new measure and any gap is written as a **real rest**.
+- Expand an entire measure of one chord into a **notation-linked rhythm preset**: quarter downstrokes, island D-D-U-U-D, half-time strokes, a 3/4 waltz or a dotted 6/8 figure. Each attack has an independent down/up stroke in the score and audio. Select an attack to cycle its length, direction or order.
+- Every chord retains its exact note spelling, sounding pitch and string/fret assignment. Score Studio, optional tablature, Songbook scores and playback all use the shared score-event model. Synthetic reference audio remains a limitation.
+- **Backward compatibility**: v0.7 progression drafts without mode/meter/duration are interpreted as C-major-style four-beat steps; no change to the portable backup schema is required. New optional fields are persisted and restored with the same JSON format. Chord-attack limit remains 16; the current builder is not an unlimited DAW arranger.
+- The app includes **64 passing Node tests** (11 new) and a new desktop/mobile v0.8 browser test. All six earlier browser suites pass as regressions. **Real-origin offline PWA, microphone calibration and persistent storage are still unverified**; an HTTP server was refused by this execution environment.
+
+### Quick practice flow
+
+1. Open **Progression Builder**, choose *Natural minor*, *A* and *4/4*.
+2. Choose **1 beat** under *New chord length* and add i, iv, V (use *Harmonic minor* for a major V) and i. You now have four chord attacks in one notated measure.
+3. Alternatively, use **I–IV–V–I** to create four full-bar chords, and choose **Island rhythm** on any whole-bar chord to replace it with five written strokes.
+4. Toggle notation + tab to check physical fingerings, then play or save the score to **Songbook**.
+
+## New in v0.7.0 — Score-first diatonic progressions
+
+- **Progression Builder** is accessible in desktop navigation, the mobile navigation and the Fretboard & Theory chord explorer. Build up to **16 measures**; reorder, remove or change each measure’s stroke direction.
+- Supports **15 conventional major-key signatures**, **triads and seventh chords**, and high-G, low-G and baritone tuning. The current editor is intentionally **one chord per 4/4 measure**; minor-key progression rules and custom beat lengths are not part of this version.
+- The harmony engine generates playable three- or four-string voicings (muting a fourth string when needed) and preserves their individual written note spellings, sounding pitches and exact string/fret locations. The rendered standard notation, optional tablature and playback use the **same canonical score events**.
+- Change key, tuning and tempo; audition the progression with a highlighted active measure. Save a complete score to Songbook without modifying the current Score Studio draft, or explicitly open it in Score Studio after a confirmation.
+- Progression drafts persist locally and travel in the **existing schema-v2 JSON backup**. Older backups without this new optional field remain supported; malformed imported progression data is rejected.
+- **53 automated Node tests pass**, including 630 valid major-key/degree/extension/tuning combinations. New desktop/mobile browser tests and all five older browser regression suites pass.
+- No publication or physical tuner verification is claimed. Real-device PWA installation and browser storage remain to be tested on an actual served origin.
+
+## Try the complete interactive demo
+
+Extract the archive and open `ukulele-workbench/demo.html` in your browser. This demo includes all JavaScript and CSS inline and requires **no package downloads or network access**. The normal source version uses ES modules and a PWA.
+
+Browser behavior for files opened via `file://` varies: if storage is disabled, try the server-based version below. Microphone features require browser permission and generally HTTPS or localhost; for real tuning, use the served version.
+
+## Run the source/PWA version
+
+From the extracted `ukulele-workbench` folder:
+
+```sh
+python3 -m http.server 4173
+```
+
+Open <http://localhost:4173>. There is no npm installation step: the prototype uses no external dependencies.
+
+Run tests with Node 20 or later:
+
+```sh
+npm test
+```
+
+`build-demo.py` regenerates the single-file preview by inlining known local modules. It is a prototype bundler for this fixed file list, not a substitute for a production bundler.
+
+## Earlier work in v0.6.0
+
+### v0.6.0: Reading technique symbols and playing real chord stacks
+- Ten **playable, notation-linked technique studies** (three more than v0.5): **C–F–G7–C chord transitions**, **down/up strumming** with standard Π/V indicators, and **slur vs staccato** phrasing. Five additional topics remain explicitly labelled planned rather than represented as working content.
+- A **four-string chord is now one musical event**, with four simultaneous sounding pitches, exact tuning-aware fret positions, a chord symbol, a strum direction, and one written rhythmic duration. Stacked noteheads appear in the staff; optional tabs display all four frets. Downstrokes/arpeggiated strums sound from G to A (or D to E for baritone); upstrokes use reverse physical order.
+- The first supported chord shapes are C, F, G7 and Am, with known frets for both GCEA variants and baritone DGBE. Chord pitch/fret correctness is validated by automated tests in all three tunings. This is not yet a generalized arbitrary chord-stack editor.
+- **Score Studio** supports adding, replacing, and editing chord events, their durations, stroke direction and accent/staccato/tenuto marks. Slur-to-next is available for adjacent single notes and remains distinct from a tie (the latter sustains a repeated pitch without re-attacking).
+- **Notation Academy** adds a four-question interactive expression lesson on ties, slurs, staccato and accents, saving its quiz score locally.
+- Technique practice continues to use optional score/tab views, removable fingering hints, reference audio and self-reported progress. Score copies, saved songs and JSON backups persist the new chord and articulation fields without breaking earlier scores.
+
+## Previous release: v0.5.0
+
+### v0.5.0: Guided, notation-first Technique Academy
+- Seven original **playable, notation-linked lessons**: clear fretting, chromatic finger independence, thumb strokes, index–middle alternation, p–i–m–a arpeggio, an introductory campanella string-distribution study, and musical phrasing with a written rest. The remaining syllabus topics were intentionally marked as **planned** in that release instead of pretending to be implemented lessons.
+- Each lesson builds a validated standard score from a physically playable string/fret pattern. High-G, low-G and baritone tuning adapt the **actual sounding pitches and the written staff** together. Exact string/fret assignments are preserved.
+- Default staff display with selectable score + optional tab / tab only. On-staff suggested fingering labels (right-hand p/i/m/a and left-hand 0–4) can be hidden or revealed. Tapping staff notes or step cards identifies and plays the selected pitch.
+- Adjustable 40–140 BPM exercise tempo, **four-beat audible count-in**, and synchronized note-cursor playback. The oscillator is only a reference sound, not a realistic demonstration of attack or technique.
+- Manual confidence rating (*Still learning*, *Comfortable*, *Confident*) records an explicit, self-reported practice attempt. This does not automatically assess performance. Local progress is included in backup exports and restored from compatible backups. Existing schema-1 and schema-2 backups still load.
+- Copy a guided étude directly into Score Studio to change its notes, duration or fingering and save an arrangement in the Songbook. Lessons never overwrite the working score without an explicit copy action.
+- Mobile navigation and 390px layout checks for Technique Academy.
+
+## Earlier features (retained)
+
+### v0.4.0: Notation, rhythm reading and tied playback
+- Major key-signature selector covering all 15 standard major keys (seven sharps to seven flats). This affects engraving and accidental cancellation, **not** the sounding MIDI pitches or transposition. Older score files without a key field continue to work as C major.
+- Dotted sixteenth, eighth, quarter and half durations for notes and rests; corresponding timing and SVG dots. Beam grouping supports dotted-eighth + sixteenth pairs.
+- Tie-to-next control on a selected note, limited to adjacent identical written and sounding pitches. Ties across bars require a full preceding bar, and playback sustains the joined duration without re-attacking the second note. Editing incompatible notes is rejected safely.
+- New **interactive rhythm-reading lesson** under Notation Academy: interpret notes/rests directly on the staff, identify their quarter-note beat values, and save quiz progress locally.
+- Updated mobile layouts and source/PWA cache assets; all new score elements retain Undo/Redo and Songbook persistence.
+
+### Score Studio (v0.3.0 improvements)
+- Bounded Undo/Redo for score edits (buttons and Ctrl/⌘+Z, Ctrl+Y / ⌘+Shift+Z). Session-only history, not in backup files.
+- Insert before/after a selected event when the measure has space; otherwise refuse safely without altering later measures. Explicitly add a blank measure.
+- Beat-aware engraving of grouped eighth/sixteenth notes, including dotted-quarter grouping in 6/8. A simplified SVG renderer remains in use.
+- Accidentals are applied per written letter and octave within each bar: repeated signs are suppressed, and naturals cancel a prior sharp/flat. Major key signatures were added in v0.4.0.
+- If duration or written spelling changes without changing the sounding pitch, retain the user-selected physical fingering.
+- Technique Lab is now accessible from the mobile navigation.
+
+### Score Studio (carried over from v0.2.0)
+- A monophonic event model for notes and rests in complete or partially filled measures. New measures are opened automatically when necessary.
+- A notation-first SVG staff with treble clef, simple time signatures, ledger lines, explicit accidentals, quarter/eighth/sixteenth/half/whole notes, and corresponding rests.
+- 3/4, 4/4 and 6/8 support (in quarter-note timing units); add, replace, select or delete notes and rests.
+- Written pitch spelling separate from sounding MIDI pitch. You can choose such spellings as C♯ and D♭ while preserving the same sounding note.
+- Four-string fingering options specific to high-G, low-G or baritone tuning. Assign a physical string/fret without changing pitch. Switching tuning clears invalid fret assignments.
+- Standard notation (default), notation + synchronized tablature, or tablature-only display.
+- Timed score playback with current-event highlighting and a Stop control.
+- Local autosaved working score and saving/reopening a full score in the existing Songbook. JSON backups now include score drafts and remain import-compatible with v0.1 schema 1.
+
+### Still available from v0.1.0
+- Interactive four-string fretboard, modes, scale spelling, diatonic chords and chord voicings.
+- Beginner note-reading quiz, technique-learning outline and basic rhythm/strumming patterns.
+- Metronome with adjustable tempo/tap tempo; tuner with guided tones and on-device microphone pitch estimates.
+- Local song metadata, lyrics/ChordPro sketches, practice logs and portable backups.
+- Local-first installable PWA shell for browser use.
+
+## Test evidence
+
+`npm test` passes **64 of 64** Node model tests, including the ten tuning-aware technique études, four-string chord voicing invariants, chord-stack engraving, up/down strokes, slurs vs ties, articulation and atomic editing. Browser smoke suites cover the original app, v0.3/v0.4/v0.5 regressions and a dedicated v0.6 workflow: chord scores in three tunings; notation-tab switching; playback/count-in; fingering hints; local practice; Score Studio chord entry; saving and reopening a song; expression quiz; and a 390px mobile layout with no page-wide overflow. Browser testing used a self-contained injected HTML page and a simulated `localStorage` object; it does **not** verify persistence across a real-origin reload or HTTPS microphone permissions. Physical ukulele tuner accuracy, service-worker install and full-device audio timing remain unverified.
+
+## Important limitations
+
+- The editor currently supports **one rhythmic voice** (including four-string chord stacks); beaming, chord-note collision layout and accidental engraving remain simplified. Independent voices, tuplets, complex rhythms, arbitrary chord stacks, printable professional scores and MusicXML import/export are **not** ready. Basic single-note slurs and articulations are available. Basic ties, major key signatures and dotted rhythms are available, but still use a simplified SVG engraver. Do not use its SVG as a professional engraving source.
+- The notation engine currently displays **sounding pitch** rather than handling conventional optional octave-transposed ukulele notation. The choice of octave convention remains a recorded design decision.
+- Current score editor supports append, replace, delete, insertion within a bar, explicit blank bars and session-scoped Undo/Redo. Drag-and-drop, automatic rhythmic reflow, and full score engraving are not implemented. Deleting an event in a non-final bar preserves later bar positions, which can leave an incomplete bar.
+- Playback uses an oscillator placeholder; actual recorded ukulele samples, realistic technique articulation and complete expression interpretation are not implemented.
+- Pitch detection is experimental and can make octave/harmonic errors. Do not use as a replacement for a verified physical tuner before testing on a real instrument.
+- Persistence is localStorage for this prototype (including technique ratings), not IndexedDB. Browser-data deletion can remove your songs. **Export JSON backups regularly.**
+- There is no React/Vite deployment yet. Planned target remains React + TypeScript, but this build is dependency-free to maintain an immediately testable proof of concept without package registry access.
+
+## Source of truth and build tracking
+
+[Google Docs living build plan](https://docs.google.com/document/d/10rZ38StT_s6_RRjAf6oq38NeCxa0CTUylJwVGba1stY/edit)
+
+Feature IDs `UW-N01`–`UW-S08` and milestone gates M0–M6 live in that document. Existing P0 requirements are **IN PROGRESS**, not prematurely marked done. An individual functioning component does not satisfy a complete acceptance gate.
+
+Next priority: improve progression editing (ties, grouped rhythm, minor-key cadence teaching), notation engraving and technique curriculum; verify tuning and audio on a real device; create a dedicated source repository; and evaluate a mature notation renderer/MusicXML before migrating to a TypeScript component architecture.
+
+## Privacy and licensing
+
+Microphone audio is analyzed only on the device and is never transmitted or recorded by this prototype. All app files in this archive are original code generated for this project; there are no bundled third-party fonts, samples or commercial songs.

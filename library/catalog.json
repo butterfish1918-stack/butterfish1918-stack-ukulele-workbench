@@ -1,0 +1,33 @@
+{
+  "format": "ukulele-workbench-catalog",
+  "schemaVersion": 1,
+  "name": "Ukulele Workbench — Starter Library",
+  "entries": [
+    {
+      "id": "first-melody-study",
+      "revision": 1,
+      "title": "First Melody — Notation Study",
+      "artist": "Ukulele Workbench",
+      "difficulty": "beginner",
+      "tags": [
+        "notation",
+        "melody",
+        "original"
+      ],
+      "file": "songs/first-melody-study.json"
+    },
+    {
+      "id": "primary-chord-changes",
+      "revision": 1,
+      "title": "I–IV–V–I Chord Changes",
+      "artist": "Ukulele Workbench",
+      "difficulty": "beginner",
+      "tags": [
+        "chords",
+        "strumming",
+        "original"
+      ],
+      "file": "songs/primary-chord-changes.json"
+    }
+  ]
+}
