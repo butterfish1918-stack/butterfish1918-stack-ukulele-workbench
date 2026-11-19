@@ -4,6 +4,7 @@ const CACHE_PREFIX = 'uke-workbench-';
 const CACHE = `${CACHE_PREFIX}v1.6.0-preview`;
 const SCOPE = new URL(self.registration.scope);
 const SHELL = new URL('./index.html', SCOPE).href;
+const LIBRARY_PATH = new URL('./library/', SCOPE).pathname;
 const ASSETS = [
  './', './index.html', './styles.css', './src/app.js', './src/song-library.js', './src/library-seed.js', './src/music.js',
  './src/score.js', './src/score-view.js', './src/technique-lessons.js',
@@ -38,6 +39,26 @@ self.addEventListener('fetch', event => {
  const url = new URL(request.url);
  const scopePath = SCOPE.pathname.endsWith('/') ? SCOPE.pathname : SCOPE.pathname + '/';
  if (url.origin !== SCOPE.origin || !url.pathname.startsWith(scopePath)) return;
+ // Song catalogs must be network-first so a live Sync Library sees new revisions.
+ // A validated cached copy remains available when the device is offline.
+ if (url.pathname.startsWith(LIBRARY_PATH) && url.pathname.endsWith('.json')) {
+  event.respondWith((async () => {
+   const libraryCache = await caches.open(CACHE);
+   try {
+    const response = await fetch(request, {cache: 'no-store'});
+    if (response.ok && response.type !== 'opaque') {
+     const copy = response.clone();
+     event.waitUntil(libraryCache.put(request, copy));
+    }
+    return response;
+   } catch (error) {
+    const offlineCopy = await libraryCache.match(request, {ignoreSearch: true});
+    if (offlineCopy) return offlineCopy;
+    throw error;
+   }
+  })());
+  return;
+ }
  event.respondWith((async () => {
   const cached = await caches.match(request, {ignoreSearch: true});
   if (cached) return cached;
