@@ -1,0 +1,60 @@
+name: Deploy Ukulele Workbench to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "github-pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Check out the project
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Verify music model and catalog
+        run: |
+          npm test
+          npm run qa:library
+
+      - name: Assemble a lean static site
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p _site
+          cp index.html styles.css sw.js manifest.webmanifest _site/
+          cp -R src assets library _site/
+          touch _site/.nojekyll
+          test -s _site/index.html
+          test -s _site/library/catalog.json
+          test -s _site/library/songs/first-melody-study.json
+          test -s _site/library/songs/primary-chord-changes.json
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload static site
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+
+      - name: Deploy static site
+        id: deployment
+        uses: actions/deploy-pages@v4
