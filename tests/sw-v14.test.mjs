@@ -105,6 +105,24 @@ test('successful remote static fetch is cached; arbitrary dynamic URLs are not',
  await env2.dispatch('fetch',request('./api/user-data'));env2.setOffline();
  await assert.rejects(()=>env2.dispatch('fetch',request('./api/user-data')),/offline/);
 });
+test('song catalog and song JSON refresh online even if pre-cached, then remain usable offline',async()=>{
+ const env=environment();await env.dispatch('install');await env.dispatch('activate');
+ for(const file of ['./library/catalog.json','./library/songs/first-melody-study.json']){
+  const url=new URL(file,ORIGIN).href;
+  const earlier=await env.caches.match(url);
+  assert.equal(await earlier.text(),`precache:${file}`);
+  const response=await env.dispatch('fetch',request(file));
+  assert.equal(await response.text(),`online:${url}`,'online sync bypasses old pre-cache');
+  const newer=await env.caches.match(url);
+  assert.equal(await newer.text(),`online:${url}`,'latest online JSON saved as offline copy');
+ }
+ const fetches=env.fetches;
+ env.setOffline();
+ const offline=await env.dispatch('fetch',request('./library/catalog.json'));
+ assert.equal(await offline.text(),`online:${new URL('./library/catalog.json',ORIGIN).href}`);
+ assert.equal(env.fetches,fetches+1,'attempts network before cache fallback');
+});
+
 test('failed installation does not activate worker with incomplete offline assets',async()=>{
  const env=environment({failInstall:true});
  await assert.rejects(()=>env.dispatch('install'),/failed to fetch offline shell/);
