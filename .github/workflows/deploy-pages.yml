@@ -42,6 +42,7 @@ jobs:
           cp index.html styles.css sw.js manifest.webmanifest _site/
           cp -R src assets library _site/
           touch _site/.nojekyll
+          node scripts/stamp-pages-cache.mjs
           test -s _site/index.html
           test -s _site/library/catalog.json
           test -s _site/library/songs/first-melody-study.json
