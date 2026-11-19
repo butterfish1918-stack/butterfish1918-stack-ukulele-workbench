@@ -4,7 +4,7 @@ Songbook now includes **Repository Library** with two bundled original notation-
 
 **Play instantly:** open `demo.html`. To test repository sync over HTTP, install Node.js 20+, run `npm start` and visit `http://127.0.0.1:4173/`. You can use the default `./library/catalog.json` on a served app or configure an HTTPS catalog URL. To validate the on-disk library, run `npm run qa:library`, `npm test`, and `npm run qa:http`. Full workflow and future ChatGPT song submission instructions: **`SONG_REPOSITORY.md`**.
 
-**Not deployed:** No dedicated GitHub repository exists yet. Live song delivery will work when the source and catalog are published to a static host that supports browser fetches. Do not put GitHub authentication tokens in a browser-accessible URL.
+**GitHub Pages deployment prepared:** This public repository includes a verified static site and an automatic Pages workflow at `.github/workflows/deploy-pages.yml`. A one-time GitHub Pages source selection (**Settings → Pages → GitHub Actions**) may still be needed. See **[PAGES_DEPLOYMENT.md](PAGES_DEPLOYMENT.md)** for the exact activation steps, expected site and song-catalog URLs, testing and safety guidance. Do not put GitHub authentication tokens in a browser-accessible URL. Browser-local practice data is not synced to GitHub.
 
 ---
 
