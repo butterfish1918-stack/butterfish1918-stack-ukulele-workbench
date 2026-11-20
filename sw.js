@@ -1,7 +1,7 @@
 /* Ukulele Workbench offline shell. Keep cache deletion scoped to THIS app:
    other tools on the same GitHub Pages origin must never be touched. */
 const CACHE_PREFIX = 'uke-workbench-';
-const CACHE = `${CACHE_PREFIX}v1.7.0-harmony-studies`;
+const CACHE = `${CACHE_PREFIX}v1.7.1-traditional-melody`;
 const SCOPE = new URL(self.registration.scope);
 const SHELL = new URL('./index.html', SCOPE).href;
 const LIBRARY_PATH = new URL('./library/', SCOPE).pathname;
@@ -27,7 +27,8 @@ const ASSETS = [
  './library/songs/scarborough-fair.json',
  './library/songs/babe-im-gonna-leave-you.json',
  './library/songs/everybody-wants-to-rule-the-world.json',
- './library/songs/california-dreamin.json'
+ './library/songs/california-dreamin.json',
+ './library/songs/scarborough-fair-traditional-1882.json'
 ];
 
 self.addEventListener('install', event => {
