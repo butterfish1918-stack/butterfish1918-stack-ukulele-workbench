@@ -238,6 +238,21 @@
         "minor-harmony"
       ],
       "file": "songs/california-dreamin.json"
+    },
+    {
+      "id": "scarborough-fair-traditional-1882",
+      "revision": 1,
+      "title": "Scarborough Fair / Whittingham Fair — Complete Traditional Tune (1882)",
+      "artist": "Traditional English / Northumbrian ballad",
+      "difficulty": "advanced",
+      "tags": [
+        "public-domain",
+        "traditional",
+        "melody",
+        "fingerstyle",
+        "complete-tune"
+      ],
+      "file": "songs/scarborough-fair-traditional-1882.json"
     }
   ],
   "repertoire": [
@@ -311,7 +326,8 @@
       "id": "scarborough-fair",
       "title": "Scarborough Fair",
       "artist": "Simon & Garfunkel",
-      "practiceFocus": "Modal melody and contrapuntal fingerpicking"
+      "practiceFocus": "Modal melody and contrapuntal fingerpicking",
+      "preferredArrangementId": "scarborough-fair-traditional-1882"
     },
     {
       "id": "babe-im-gonna-leave-you",
