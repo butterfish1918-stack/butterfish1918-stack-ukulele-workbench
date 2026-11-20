@@ -1,0 +1,1828 @@
+{
+  "format": "ukulele-workbench-arrangement",
+  "schemaVersion": 1,
+  "id": "a-forest",
+  "revision": 1,
+  "title": "A Forest — Harmony & Technique Study",
+  "artist": "The Cure",
+  "difficulty": "advanced",
+  "tags": [
+    "advanced-repertoire",
+    "original-study",
+    "notation",
+    "minor-harmony"
+  ],
+  "key": "C",
+  "tonalCenter": "A minor",
+  "bpm": 130,
+  "tuning": "highG",
+  "description": "An original 16-measure ukulele harmony and technique study associated with “A Forest”. Not a transcription of its melody, bass riff, lyrics, studio arrangement or original timing. Uses harmonic vocabulary in the song’s concert key; this is a practice tempo.",
+  "body": "Study harmony by measure (not a full song chart): [Am] | [F] | [C] | [G] | [Am] | [Em] | [F] | [G] | [Am] | [F] | [C] | [G] | [Em] | [F] | [G] | [Am]",
+  "notes": "Original tonal centre: A minor. Standard high-G GCEA, no capo. Staff and optional tablature show exact playable fret positions. Repetitive picking, open-space phrasing and shifting tonal centres. The notated chord/arpeggio figure is newly composed and does not reproduce the recording's melody or signature riffs. Scores may use the relative major’s key signature to notate minor/modal centres.",
+  "score": {
+    "schema": 1,
+    "id": "repertoire-study-a-forest",
+    "title": "A Forest — Original harmonic study",
+    "tuning": "highG",
+    "meter": "4/4",
+    "key": "C",
+    "tempo": 130,
+    "measures": [
+      {
+        "events": [
+          {
+            "id": "a-forest-0-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "Am",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 60,
+                "spelling": "C",
+                "position": {
+                  "string": 1,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 2,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 69,
+                "spelling": "A",
+                "position": {
+                  "string": 3,
+                  "fret": 0
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              9,
+              0,
+              4
+            ],
+            "spellings": [
+              "A",
+              "C",
+              "E"
+            ]
+          },
+          {
+            "id": "a-forest-0-1",
+            "type": "note",
+            "midi": 60,
+            "spelling": "C",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 0
+            }
+          },
+          {
+            "id": "a-forest-0-2",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "a-forest-0-3",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "a-forest-0-4",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "a-forest-0-5",
+            "type": "note",
+            "midi": 60,
+            "spelling": "C",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 0
+            }
+          },
+          {
+            "id": "a-forest-0-6",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "a-forest-1-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "F",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 60,
+                "spelling": "C",
+                "position": {
+                  "string": 1,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 65,
+                "spelling": "F",
+                "position": {
+                  "string": 2,
+                  "fret": 1
+                }
+              },
+              {
+                "midi": 69,
+                "spelling": "A",
+                "position": {
+                  "string": 3,
+                  "fret": 0
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              5,
+              9,
+              0
+            ],
+            "spellings": [
+              "F",
+              "A",
+              "C"
+            ]
+          },
+          {
+            "id": "a-forest-1-1",
+            "type": "note",
+            "midi": 65,
+            "spelling": "F",
+            "duration": 0.75,
+            "position": {
+              "string": 2,
+              "fret": 1
+            }
+          },
+          {
+            "id": "a-forest-1-2",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.25,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "a-forest-1-3",
+            "type": "note",
+            "midi": 60,
+            "spelling": "C",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 0
+            }
+          },
+          {
+            "id": "a-forest-1-4",
+            "type": "note",
+            "midi": 65,
+            "spelling": "F",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 1
+            }
+          },
+          {
+            "id": "a-forest-1-5",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "a-forest-1-6",
+            "type": "note",
+            "midi": 60,
+            "spelling": "C",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 0
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "a-forest-2-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "C",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 67,
+                "spelling": "G",
+                "position": {
+                  "string": 0,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 60,
+                "spelling": "C",
+                "position": {
+                  "string": 1,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 2,
+                  "fret": 0
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              0,
+              4,
+              7
+            ],
+            "spellings": [
+              "C",
+              "E",
+              "G"
+            ]
+          },
+          {
+            "id": "a-forest-2-1",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.25,
+            "position": {
+              "string": 0,
+              "fret": 0
+            },
+            "articulation": "accent"
+          },
+          {
+            "id": "a-forest-2-2",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.25,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "a-forest-2-3",
+            "type": "note",
+            "midi": 60,
+            "spelling": "C",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 0
+            }
+          },
+          {
+            "id": "a-forest-2-4",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.75,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "a-forest-2-5",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.25,
+            "position": {
+              "string": 0,
+              "fret": 0
+            }
+          },
+          {
+            "id": "a-forest-2-6",
+            "type": "note",
+            "midi": 60,
+            "spelling": "C",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 0
+            }
+          },
+          {
+            "id": "a-forest-2-7",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "a-forest-3-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "G",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 67,
+                "spelling": "G",
+                "position": {
+                  "string": 0,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 62,
+                "spelling": "D",
+                "position": {
+                  "string": 1,
+                  "fret": 2
+                }
+              },
+              {
+                "midi": 71,
+                "spelling": "B",
+                "position": {
+                  "string": 3,
+                  "fret": 2
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              7,
+              11,
+              2
+            ],
+            "spellings": [
+              "G",
+              "B",
+              "D"
+            ]
+          },
+          {
+            "id": "a-forest-3-1",
+            "type": "note",
+            "midi": 62,
+            "spelling": "D",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 2
+            }
+          },
+          {
+            "id": "a-forest-3-2",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "a-forest-3-3",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 1,
+            "position": {
+              "string": 0,
+              "fret": 0
+            }
+          },
+          {
+            "id": "a-forest-3-4",
+            "type": "note",
+            "midi": 62,
+            "spelling": "D",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 2
+            }
+          },
+          {
+            "id": "a-forest-3-5",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "a-forest-4-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "Am",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 60,
+                "spelling": "C",
+                "position": {
+                  "string": 1,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 2,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 69,
+                "spelling": "A",
+                "position": {
+                  "string": 3,
+                  "fret": 0
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              9,
+              0,
+              4
+            ],
+            "spellings": [
+              "A",
+              "C",
+              "E"
+            ]
+          },
+          {
+            "id": "a-forest-4-1",
+            "type": "note",
+            "midi": 60,
+            "spelling": "C",
+            "duration": 1,
+            "position": {
+              "string": 1,
+              "fret": 0
+            }
+          },
+          {
+            "id": "a-forest-4-2",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "a-forest-4-3",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "a-forest-4-4",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "a-forest-4-5",
+            "type": "note",
+            "midi": 60,
+            "spelling": "C",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 0
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "a-forest-5-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "Em",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 67,
+                "spelling": "G",
+                "position": {
+                  "string": 0,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 2,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 71,
+                "spelling": "B",
+                "position": {
+                  "string": 3,
+                  "fret": 2
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              4,
+              7,
+              11
+            ],
+            "spellings": [
+              "E",
+              "G",
+              "B"
+            ]
+          },
+          {
+            "id": "a-forest-5-1",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "a-forest-5-2",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "a-forest-5-3",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 0
+            }
+          },
+          {
+            "id": "a-forest-5-4",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "a-forest-5-5",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "a-forest-5-6",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 0
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "a-forest-6-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "F",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 60,
+                "spelling": "C",
+                "position": {
+                  "string": 1,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 65,
+                "spelling": "F",
+                "position": {
+                  "string": 2,
+                  "fret": 1
+                }
+              },
+              {
+                "midi": 69,
+                "spelling": "A",
+                "position": {
+                  "string": 3,
+                  "fret": 0
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              5,
+              9,
+              0
+            ],
+            "spellings": [
+              "F",
+              "A",
+              "C"
+            ]
+          },
+          {
+            "id": "a-forest-6-1",
+            "type": "note",
+            "midi": 60,
+            "spelling": "C",
+            "duration": 0.75,
+            "position": {
+              "string": 1,
+              "fret": 0
+            },
+            "articulation": "accent"
+          },
+          {
+            "id": "a-forest-6-2",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.25,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "a-forest-6-3",
+            "type": "note",
+            "midi": 65,
+            "spelling": "F",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 1
+            }
+          },
+          {
+            "id": "a-forest-6-4",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "a-forest-6-5",
+            "type": "note",
+            "midi": 60,
+            "spelling": "C",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 0
+            }
+          },
+          {
+            "id": "a-forest-6-6",
+            "type": "note",
+            "midi": 65,
+            "spelling": "F",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 1
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "a-forest-7-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "G",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 67,
+                "spelling": "G",
+                "position": {
+                  "string": 0,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 62,
+                "spelling": "D",
+                "position": {
+                  "string": 1,
+                  "fret": 2
+                }
+              },
+              {
+                "midi": 71,
+                "spelling": "B",
+                "position": {
+                  "string": 3,
+                  "fret": 2
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              7,
+              11,
+              2
+            ],
+            "spellings": [
+              "G",
+              "B",
+              "D"
+            ]
+          },
+          {
+            "id": "a-forest-7-1",
+            "type": "note",
+            "midi": 62,
+            "spelling": "D",
+            "duration": 0.25,
+            "position": {
+              "string": 1,
+              "fret": 2
+            }
+          },
+          {
+            "id": "a-forest-7-2",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.25,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "a-forest-7-3",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 0
+            }
+          },
+          {
+            "id": "a-forest-7-4",
+            "type": "note",
+            "midi": 62,
+            "spelling": "D",
+            "duration": 0.75,
+            "position": {
+              "string": 1,
+              "fret": 2
+            }
+          },
+          {
+            "id": "a-forest-7-5",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.25,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "a-forest-7-6",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 0
+            }
+          },
+          {
+            "id": "a-forest-7-7",
+            "type": "note",
+            "midi": 62,
+            "spelling": "D",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 2
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "a-forest-8-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "Am",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 60,
+                "spelling": "C",
+                "position": {
+                  "string": 1,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 2,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 69,
+                "spelling": "A",
+                "position": {
+                  "string": 3,
+                  "fret": 0
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              9,
+              0,
+              4
+            ],
+            "spellings": [
+              "A",
+              "C",
+              "E"
+            ]
+          },
+          {
+            "id": "a-forest-8-1",
+            "type": "note",
+            "midi": 60,
+            "spelling": "C",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 0
+            }
+          },
+          {
+            "id": "a-forest-8-2",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "a-forest-8-3",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 1,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "a-forest-8-4",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "a-forest-8-5",
+            "type": "note",
+            "midi": 60,
+            "spelling": "C",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 0
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "a-forest-9-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "F",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 60,
+                "spelling": "C",
+                "position": {
+                  "string": 1,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 65,
+                "spelling": "F",
+                "position": {
+                  "string": 2,
+                  "fret": 1
+                }
+              },
+              {
+                "midi": 69,
+                "spelling": "A",
+                "position": {
+                  "string": 3,
+                  "fret": 0
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              5,
+              9,
+              0
+            ],
+            "spellings": [
+              "F",
+              "A",
+              "C"
+            ]
+          },
+          {
+            "id": "a-forest-9-1",
+            "type": "note",
+            "midi": 65,
+            "spelling": "F",
+            "duration": 1,
+            "position": {
+              "string": 2,
+              "fret": 1
+            }
+          },
+          {
+            "id": "a-forest-9-2",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "a-forest-9-3",
+            "type": "note",
+            "midi": 60,
+            "spelling": "C",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 0
+            }
+          },
+          {
+            "id": "a-forest-9-4",
+            "type": "note",
+            "midi": 65,
+            "spelling": "F",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 1
+            }
+          },
+          {
+            "id": "a-forest-9-5",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "a-forest-10-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "C",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 67,
+                "spelling": "G",
+                "position": {
+                  "string": 0,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 60,
+                "spelling": "C",
+                "position": {
+                  "string": 1,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 2,
+                  "fret": 0
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              0,
+              4,
+              7
+            ],
+            "spellings": [
+              "C",
+              "E",
+              "G"
+            ]
+          },
+          {
+            "id": "a-forest-10-1",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 0
+            },
+            "articulation": "accent"
+          },
+          {
+            "id": "a-forest-10-2",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "a-forest-10-3",
+            "type": "note",
+            "midi": 60,
+            "spelling": "C",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 0
+            }
+          },
+          {
+            "id": "a-forest-10-4",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "a-forest-10-5",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 0
+            }
+          },
+          {
+            "id": "a-forest-10-6",
+            "type": "note",
+            "midi": 60,
+            "spelling": "C",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 0
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "a-forest-11-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "G",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 67,
+                "spelling": "G",
+                "position": {
+                  "string": 0,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 62,
+                "spelling": "D",
+                "position": {
+                  "string": 1,
+                  "fret": 2
+                }
+              },
+              {
+                "midi": 71,
+                "spelling": "B",
+                "position": {
+                  "string": 3,
+                  "fret": 2
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              7,
+              11,
+              2
+            ],
+            "spellings": [
+              "G",
+              "B",
+              "D"
+            ]
+          },
+          {
+            "id": "a-forest-11-1",
+            "type": "note",
+            "midi": 62,
+            "spelling": "D",
+            "duration": 0.75,
+            "position": {
+              "string": 1,
+              "fret": 2
+            }
+          },
+          {
+            "id": "a-forest-11-2",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.25,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "a-forest-11-3",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 0
+            }
+          },
+          {
+            "id": "a-forest-11-4",
+            "type": "note",
+            "midi": 62,
+            "spelling": "D",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 2
+            }
+          },
+          {
+            "id": "a-forest-11-5",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "a-forest-11-6",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 0
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "a-forest-12-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "Em",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 67,
+                "spelling": "G",
+                "position": {
+                  "string": 0,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 2,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 71,
+                "spelling": "B",
+                "position": {
+                  "string": 3,
+                  "fret": 2
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              4,
+              7,
+              11
+            ],
+            "spellings": [
+              "E",
+              "G",
+              "B"
+            ]
+          },
+          {
+            "id": "a-forest-12-1",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.25,
+            "position": {
+              "string": 0,
+              "fret": 0
+            }
+          },
+          {
+            "id": "a-forest-12-2",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.25,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "a-forest-12-3",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "a-forest-12-4",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.75,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "a-forest-12-5",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.25,
+            "position": {
+              "string": 0,
+              "fret": 0
+            }
+          },
+          {
+            "id": "a-forest-12-6",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "a-forest-12-7",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "a-forest-13-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "F",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 60,
+                "spelling": "C",
+                "position": {
+                  "string": 1,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 65,
+                "spelling": "F",
+                "position": {
+                  "string": 2,
+                  "fret": 1
+                }
+              },
+              {
+                "midi": 69,
+                "spelling": "A",
+                "position": {
+                  "string": 3,
+                  "fret": 0
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              5,
+              9,
+              0
+            ],
+            "spellings": [
+              "F",
+              "A",
+              "C"
+            ]
+          },
+          {
+            "id": "a-forest-13-1",
+            "type": "note",
+            "midi": 65,
+            "spelling": "F",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 1
+            }
+          },
+          {
+            "id": "a-forest-13-2",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "a-forest-13-3",
+            "type": "note",
+            "midi": 60,
+            "spelling": "C",
+            "duration": 1,
+            "position": {
+              "string": 1,
+              "fret": 0
+            }
+          },
+          {
+            "id": "a-forest-13-4",
+            "type": "note",
+            "midi": 65,
+            "spelling": "F",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 1
+            }
+          },
+          {
+            "id": "a-forest-13-5",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "a-forest-14-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "G",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 67,
+                "spelling": "G",
+                "position": {
+                  "string": 0,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 62,
+                "spelling": "D",
+                "position": {
+                  "string": 1,
+                  "fret": 2
+                }
+              },
+              {
+                "midi": 71,
+                "spelling": "B",
+                "position": {
+                  "string": 3,
+                  "fret": 2
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              7,
+              11,
+              2
+            ],
+            "spellings": [
+              "G",
+              "B",
+              "D"
+            ]
+          },
+          {
+            "id": "a-forest-14-1",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 1,
+            "position": {
+              "string": 0,
+              "fret": 0
+            },
+            "articulation": "accent"
+          },
+          {
+            "id": "a-forest-14-2",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "a-forest-14-3",
+            "type": "note",
+            "midi": 62,
+            "spelling": "D",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 2
+            }
+          },
+          {
+            "id": "a-forest-14-4",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "a-forest-14-5",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 0
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "a-forest-15-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "Am",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 60,
+                "spelling": "C",
+                "position": {
+                  "string": 1,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 2,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 69,
+                "spelling": "A",
+                "position": {
+                  "string": 3,
+                  "fret": 0
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              9,
+              0,
+              4
+            ],
+            "spellings": [
+              "A",
+              "C",
+              "E"
+            ]
+          },
+          {
+            "id": "a-forest-15-1",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "a-forest-15-2",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "a-forest-15-3",
+            "type": "note",
+            "midi": 60,
+            "spelling": "C",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 0
+            }
+          },
+          {
+            "id": "a-forest-15-4",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "a-forest-15-5",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "a-forest-15-6",
+            "type": "note",
+            "midi": 60,
+            "spelling": "C",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 0
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
