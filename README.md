@@ -1,10 +1,17 @@
 # Ukulele Workbench v1.6.0 Preview — Connected Song Repository
 
-## Approved repertoire — 15 selected songs
+## Approved repertoire — 15 selected songs and a historical full melody
+
+### Full traditional Scarborough Fair melody (1882 source)
+
+A complete 32-bar instrumental ukulele setting of the eight-bar **Whittingham Fair** tune has been added at `library/songs/scarborough-fair-traditional-1882.json`. Its historical source is Bruce & Stokoe, *Northumbrian Minstrelsy* (1882), pp. 81–82, as transcribed in [The Fiddler's Companion](https://www.ibiblio.org/fiddlers/WHI_WHZ.htm). Three repetitions of the original E-minor, 6/8 tune follow an independently composed four-bar introduction; there is also a new four-bar coda. Exact high-G note positions and durations are validated by the tests.
+
+**Distinction:** this is an older traditional melody, not the Simon & Garfunkel 1966 recording's tune, guitar part, Canticle section, counterpoint, or full production. The Approved Songs list prefers the historic score when importing **Scarborough Fair**. The other fourteen commercial titles still have original harmonic studies only: faithful full-song scores require user-supplied or explicitly licensed source material.
+
 
 **Songbook → Approved Songs** now lists 15 approved practice titles and their associated **original, fully notated 16-bar harmonic and technique studies**. The notes, chord voicings and fingerings work in standard high-G GCEA; optional tablature follows the app's existing notation display setting. These are newly composed instructional studies based on each song's tonal centre and harmonic vocabulary, **not transcriptions of the song's protected melody, instrumental riffs, lyrics or original rhythmic performance**. The original 2 bundled beginner scores remain available offline. On the hosted app, use **Sync Library** to retrieve the 15 additional studies.
 
-Select **Import available practice studies** after **Sync Library** to copy the 15 scored studies into local My Songbook, or copy one study at a time. The import is idempotent and does not overwrite existing songs or annotations. The dedicated **Repository Library** contains the two starter studies plus the fifteen original song-associated studies. The approved-song title list is bundled for offline browsing; the 15 scores are available through catalog sync and are pre-cached for offline access by the installed service worker.
+Select **Import available practice studies** after **Sync Library** to copy the 15 scored studies into local My Songbook, or copy one study at a time. The import is idempotent and does not overwrite existing songs or annotations. The dedicated **Repository Library** contains the two starter studies, fifteen original song-associated studies and an additional full traditional melody arrangement. The approved-song title list is bundled for offline browsing; the 15 scores are available through catalog sync and are pre-cached for offline access by the installed service worker.
 
 
 Songbook now includes **Repository Library** with two bundled original notation-first studies, score previews, search/difficulty filters and **Sync Library**. A song copied to **My Songbook** is independent and is never overwritten by an upstream update. The app's existing editable Score Studio, Technique Academy, MusicXML support and local JSON backup remain available.
