@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {validateCatalog,validateRepertoire,importApprovedRepertoire} from '../src/song-library.js';
+import {validateCatalog,validateRepertoire,validateArrangement,importApprovedRepertoire} from '../src/song-library.js';
+import {validateScore} from '../src/score.js';
 import {BUNDLED_LIBRARY} from '../src/library-seed.js';
 
 const catalog=JSON.parse(readFileSync(new URL('../library/catalog.json',import.meta.url),'utf8'));
@@ -13,6 +14,15 @@ test('approved repertoire has exactly the fifteen explicitly selected titles',()
   'Everybody Wants to Rule the World',"California Dreamin'"];
  assert.deepEqual(catalog.repertoire.map(s=>s.title),wanted);
  assert.equal(validateCatalog(catalog),true);
+ assert.equal(catalog.entries.length,17);
+ for(const meta of catalog.entries){
+  const file=JSON.parse(readFileSync(new URL('../library/'+meta.file,import.meta.url),'utf8'));
+  assert.equal(validateArrangement(file,meta,validateScore),true);
+  if(catalog.repertoire.some(x=>x.id===meta.id)){
+   assert.equal(file.score.measures.length,16);
+   assert.match(file.description,/Not a transcription/);
+  }
+ }
  assert.equal(validateRepertoire(BUNDLED_LIBRARY.catalog.repertoire),true);
  assert.deepEqual(BUNDLED_LIBRARY.catalog.repertoire,catalog.repertoire);
  assert.ok(!wanted.includes('Golden Brown'));
