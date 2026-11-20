@@ -1,0 +1,2133 @@
+{
+  "format": "ukulele-workbench-arrangement",
+  "schemaVersion": 1,
+  "id": "scarborough-fair-traditional-1882",
+  "revision": 1,
+  "title": "Scarborough Fair / Whittingham Fair — Complete Traditional Tune (1882)",
+  "artist": "Traditional English / Northumbrian ballad",
+  "difficulty": "advanced",
+  "tags": [
+    "public-domain",
+    "traditional",
+    "melody",
+    "fingerstyle",
+    "complete-tune"
+  ],
+  "key": "G",
+  "tonalCenter": "E minor",
+  "bpm": 88,
+  "tuning": "highG",
+  "description": "Complete eight-bar 1882 Whittingham Fair melody, played through three times with an original four-bar introduction and coda. Historically related to Scarborough Fair, but NOT the Simon & Garfunkel / Martin Carthy recording arrangement.",
+  "body": "6/8 instrumental programme: Intro: [Em] [C] [D] [Em] | Traditional 8-bar tune × 3 | Coda: [Em] [C] [D] [Em]. Traditional air transcribed in E minor, no lyrics.",
+  "notes": "Source: Bruce & Stokoe, Northumbrian Minstrelsy (1882), pp. 81–82; historical ABC preserved by The Fiddler's Companion, https://www.ibiblio.org/fiddlers/WHI_WHZ.htm (Whittingham Fair). Melody kept in E minor, 6/8, with the source's eight-bar pitches and rhythms repeated without alteration. New ukulele-specific introduction, coda, harmony and fingerings. Four-string high-G GCEA, no capo. Verse 1 bars 5–12; verse 2 bars 13–20; verse 3 bars 21–28; intro bars 1–4; coda bars 29–32. This is NOT a transcription of the 1966 Simon & Garfunkel recording, its counterpoint or its guitar arrangement.",
+  "sourceUrl": "https://www.ibiblio.org/fiddlers/WHI_WHZ.htm",
+  "sourceDate": "1882",
+  "score": {
+    "schema": 1,
+    "id": "score-scarborough-fair-traditional-1882",
+    "title": "Scarborough Fair / Whittingham Fair — Complete Traditional Tune (1882)",
+    "tuning": "highG",
+    "meter": "6/8",
+    "key": "G",
+    "tempo": 88,
+    "measures": [
+      {
+        "events": [
+          {
+            "id": "scarborough-fair-traditional-1882-accomp-0-chord",
+            "type": "chord",
+            "duration": 1.5,
+            "symbol": "Em",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 67,
+                "spelling": "G",
+                "position": {
+                  "string": 0,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 2,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 71,
+                "spelling": "B",
+                "position": {
+                  "string": 3,
+                  "fret": 2
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              4,
+              7,
+              11
+            ],
+            "spellings": [
+              "E",
+              "G",
+              "B"
+            ]
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-accomp-0-0",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 0
+            },
+            "articulation": "tenuto"
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-accomp-0-1",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-accomp-0-2",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "scarborough-fair-traditional-1882-accomp-1-chord",
+            "type": "chord",
+            "duration": 1.5,
+            "symbol": "C",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 67,
+                "spelling": "G",
+                "position": {
+                  "string": 0,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 60,
+                "spelling": "C",
+                "position": {
+                  "string": 1,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 2,
+                  "fret": 0
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              0,
+              4,
+              7
+            ],
+            "spellings": [
+              "C",
+              "E",
+              "G"
+            ]
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-accomp-1-0",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            },
+            "articulation": "tenuto"
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-accomp-1-1",
+            "type": "note",
+            "midi": 60,
+            "spelling": "C",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-accomp-1-2",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 0
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "scarborough-fair-traditional-1882-accomp-2-chord",
+            "type": "chord",
+            "duration": 1.5,
+            "symbol": "D",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 69,
+                "spelling": "A",
+                "position": {
+                  "string": 0,
+                  "fret": 2
+                }
+              },
+              {
+                "midi": 62,
+                "spelling": "D",
+                "position": {
+                  "string": 1,
+                  "fret": 2
+                }
+              },
+              {
+                "midi": 66,
+                "spelling": "F#",
+                "position": {
+                  "string": 2,
+                  "fret": 2
+                }
+              },
+              {
+                "midi": 69,
+                "spelling": "A",
+                "position": {
+                  "string": 3,
+                  "fret": 0
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              2,
+              6,
+              9
+            ],
+            "spellings": [
+              "D",
+              "F#",
+              "A"
+            ]
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-accomp-2-0",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 2
+            },
+            "articulation": "tenuto"
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-accomp-2-1",
+            "type": "note",
+            "midi": 62,
+            "spelling": "D",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 2
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-accomp-2-2",
+            "type": "note",
+            "midi": 66,
+            "spelling": "F#",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 2
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "scarborough-fair-traditional-1882-accomp-3-chord",
+            "type": "chord",
+            "duration": 1.5,
+            "symbol": "Em",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 67,
+                "spelling": "G",
+                "position": {
+                  "string": 0,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 2,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 71,
+                "spelling": "B",
+                "position": {
+                  "string": 3,
+                  "fret": 2
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              4,
+              7,
+              11
+            ],
+            "spellings": [
+              "E",
+              "G",
+              "B"
+            ]
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-accomp-3-0",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            },
+            "articulation": "tenuto"
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-accomp-3-1",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-accomp-3-2",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 0
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "scarborough-fair-traditional-1882-verse-1-bar-1-n1",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 1,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-1-bar-1-n2",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-1-bar-1-n3",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 3
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-1-bar-1-n4",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-1-bar-1-n5",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "scarborough-fair-traditional-1882-verse-1-bar-2-n1",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-1-bar-2-n2",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-1-bar-2-n3",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-1-bar-2-n4",
+            "type": "note",
+            "midi": 66,
+            "spelling": "F#",
+            "duration": 1.5,
+            "position": {
+              "string": 2,
+              "fret": 2
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "scarborough-fair-traditional-1882-verse-1-bar-3-n1",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-1-bar-3-n2",
+            "type": "note",
+            "midi": 66,
+            "spelling": "F#",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 2
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-1-bar-3-n3",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-1-bar-3-n4",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 3
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-1-bar-3-n5",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-1-bar-3-n6",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "scarborough-fair-traditional-1882-verse-1-bar-4-n1",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-1-bar-4-n2",
+            "type": "note",
+            "midi": 72,
+            "spelling": "C",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 3
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-1-bar-4-n3",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-1-bar-4-n4",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 1,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-1-bar-4-n5",
+            "type": "note",
+            "midi": 76,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 7
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "scarborough-fair-traditional-1882-verse-1-bar-5-n1",
+            "type": "note",
+            "midi": 76,
+            "spelling": "E",
+            "duration": 1,
+            "position": {
+              "string": 3,
+              "fret": 7
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-1-bar-5-n2",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-1-bar-5-n3",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-1-bar-5-n4",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-1-bar-5-n5",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 3
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "scarborough-fair-traditional-1882-verse-1-bar-6-n1",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-1-bar-6-n2",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-1-bar-6-n3",
+            "type": "note",
+            "midi": 74,
+            "spelling": "D",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 5
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-1-bar-6-n4",
+            "type": "note",
+            "midi": 66,
+            "spelling": "F#",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 2
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-1-bar-6-n5",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-1-bar-6-n6",
+            "type": "note",
+            "midi": 62,
+            "spelling": "D",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 2
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "scarborough-fair-traditional-1882-verse-1-bar-7-n1",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 1,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-1-bar-7-n2",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-1-bar-7-n3",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 3
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-1-bar-7-n4",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-1-bar-7-n5",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "scarborough-fair-traditional-1882-verse-1-bar-8-n1",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-1-bar-8-n2",
+            "type": "note",
+            "midi": 66,
+            "spelling": "F#",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 2
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-1-bar-8-n3",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 3
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-1-bar-8-n4",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 1.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "scarborough-fair-traditional-1882-verse-2-bar-1-n1",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 1,
+            "position": {
+              "string": 2,
+              "fret": 0
+            },
+            "articulation": "tenuto"
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-2-bar-1-n2",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-2-bar-1-n3",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 3
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-2-bar-1-n4",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-2-bar-1-n5",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "scarborough-fair-traditional-1882-verse-2-bar-2-n1",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            },
+            "articulation": "tenuto"
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-2-bar-2-n2",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-2-bar-2-n3",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-2-bar-2-n4",
+            "type": "note",
+            "midi": 66,
+            "spelling": "F#",
+            "duration": 1.5,
+            "position": {
+              "string": 2,
+              "fret": 2
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "scarborough-fair-traditional-1882-verse-2-bar-3-n1",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            },
+            "articulation": "tenuto"
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-2-bar-3-n2",
+            "type": "note",
+            "midi": 66,
+            "spelling": "F#",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 2
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-2-bar-3-n3",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-2-bar-3-n4",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 3
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-2-bar-3-n5",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-2-bar-3-n6",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "scarborough-fair-traditional-1882-verse-2-bar-4-n1",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            },
+            "articulation": "tenuto"
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-2-bar-4-n2",
+            "type": "note",
+            "midi": 72,
+            "spelling": "C",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 3
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-2-bar-4-n3",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-2-bar-4-n4",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 1,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-2-bar-4-n5",
+            "type": "note",
+            "midi": 76,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 7
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "scarborough-fair-traditional-1882-verse-2-bar-5-n1",
+            "type": "note",
+            "midi": 76,
+            "spelling": "E",
+            "duration": 1,
+            "position": {
+              "string": 3,
+              "fret": 7
+            },
+            "articulation": "tenuto"
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-2-bar-5-n2",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-2-bar-5-n3",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-2-bar-5-n4",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-2-bar-5-n5",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 3
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "scarborough-fair-traditional-1882-verse-2-bar-6-n1",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            },
+            "articulation": "tenuto"
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-2-bar-6-n2",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-2-bar-6-n3",
+            "type": "note",
+            "midi": 74,
+            "spelling": "D",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 5
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-2-bar-6-n4",
+            "type": "note",
+            "midi": 66,
+            "spelling": "F#",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 2
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-2-bar-6-n5",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-2-bar-6-n6",
+            "type": "note",
+            "midi": 62,
+            "spelling": "D",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 2
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "scarborough-fair-traditional-1882-verse-2-bar-7-n1",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 1,
+            "position": {
+              "string": 2,
+              "fret": 0
+            },
+            "articulation": "tenuto"
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-2-bar-7-n2",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-2-bar-7-n3",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 3
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-2-bar-7-n4",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-2-bar-7-n5",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "scarborough-fair-traditional-1882-verse-2-bar-8-n1",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            },
+            "articulation": "tenuto"
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-2-bar-8-n2",
+            "type": "note",
+            "midi": 66,
+            "spelling": "F#",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 2
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-2-bar-8-n3",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 3
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-2-bar-8-n4",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 1.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "scarborough-fair-traditional-1882-verse-3-bar-1-n1",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 1,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-3-bar-1-n2",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-3-bar-1-n3",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 3
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-3-bar-1-n4",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-3-bar-1-n5",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "scarborough-fair-traditional-1882-verse-3-bar-2-n1",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-3-bar-2-n2",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-3-bar-2-n3",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-3-bar-2-n4",
+            "type": "note",
+            "midi": 66,
+            "spelling": "F#",
+            "duration": 1.5,
+            "position": {
+              "string": 2,
+              "fret": 2
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "scarborough-fair-traditional-1882-verse-3-bar-3-n1",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-3-bar-3-n2",
+            "type": "note",
+            "midi": 66,
+            "spelling": "F#",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 2
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-3-bar-3-n3",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-3-bar-3-n4",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 3
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-3-bar-3-n5",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-3-bar-3-n6",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "scarborough-fair-traditional-1882-verse-3-bar-4-n1",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-3-bar-4-n2",
+            "type": "note",
+            "midi": 72,
+            "spelling": "C",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 3
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-3-bar-4-n3",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-3-bar-4-n4",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 1,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-3-bar-4-n5",
+            "type": "note",
+            "midi": 76,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 7
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "scarborough-fair-traditional-1882-verse-3-bar-5-n1",
+            "type": "note",
+            "midi": 76,
+            "spelling": "E",
+            "duration": 1,
+            "position": {
+              "string": 3,
+              "fret": 7
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-3-bar-5-n2",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-3-bar-5-n3",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-3-bar-5-n4",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-3-bar-5-n5",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 3
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "scarborough-fair-traditional-1882-verse-3-bar-6-n1",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-3-bar-6-n2",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-3-bar-6-n3",
+            "type": "note",
+            "midi": 74,
+            "spelling": "D",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 5
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-3-bar-6-n4",
+            "type": "note",
+            "midi": 66,
+            "spelling": "F#",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 2
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-3-bar-6-n5",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-3-bar-6-n6",
+            "type": "note",
+            "midi": 62,
+            "spelling": "D",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 2
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "scarborough-fair-traditional-1882-verse-3-bar-7-n1",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 1,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-3-bar-7-n2",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-3-bar-7-n3",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 3
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-3-bar-7-n4",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-3-bar-7-n5",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "scarborough-fair-traditional-1882-verse-3-bar-8-n1",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            },
+            "articulation": "tenuto"
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-3-bar-8-n2",
+            "type": "note",
+            "midi": 66,
+            "spelling": "F#",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 2
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-3-bar-8-n3",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 3
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-verse-3-bar-8-n4",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 1.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "scarborough-fair-traditional-1882-accomp-4-chord",
+            "type": "chord",
+            "duration": 1.5,
+            "symbol": "Em",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 67,
+                "spelling": "G",
+                "position": {
+                  "string": 0,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 2,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 71,
+                "spelling": "B",
+                "position": {
+                  "string": 3,
+                  "fret": 2
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              4,
+              7,
+              11
+            ],
+            "spellings": [
+              "E",
+              "G",
+              "B"
+            ]
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-accomp-4-0",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 0
+            },
+            "articulation": "tenuto"
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-accomp-4-1",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-accomp-4-2",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "scarborough-fair-traditional-1882-accomp-5-chord",
+            "type": "chord",
+            "duration": 1.5,
+            "symbol": "C",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 67,
+                "spelling": "G",
+                "position": {
+                  "string": 0,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 60,
+                "spelling": "C",
+                "position": {
+                  "string": 1,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 2,
+                  "fret": 0
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              0,
+              4,
+              7
+            ],
+            "spellings": [
+              "C",
+              "E",
+              "G"
+            ]
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-accomp-5-0",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            },
+            "articulation": "tenuto"
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-accomp-5-1",
+            "type": "note",
+            "midi": 60,
+            "spelling": "C",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-accomp-5-2",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 0
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "scarborough-fair-traditional-1882-accomp-6-chord",
+            "type": "chord",
+            "duration": 1.5,
+            "symbol": "D",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 69,
+                "spelling": "A",
+                "position": {
+                  "string": 0,
+                  "fret": 2
+                }
+              },
+              {
+                "midi": 62,
+                "spelling": "D",
+                "position": {
+                  "string": 1,
+                  "fret": 2
+                }
+              },
+              {
+                "midi": 66,
+                "spelling": "F#",
+                "position": {
+                  "string": 2,
+                  "fret": 2
+                }
+              },
+              {
+                "midi": 69,
+                "spelling": "A",
+                "position": {
+                  "string": 3,
+                  "fret": 0
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              2,
+              6,
+              9
+            ],
+            "spellings": [
+              "D",
+              "F#",
+              "A"
+            ]
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-accomp-6-0",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 2
+            },
+            "articulation": "tenuto"
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-accomp-6-1",
+            "type": "note",
+            "midi": 62,
+            "spelling": "D",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 2
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-accomp-6-2",
+            "type": "note",
+            "midi": 66,
+            "spelling": "F#",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 2
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "scarborough-fair-traditional-1882-accomp-7-chord",
+            "type": "chord",
+            "duration": 1.5,
+            "symbol": "Em",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 67,
+                "spelling": "G",
+                "position": {
+                  "string": 0,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 2,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 71,
+                "spelling": "B",
+                "position": {
+                  "string": 3,
+                  "fret": 2
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              4,
+              7,
+              11
+            ],
+            "spellings": [
+              "E",
+              "G",
+              "B"
+            ]
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-accomp-7-0",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            },
+            "articulation": "tenuto"
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-accomp-7-1",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-traditional-1882-accomp-7-2",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 0
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
