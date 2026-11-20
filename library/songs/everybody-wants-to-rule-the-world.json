@@ -1,0 +1,1418 @@
+{
+  "format": "ukulele-workbench-arrangement",
+  "schemaVersion": 1,
+  "id": "everybody-wants-to-rule-the-world",
+  "revision": 1,
+  "title": "Everybody Wants to Rule the World — Harmony & Technique Study",
+  "artist": "Tears for Fears",
+  "difficulty": "advanced",
+  "tags": [
+    "advanced-repertoire",
+    "original-study",
+    "compound-meter",
+    "fingerstyle"
+  ],
+  "key": "D",
+  "tonalCenter": "D major",
+  "bpm": 112,
+  "tuning": "highG",
+  "description": "An original 16-measure ukulele harmony and technique study associated with “Everybody Wants to Rule the World”. Not a transcription of its melody, bass riff, lyrics, studio arrangement or original timing. Uses harmonic vocabulary in the song’s concert key; this is a practice tempo.",
+  "body": "Study harmony by measure (not a full song chart): [Dmaj7] | [G] | [F#m] | [G] | [Em] | [F#m] | [G] | [A] | [Dmaj7] | [G] | [F#m] | [G] | [Em] | [F#m] | [A] | [Dmaj7]",
+  "notes": "Original tonal centre: D major. Standard high-G GCEA, no capo. Staff and optional tablature show exact playable fret positions. Compound-meter re-interpretation, rhythmic subdivisions and bright voicings. The notated chord/arpeggio figure is newly composed and does not reproduce the recording's melody or signature riffs. Scores may use the relative major’s key signature to notate minor/modal centres.",
+  "score": {
+    "schema": 1,
+    "id": "repertoire-study-everybody-wants-to-rule-the-world",
+    "title": "Everybody Wants to Rule the World — Original harmonic study",
+    "tuning": "highG",
+    "meter": "6/8",
+    "key": "D",
+    "tempo": 112,
+    "measures": [
+      {
+        "events": [
+          {
+            "id": "everybody-wants-to-rule-the-world-0-0",
+            "type": "chord",
+            "duration": 1.5,
+            "symbol": "Dmaj7",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 73,
+                "spelling": "C#",
+                "position": {
+                  "string": 0,
+                  "fret": 6
+                }
+              },
+              {
+                "midi": 66,
+                "spelling": "F#",
+                "position": {
+                  "string": 1,
+                  "fret": 6
+                }
+              },
+              {
+                "midi": 69,
+                "spelling": "A",
+                "position": {
+                  "string": 2,
+                  "fret": 5
+                }
+              },
+              {
+                "midi": 74,
+                "spelling": "D",
+                "position": {
+                  "string": 3,
+                  "fret": 5
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              2,
+              6,
+              9,
+              1
+            ],
+            "spellings": [
+              "D",
+              "F#",
+              "A",
+              "C#"
+            ]
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-0-1",
+            "type": "note",
+            "midi": 73,
+            "spelling": "C#",
+            "duration": 0.75,
+            "position": {
+              "string": 0,
+              "fret": 6
+            }
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-0-2",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.25,
+            "position": {
+              "string": 2,
+              "fret": 5
+            }
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-0-3",
+            "type": "note",
+            "midi": 66,
+            "spelling": "F#",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 6
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "everybody-wants-to-rule-the-world-1-0",
+            "type": "chord",
+            "duration": 1.5,
+            "symbol": "G",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 67,
+                "spelling": "G",
+                "position": {
+                  "string": 0,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 62,
+                "spelling": "D",
+                "position": {
+                  "string": 1,
+                  "fret": 2
+                }
+              },
+              {
+                "midi": 71,
+                "spelling": "B",
+                "position": {
+                  "string": 3,
+                  "fret": 2
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              7,
+              11,
+              2
+            ],
+            "spellings": [
+              "G",
+              "B",
+              "D"
+            ]
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-1-1",
+            "type": "note",
+            "midi": 62,
+            "spelling": "D",
+            "duration": 0.25,
+            "position": {
+              "string": 1,
+              "fret": 2
+            }
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-1-2",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.25,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-1-3",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 0
+            }
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-1-4",
+            "type": "note",
+            "midi": 62,
+            "spelling": "D",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 2
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "everybody-wants-to-rule-the-world-2-0",
+            "type": "chord",
+            "duration": 1.5,
+            "symbol": "F#m",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 73,
+                "spelling": "C#",
+                "position": {
+                  "string": 0,
+                  "fret": 6
+                }
+              },
+              {
+                "midi": 66,
+                "spelling": "F#",
+                "position": {
+                  "string": 1,
+                  "fret": 6
+                }
+              },
+              {
+                "midi": 69,
+                "spelling": "A",
+                "position": {
+                  "string": 3,
+                  "fret": 0
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              6,
+              9,
+              1
+            ],
+            "spellings": [
+              "F#",
+              "A",
+              "C#"
+            ]
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-2-1",
+            "type": "note",
+            "midi": 73,
+            "spelling": "C#",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 6
+            },
+            "articulation": "accent"
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-2-2",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-2-3",
+            "type": "note",
+            "midi": 66,
+            "spelling": "F#",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 6
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "everybody-wants-to-rule-the-world-3-0",
+            "type": "chord",
+            "duration": 1.5,
+            "symbol": "G",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 67,
+                "spelling": "G",
+                "position": {
+                  "string": 0,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 62,
+                "spelling": "D",
+                "position": {
+                  "string": 1,
+                  "fret": 2
+                }
+              },
+              {
+                "midi": 71,
+                "spelling": "B",
+                "position": {
+                  "string": 3,
+                  "fret": 2
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              7,
+              11,
+              2
+            ],
+            "spellings": [
+              "G",
+              "B",
+              "D"
+            ]
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-3-1",
+            "type": "note",
+            "midi": 62,
+            "spelling": "D",
+            "duration": 0.75,
+            "position": {
+              "string": 1,
+              "fret": 2
+            }
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-3-2",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.25,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-3-3",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 0
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "everybody-wants-to-rule-the-world-4-0",
+            "type": "chord",
+            "duration": 1.5,
+            "symbol": "Em",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 67,
+                "spelling": "G",
+                "position": {
+                  "string": 0,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 2,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 71,
+                "spelling": "B",
+                "position": {
+                  "string": 3,
+                  "fret": 2
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              4,
+              7,
+              11
+            ],
+            "spellings": [
+              "E",
+              "G",
+              "B"
+            ]
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-4-1",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.25,
+            "position": {
+              "string": 0,
+              "fret": 0
+            }
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-4-2",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.25,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-4-3",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-4-4",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "everybody-wants-to-rule-the-world-5-0",
+            "type": "chord",
+            "duration": 1.5,
+            "symbol": "F#m",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 73,
+                "spelling": "C#",
+                "position": {
+                  "string": 0,
+                  "fret": 6
+                }
+              },
+              {
+                "midi": 66,
+                "spelling": "F#",
+                "position": {
+                  "string": 1,
+                  "fret": 6
+                }
+              },
+              {
+                "midi": 69,
+                "spelling": "A",
+                "position": {
+                  "string": 3,
+                  "fret": 0
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              6,
+              9,
+              1
+            ],
+            "spellings": [
+              "F#",
+              "A",
+              "C#"
+            ]
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-5-1",
+            "type": "note",
+            "midi": 66,
+            "spelling": "F#",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 6
+            }
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-5-2",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-5-3",
+            "type": "note",
+            "midi": 73,
+            "spelling": "C#",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 6
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "everybody-wants-to-rule-the-world-6-0",
+            "type": "chord",
+            "duration": 1.5,
+            "symbol": "G",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 67,
+                "spelling": "G",
+                "position": {
+                  "string": 0,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 62,
+                "spelling": "D",
+                "position": {
+                  "string": 1,
+                  "fret": 2
+                }
+              },
+              {
+                "midi": 71,
+                "spelling": "B",
+                "position": {
+                  "string": 3,
+                  "fret": 2
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              7,
+              11,
+              2
+            ],
+            "spellings": [
+              "G",
+              "B",
+              "D"
+            ]
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-6-1",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.75,
+            "position": {
+              "string": 0,
+              "fret": 0
+            },
+            "articulation": "accent"
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-6-2",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.25,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-6-3",
+            "type": "note",
+            "midi": 62,
+            "spelling": "D",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 2
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "everybody-wants-to-rule-the-world-7-0",
+            "type": "chord",
+            "duration": 1.5,
+            "symbol": "A",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 61,
+                "spelling": "C#",
+                "position": {
+                  "string": 1,
+                  "fret": 1
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 2,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 69,
+                "spelling": "A",
+                "position": {
+                  "string": 3,
+                  "fret": 0
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              9,
+              1,
+              4
+            ],
+            "spellings": [
+              "A",
+              "C#",
+              "E"
+            ]
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-7-1",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.25,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-7-2",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.25,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-7-3",
+            "type": "note",
+            "midi": 61,
+            "spelling": "C#",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 1
+            }
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-7-4",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "everybody-wants-to-rule-the-world-8-0",
+            "type": "chord",
+            "duration": 1.5,
+            "symbol": "Dmaj7",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 73,
+                "spelling": "C#",
+                "position": {
+                  "string": 0,
+                  "fret": 6
+                }
+              },
+              {
+                "midi": 66,
+                "spelling": "F#",
+                "position": {
+                  "string": 1,
+                  "fret": 6
+                }
+              },
+              {
+                "midi": 69,
+                "spelling": "A",
+                "position": {
+                  "string": 2,
+                  "fret": 5
+                }
+              },
+              {
+                "midi": 74,
+                "spelling": "D",
+                "position": {
+                  "string": 3,
+                  "fret": 5
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              2,
+              6,
+              9,
+              1
+            ],
+            "spellings": [
+              "D",
+              "F#",
+              "A",
+              "C#"
+            ]
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-8-1",
+            "type": "note",
+            "midi": 73,
+            "spelling": "C#",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 6
+            }
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-8-2",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 5
+            }
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-8-3",
+            "type": "note",
+            "midi": 66,
+            "spelling": "F#",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 6
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "everybody-wants-to-rule-the-world-9-0",
+            "type": "chord",
+            "duration": 1.5,
+            "symbol": "G",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 67,
+                "spelling": "G",
+                "position": {
+                  "string": 0,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 62,
+                "spelling": "D",
+                "position": {
+                  "string": 1,
+                  "fret": 2
+                }
+              },
+              {
+                "midi": 71,
+                "spelling": "B",
+                "position": {
+                  "string": 3,
+                  "fret": 2
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              7,
+              11,
+              2
+            ],
+            "spellings": [
+              "G",
+              "B",
+              "D"
+            ]
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-9-1",
+            "type": "note",
+            "midi": 62,
+            "spelling": "D",
+            "duration": 0.75,
+            "position": {
+              "string": 1,
+              "fret": 2
+            }
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-9-2",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.25,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-9-3",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 0
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "everybody-wants-to-rule-the-world-10-0",
+            "type": "chord",
+            "duration": 1.5,
+            "symbol": "F#m",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 73,
+                "spelling": "C#",
+                "position": {
+                  "string": 0,
+                  "fret": 6
+                }
+              },
+              {
+                "midi": 66,
+                "spelling": "F#",
+                "position": {
+                  "string": 1,
+                  "fret": 6
+                }
+              },
+              {
+                "midi": 69,
+                "spelling": "A",
+                "position": {
+                  "string": 3,
+                  "fret": 0
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              6,
+              9,
+              1
+            ],
+            "spellings": [
+              "F#",
+              "A",
+              "C#"
+            ]
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-10-1",
+            "type": "note",
+            "midi": 73,
+            "spelling": "C#",
+            "duration": 0.25,
+            "position": {
+              "string": 0,
+              "fret": 6
+            },
+            "articulation": "accent"
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-10-2",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.25,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-10-3",
+            "type": "note",
+            "midi": 66,
+            "spelling": "F#",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 6
+            }
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-10-4",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "everybody-wants-to-rule-the-world-11-0",
+            "type": "chord",
+            "duration": 1.5,
+            "symbol": "G",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 67,
+                "spelling": "G",
+                "position": {
+                  "string": 0,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 62,
+                "spelling": "D",
+                "position": {
+                  "string": 1,
+                  "fret": 2
+                }
+              },
+              {
+                "midi": 71,
+                "spelling": "B",
+                "position": {
+                  "string": 3,
+                  "fret": 2
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              7,
+              11,
+              2
+            ],
+            "spellings": [
+              "G",
+              "B",
+              "D"
+            ]
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-11-1",
+            "type": "note",
+            "midi": 62,
+            "spelling": "D",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 2
+            }
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-11-2",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-11-3",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 0
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "everybody-wants-to-rule-the-world-12-0",
+            "type": "chord",
+            "duration": 1.5,
+            "symbol": "Em",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 67,
+                "spelling": "G",
+                "position": {
+                  "string": 0,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 2,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 71,
+                "spelling": "B",
+                "position": {
+                  "string": 3,
+                  "fret": 2
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              4,
+              7,
+              11
+            ],
+            "spellings": [
+              "E",
+              "G",
+              "B"
+            ]
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-12-1",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.75,
+            "position": {
+              "string": 0,
+              "fret": 0
+            }
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-12-2",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.25,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-12-3",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "everybody-wants-to-rule-the-world-13-0",
+            "type": "chord",
+            "duration": 1.5,
+            "symbol": "F#m",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 73,
+                "spelling": "C#",
+                "position": {
+                  "string": 0,
+                  "fret": 6
+                }
+              },
+              {
+                "midi": 66,
+                "spelling": "F#",
+                "position": {
+                  "string": 1,
+                  "fret": 6
+                }
+              },
+              {
+                "midi": 69,
+                "spelling": "A",
+                "position": {
+                  "string": 3,
+                  "fret": 0
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              6,
+              9,
+              1
+            ],
+            "spellings": [
+              "F#",
+              "A",
+              "C#"
+            ]
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-13-1",
+            "type": "note",
+            "midi": 66,
+            "spelling": "F#",
+            "duration": 0.25,
+            "position": {
+              "string": 1,
+              "fret": 6
+            }
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-13-2",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.25,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-13-3",
+            "type": "note",
+            "midi": 73,
+            "spelling": "C#",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 6
+            }
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-13-4",
+            "type": "note",
+            "midi": 66,
+            "spelling": "F#",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 6
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "everybody-wants-to-rule-the-world-14-0",
+            "type": "chord",
+            "duration": 1.5,
+            "symbol": "A",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 61,
+                "spelling": "C#",
+                "position": {
+                  "string": 1,
+                  "fret": 1
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 2,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 69,
+                "spelling": "A",
+                "position": {
+                  "string": 3,
+                  "fret": 0
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              9,
+              1,
+              4
+            ],
+            "spellings": [
+              "A",
+              "C#",
+              "E"
+            ]
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-14-1",
+            "type": "note",
+            "midi": 61,
+            "spelling": "C#",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 1
+            },
+            "articulation": "accent"
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-14-2",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-14-3",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "everybody-wants-to-rule-the-world-15-0",
+            "type": "chord",
+            "duration": 1.5,
+            "symbol": "Dmaj7",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 73,
+                "spelling": "C#",
+                "position": {
+                  "string": 0,
+                  "fret": 6
+                }
+              },
+              {
+                "midi": 66,
+                "spelling": "F#",
+                "position": {
+                  "string": 1,
+                  "fret": 6
+                }
+              },
+              {
+                "midi": 69,
+                "spelling": "A",
+                "position": {
+                  "string": 2,
+                  "fret": 5
+                }
+              },
+              {
+                "midi": 74,
+                "spelling": "D",
+                "position": {
+                  "string": 3,
+                  "fret": 5
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              2,
+              6,
+              9,
+              1
+            ],
+            "spellings": [
+              "D",
+              "F#",
+              "A",
+              "C#"
+            ]
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-15-1",
+            "type": "note",
+            "midi": 66,
+            "spelling": "F#",
+            "duration": 0.75,
+            "position": {
+              "string": 1,
+              "fret": 6
+            }
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-15-2",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.25,
+            "position": {
+              "string": 2,
+              "fret": 5
+            }
+          },
+          {
+            "id": "everybody-wants-to-rule-the-world-15-3",
+            "type": "note",
+            "midi": 73,
+            "spelling": "C#",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 6
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
