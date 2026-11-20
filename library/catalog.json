@@ -29,5 +29,97 @@
       ],
       "file": "songs/primary-chord-changes.json"
     }
+  ],
+  "repertoire": [
+    {
+      "id": "isolation",
+      "title": "Isolation",
+      "artist": "Joy Division",
+      "practiceFocus": "Syncopated rhythm and keyboard-to-ukulele adaptation"
+    },
+    {
+      "id": "love-will-tear-us-apart",
+      "title": "Love Will Tear Us Apart",
+      "artist": "Joy Division",
+      "practiceFocus": "Chord voicings, melodic accompaniment and barre shapes"
+    },
+    {
+      "id": "the-passenger",
+      "title": "The Passenger",
+      "artist": "Iggy Pop",
+      "practiceFocus": "Steady rhythmic articulation and accompaniment groove"
+    },
+    {
+      "id": "passover",
+      "title": "Passover",
+      "artist": "Joy Division",
+      "practiceFocus": "Arpeggiation and minor-key harmonic phrasing"
+    },
+    {
+      "id": "spellbound",
+      "title": "Spellbound",
+      "artist": "Siouxsie and the Banshees",
+      "practiceFocus": "Fast picking and intricate rhythmic articulation"
+    },
+    {
+      "id": "a-forest",
+      "title": "A Forest",
+      "artist": "The Cure",
+      "practiceFocus": "Interlocking melodic figures and atmospheric fingerpicking"
+    },
+    {
+      "id": "life-on-mars",
+      "title": "Life on Mars?",
+      "artist": "David Bowie",
+      "practiceFocus": "Chromatic harmony and complex chord transitions"
+    },
+    {
+      "id": "blackbird",
+      "title": "Blackbird",
+      "artist": "The Beatles",
+      "practiceFocus": "Two-voice fingerstyle and melodic independence"
+    },
+    {
+      "id": "space-oddity",
+      "title": "Space Oddity",
+      "artist": "David Bowie",
+      "practiceFocus": "Suspended harmony and changing accompaniment textures"
+    },
+    {
+      "id": "while-my-guitar-gently-weeps",
+      "title": "While My Guitar Gently Weeps",
+      "artist": "The Beatles",
+      "practiceFocus": "Descending bass movement and chord-melody technique"
+    },
+    {
+      "id": "wish-you-were-here",
+      "title": "Wish You Were Here",
+      "artist": "Pink Floyd",
+      "practiceFocus": "Acoustic accompaniment combined with lead phrases"
+    },
+    {
+      "id": "scarborough-fair",
+      "title": "Scarborough Fair",
+      "artist": "Simon & Garfunkel",
+      "practiceFocus": "Modal melody and contrapuntal fingerpicking"
+    },
+    {
+      "id": "babe-im-gonna-leave-you",
+      "title": "Babe I'm Gonna Leave You",
+      "artist": "Led Zeppelin",
+      "practiceFocus": "Arpeggios, descending bass and dynamic contrasts"
+    },
+    {
+      "id": "everybody-wants-to-rule-the-world",
+      "title": "Everybody Wants to Rule the World",
+      "artist": "Tears for Fears",
+      "practiceFocus": "Syncopation and interconnected guitar motifs"
+    },
+    {
+      "id": "california-dreamin",
+      "title": "California Dreamin'",
+      "artist": "The Mamas & the Papas",
+      "practiceFocus": "Minor-key harmony and instrumental melody adaptation"
+    }
   ]
 }
