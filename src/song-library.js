@@ -128,7 +128,7 @@ export function validateRepertoire(entries){
  const ids=new Set();
  for(const item of entries){
   if(!item||!slug(item.id)||!text(item.title,120)||!text(item.artist,120)
-   ||!text(item.practiceFocus,200)||ids.has(item.id))throw Error('Invalid or duplicate repertoire item');
+   ||!text(item.practiceFocus,200)||(item.preferredArrangementId!==undefined&&!slug(item.preferredArrangementId))||ids.has(item.id))throw Error('Invalid or duplicate repertoire item');
   ids.add(item.id);
  }
  return true;
