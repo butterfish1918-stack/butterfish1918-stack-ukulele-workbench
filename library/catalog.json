@@ -28,6 +28,216 @@
         "original"
       ],
       "file": "songs/primary-chord-changes.json"
+    },
+    {
+      "id": "isolation",
+      "revision": 1,
+      "title": "Isolation — Harmony & Technique Study",
+      "artist": "Joy Division",
+      "difficulty": "advanced",
+      "tags": [
+        "advanced-repertoire",
+        "original-study",
+        "notation",
+        "fingerstyle"
+      ],
+      "file": "songs/isolation.json"
+    },
+    {
+      "id": "love-will-tear-us-apart",
+      "revision": 1,
+      "title": "Love Will Tear Us Apart — Harmony & Technique Study",
+      "artist": "Joy Division",
+      "difficulty": "advanced",
+      "tags": [
+        "advanced-repertoire",
+        "original-study",
+        "notation",
+        "fingerstyle"
+      ],
+      "file": "songs/love-will-tear-us-apart.json"
+    },
+    {
+      "id": "the-passenger",
+      "revision": 1,
+      "title": "The Passenger — Harmony & Technique Study",
+      "artist": "Iggy Pop",
+      "difficulty": "intermediate",
+      "tags": [
+        "advanced-repertoire",
+        "original-study",
+        "notation",
+        "minor-harmony"
+      ],
+      "file": "songs/the-passenger.json"
+    },
+    {
+      "id": "passover",
+      "revision": 1,
+      "title": "Passover — Harmony & Technique Study",
+      "artist": "Joy Division",
+      "difficulty": "advanced",
+      "tags": [
+        "advanced-repertoire",
+        "original-study",
+        "notation",
+        "minor-harmony"
+      ],
+      "file": "songs/passover.json"
+    },
+    {
+      "id": "spellbound",
+      "revision": 1,
+      "title": "Spellbound — Harmony & Technique Study",
+      "artist": "Siouxsie and the Banshees",
+      "difficulty": "advanced",
+      "tags": [
+        "advanced-repertoire",
+        "original-study",
+        "notation",
+        "minor-harmony"
+      ],
+      "file": "songs/spellbound.json"
+    },
+    {
+      "id": "a-forest",
+      "revision": 1,
+      "title": "A Forest — Harmony & Technique Study",
+      "artist": "The Cure",
+      "difficulty": "advanced",
+      "tags": [
+        "advanced-repertoire",
+        "original-study",
+        "notation",
+        "minor-harmony"
+      ],
+      "file": "songs/a-forest.json"
+    },
+    {
+      "id": "life-on-mars",
+      "revision": 1,
+      "title": "Life on Mars? — Harmony & Technique Study",
+      "artist": "David Bowie",
+      "difficulty": "advanced",
+      "tags": [
+        "advanced-repertoire",
+        "original-study",
+        "notation",
+        "fingerstyle"
+      ],
+      "file": "songs/life-on-mars.json"
+    },
+    {
+      "id": "blackbird",
+      "revision": 1,
+      "title": "Blackbird — Harmony & Technique Study",
+      "artist": "The Beatles",
+      "difficulty": "advanced",
+      "tags": [
+        "advanced-repertoire",
+        "original-study",
+        "notation",
+        "fingerstyle"
+      ],
+      "file": "songs/blackbird.json"
+    },
+    {
+      "id": "space-oddity",
+      "revision": 1,
+      "title": "Space Oddity — Harmony & Technique Study",
+      "artist": "David Bowie",
+      "difficulty": "advanced",
+      "tags": [
+        "advanced-repertoire",
+        "original-study",
+        "notation",
+        "fingerstyle"
+      ],
+      "file": "songs/space-oddity.json"
+    },
+    {
+      "id": "while-my-guitar-gently-weeps",
+      "revision": 1,
+      "title": "While My Guitar Gently Weeps — Harmony & Technique Study",
+      "artist": "The Beatles",
+      "difficulty": "advanced",
+      "tags": [
+        "advanced-repertoire",
+        "original-study",
+        "notation",
+        "minor-harmony"
+      ],
+      "file": "songs/while-my-guitar-gently-weeps.json"
+    },
+    {
+      "id": "wish-you-were-here",
+      "revision": 1,
+      "title": "Wish You Were Here — Harmony & Technique Study",
+      "artist": "Pink Floyd",
+      "difficulty": "intermediate",
+      "tags": [
+        "advanced-repertoire",
+        "original-study",
+        "notation",
+        "fingerstyle"
+      ],
+      "file": "songs/wish-you-were-here.json"
+    },
+    {
+      "id": "scarborough-fair",
+      "revision": 1,
+      "title": "Scarborough Fair — Harmony & Technique Study",
+      "artist": "Simon & Garfunkel",
+      "difficulty": "advanced",
+      "tags": [
+        "advanced-repertoire",
+        "original-study",
+        "notation",
+        "fingerstyle"
+      ],
+      "file": "songs/scarborough-fair.json"
+    },
+    {
+      "id": "babe-im-gonna-leave-you",
+      "revision": 1,
+      "title": "Babe I'm Gonna Leave You — Harmony & Technique Study",
+      "artist": "Led Zeppelin",
+      "difficulty": "advanced",
+      "tags": [
+        "advanced-repertoire",
+        "original-study",
+        "notation",
+        "minor-harmony"
+      ],
+      "file": "songs/babe-im-gonna-leave-you.json"
+    },
+    {
+      "id": "everybody-wants-to-rule-the-world",
+      "revision": 1,
+      "title": "Everybody Wants to Rule the World — Harmony & Technique Study",
+      "artist": "Tears for Fears",
+      "difficulty": "advanced",
+      "tags": [
+        "advanced-repertoire",
+        "original-study",
+        "compound-meter",
+        "fingerstyle"
+      ],
+      "file": "songs/everybody-wants-to-rule-the-world.json"
+    },
+    {
+      "id": "california-dreamin",
+      "revision": 1,
+      "title": "California Dreamin' — Harmony & Technique Study",
+      "artist": "The Mamas & the Papas",
+      "difficulty": "advanced",
+      "tags": [
+        "advanced-repertoire",
+        "original-study",
+        "notation",
+        "minor-harmony"
+      ],
+      "file": "songs/california-dreamin.json"
     }
   ],
   "repertoire": [
