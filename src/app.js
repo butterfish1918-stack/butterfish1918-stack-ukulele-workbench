@@ -409,13 +409,14 @@ function repositorySongbook(){
  </section></div>`;
 }
 function repertoireItems(){return state.repositorySnapshot.catalog.repertoire??BUNDLED_LIBRARY.catalog.repertoire??[];}
+function repertoireScoreId(item){return item.preferredArrangementId||item.id;}
 function approvedRepertoireSongbook(){
  const items=repertoireItems();
  const owned=new Set(songs().flatMap(s=>[s.repertoireOrigin?.id,s.repositoryOrigin?.id]).filter(Boolean));
- return `${hero('APPROVED PRACTICE SONGS','Your <em>repertoire.</em>','Selected titles with independently composed, notation-first harmonic and technique studies. These are not transcriptions of the recordings.',`${items.length} APPROVED SONGS · ORIGINAL STUDIES`)}
+ return `${hero('APPROVED PRACTICE SONGS','Your <em>repertoire.</em>','Your selected songs include original harmony studies and, where public-domain material permits, documented traditional melodies. The studies are not transcriptions of the protected recordings.',`${items.length} APPROVED SONGS · ORIGINAL STUDIES`)}
  <section class="panel panel-pad"><div class="panel-title"><h2>Approved repertoire</h2><button class="btn gold compact" data-action="repertoire-import-all">＋ Import available practice studies</button></div>
- <p class="small-text">Sync the Repository Library to access all 15 original, fully notated studies. Copying imports their playable notation and optional tabs as independent local scores, without reproducing protected song melodies or riffs. Previously copied songs are not replaced.</p>
- <div class="song-list">${items.map(item=>`<div class="song-row"><div class="song-initial">♫</div><div class="song-title"><b>${h(item.title)}</b><small>${h(item.artist)} · ${h(item.practiceFocus)} · ${owned.has(item.id)?'In My Songbook':state.repositorySnapshot.songs[item.id]?'Original study available':'Sync Library for study'}</small></div><button class="btn compact" data-repertoire="${h(item.id)}" ${owned.has(item.id)||!state.repositorySnapshot.songs[item.id]?'disabled':''}>${owned.has(item.id)?'Added':state.repositorySnapshot.songs[item.id]?'Copy study':'Sync first'}</button></div>`).join('')}</div>
+ <p class="small-text">Sync the Repository Library to access all the available scores. These include original technique studies and one complete historical version of Scarborough Fair; the latter is not Simon & Garfunkel’s arrangement. Copying imports notation and optional tablature as independent local scores. Previously copied songs are not replaced.</p>
+ <div class="song-list">${items.map(item=>`<div class="song-row"><div class="song-initial">♫</div><div class="song-title"><b>${h(item.title)}</b><small>${h(item.artist)} · ${h(item.practiceFocus)} · ${owned.has(item.id)?'In My Songbook':state.repositorySnapshot.songs[repertoireScoreId(item)]?(item.preferredArrangementId?'Full traditional tune available':'Original study available'):'Sync Library for score'}</small></div><button class="btn compact" data-repertoire="${h(item.id)}" ${owned.has(item.id)||!state.repositorySnapshot.songs[repertoireScoreId(item)]?'disabled':''}>${owned.has(item.id)?'Added':state.repositorySnapshot.songs[repertoireScoreId(item)]?(item.preferredArrangementId?'Copy full tune':'Copy study'):'Sync first'}</button></div>`).join('')}</div>
  </section>`;
 }
 function songbook(){return `<div class="repo-tabs" role="group" aria-label="Songbook collections"><button class="btn ${state.songbookView==='mine'?'gold':'ghost'}" data-action="repo-view-mine" aria-pressed="${state.songbookView==='mine'}">My Songbook</button><button class="btn ${state.songbookView==='repertoire'?'gold':'ghost'}" data-action="repo-view-repertoire" aria-pressed="${state.songbookView==='repertoire'}">Approved Songs <span class="repo-count">${repertoireItems().length}</span></button><button class="btn ${state.songbookView==='repository'?'gold':'ghost'}" data-action="repo-view-repository" aria-pressed="${state.songbookView==='repository'}">Repository Library <span class="repo-count">${state.repositorySnapshot.catalog.entries.length}</span></button></div>${state.songbookView==='repository'?repositorySongbook():state.songbookView==='repertoire'?approvedRepertoireSongbook():mySongbook()}`;}
@@ -451,10 +452,11 @@ function addApprovedSongs(ids=null){
   const items=repertoireItems().filter(item=>ids===null||ids.includes(item.id));
   let next=songs(),added=0;
   for(const item of items){
-   if(next.some(s=>s.repertoireOrigin?.id===item.id||s.repositoryOrigin?.id===item.id))continue;
-   if(!state.repositorySnapshot.songs[item.id])continue;
+   const arrangementId=repertoireScoreId(item);
+   if(next.some(s=>s.repertoireOrigin?.id===item.id||s.repositoryOrigin?.id===arrangementId))continue;
+   if(!state.repositorySnapshot.songs[arrangementId])continue;
    const id='repertoire-study-copy-'+(globalThis.crypto?.randomUUID?.()??Date.now()+'-'+Math.floor(Math.random()*1e6))+'-'+added;
-   next=copyToSongbook(state.repositorySnapshot,item.id,next,{id,validateScore});
+   next=copyToSongbook(state.repositorySnapshot,arrangementId,next,{id,validateScore});
    next.at(-1).repertoireOrigin={id:item.id};
    added++;
   }
