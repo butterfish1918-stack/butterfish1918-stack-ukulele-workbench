@@ -1,5 +1,12 @@
 # Ukulele Workbench v1.6.0 Preview — Connected Song Repository
 
+## Approved repertoire — 15 selected songs
+
+**Songbook → Approved Songs** now lists the owner's 15 approved practice titles, spanning Joy Division, Siouxsie and the Banshees, The Cure, Iggy Pop, David Bowie, the Beatles, Pink Floyd, Simon & Garfunkel, Led Zeppelin, Tears for Fears, and the Mamas & the Papas. Each has an individual practice objective. This is a **metadata-only repertoire list**: complete copyrighted scores, lyrics and tablatures are *not* bundled or claimed to exist.
+
+Select **Add missing titles to My Songbook** to create 15 independent personal sketches in local browser storage (or add one song individually). The action is idempotent and does not overwrite existing songs. Use Score Studio to develop original arrangements or add material you own or are licensed to use. The dedicated **Repository Library** continues to contain two fully notated original studies. The approved titles are available offline in the bundled library; a served app can also update them through **Sync Library**.
+
+
 Songbook now includes **Repository Library** with two bundled original notation-first studies, score previews, search/difficulty filters and **Sync Library**. A song copied to **My Songbook** is independent and is never overwritten by an upstream update. The app's existing editable Score Studio, Technique Academy, MusicXML support and local JSON backup remain available.
 
 **Play instantly:** open `demo.html`. To test repository sync over HTTP, install Node.js 20+, run `npm start` and visit `http://127.0.0.1:4173/`. You can use the default `./library/catalog.json` on a served app or configure an HTTPS catalog URL. To validate the on-disk library, run `npm run qa:library`, `npm test`, and `npm run qa:http`. Full workflow and future ChatGPT song submission instructions: **`SONG_REPOSITORY.md`**.
