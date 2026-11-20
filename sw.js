@@ -1,7 +1,7 @@
 /* Ukulele Workbench offline shell. Keep cache deletion scoped to THIS app:
    other tools on the same GitHub Pages origin must never be touched. */
 const CACHE_PREFIX = 'uke-workbench-';
-const CACHE = `${CACHE_PREFIX}v1.6.1-repertoire`;
+const CACHE = `${CACHE_PREFIX}v1.7.0-harmony-studies`;
 const SCOPE = new URL(self.registration.scope);
 const SHELL = new URL('./index.html', SCOPE).href;
 const LIBRARY_PATH = new URL('./library/', SCOPE).pathname;
@@ -12,7 +12,22 @@ const ASSETS = [
  './src/reading-lessons.js', './src/musicxml.js', './src/engraving.js',
  './src/tuner-dsp.js', './src/storage-safety.js', './src/device-qa.js',
  './assets/icon.svg', './assets/icon-192.png', './assets/icon-512.png',
- './manifest.webmanifest', './library/catalog.json', './library/songs/first-melody-study.json', './library/songs/primary-chord-changes.json'
+ './manifest.webmanifest', './library/catalog.json', './library/songs/first-melody-study.json', './library/songs/primary-chord-changes.json',
+ './library/songs/isolation.json',
+ './library/songs/love-will-tear-us-apart.json',
+ './library/songs/the-passenger.json',
+ './library/songs/passover.json',
+ './library/songs/spellbound.json',
+ './library/songs/a-forest.json',
+ './library/songs/life-on-mars.json',
+ './library/songs/blackbird.json',
+ './library/songs/space-oddity.json',
+ './library/songs/while-my-guitar-gently-weeps.json',
+ './library/songs/wish-you-were-here.json',
+ './library/songs/scarborough-fair.json',
+ './library/songs/babe-im-gonna-leave-you.json',
+ './library/songs/everybody-wants-to-rule-the-world.json',
+ './library/songs/california-dreamin.json'
 ];
 
 self.addEventListener('install', event => {
