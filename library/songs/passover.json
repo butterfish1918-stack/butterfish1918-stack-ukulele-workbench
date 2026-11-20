@@ -1,0 +1,1817 @@
+{
+  "format": "ukulele-workbench-arrangement",
+  "schemaVersion": 1,
+  "id": "passover",
+  "revision": 1,
+  "title": "Passover — Harmony & Technique Study",
+  "artist": "Joy Division",
+  "difficulty": "advanced",
+  "tags": [
+    "advanced-repertoire",
+    "original-study",
+    "notation",
+    "minor-harmony"
+  ],
+  "key": "G",
+  "tonalCenter": "E minor",
+  "bpm": 126,
+  "tuning": "highG",
+  "description": "An original 16-measure ukulele harmony and technique study associated with “Passover”. Not a transcription of its melody, bass riff, lyrics, studio arrangement or original timing. Uses harmonic vocabulary in the song’s concert key; this is a practice tempo.",
+  "body": "Study harmony by measure (not a full song chart): [Em] | [C] | [Bm] | [Em] | [Em] | [G] | [C] | [Bm] | [Em] | [C] | [G] | [Em] | [C] | [Bm] | [Em] | [Em]",
+  "notes": "Original tonal centre: E minor. Standard high-G GCEA, no capo. Staff and optional tablature show exact playable fret positions. Angular phrasing, minor-key voicings and note duration. The notated chord/arpeggio figure is newly composed and does not reproduce the recording's melody or signature riffs. Scores may use the relative major’s key signature to notate minor/modal centres.",
+  "score": {
+    "schema": 1,
+    "id": "repertoire-study-passover",
+    "title": "Passover — Original harmonic study",
+    "tuning": "highG",
+    "meter": "4/4",
+    "key": "G",
+    "tempo": 126,
+    "measures": [
+      {
+        "events": [
+          {
+            "id": "passover-0-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "Em",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 67,
+                "spelling": "G",
+                "position": {
+                  "string": 0,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 2,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 71,
+                "spelling": "B",
+                "position": {
+                  "string": 3,
+                  "fret": 2
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              4,
+              7,
+              11
+            ],
+            "spellings": [
+              "E",
+              "G",
+              "B"
+            ]
+          },
+          {
+            "id": "passover-0-1",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 0
+            }
+          },
+          {
+            "id": "passover-0-2",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "passover-0-3",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 1,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "passover-0-4",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "passover-0-5",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 0
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "passover-1-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "C",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 67,
+                "spelling": "G",
+                "position": {
+                  "string": 0,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 60,
+                "spelling": "C",
+                "position": {
+                  "string": 1,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 2,
+                  "fret": 0
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              0,
+              4,
+              7
+            ],
+            "spellings": [
+              "C",
+              "E",
+              "G"
+            ]
+          },
+          {
+            "id": "passover-1-1",
+            "type": "note",
+            "midi": 60,
+            "spelling": "C",
+            "duration": 1,
+            "position": {
+              "string": 1,
+              "fret": 0
+            }
+          },
+          {
+            "id": "passover-1-2",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "passover-1-3",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 0
+            }
+          },
+          {
+            "id": "passover-1-4",
+            "type": "note",
+            "midi": 60,
+            "spelling": "C",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 0
+            }
+          },
+          {
+            "id": "passover-1-5",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "passover-2-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "Bm",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 62,
+                "spelling": "D",
+                "position": {
+                  "string": 1,
+                  "fret": 2
+                }
+              },
+              {
+                "midi": 66,
+                "spelling": "F#",
+                "position": {
+                  "string": 2,
+                  "fret": 2
+                }
+              },
+              {
+                "midi": 71,
+                "spelling": "B",
+                "position": {
+                  "string": 3,
+                  "fret": 2
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              11,
+              2,
+              6
+            ],
+            "spellings": [
+              "B",
+              "D",
+              "F#"
+            ]
+          },
+          {
+            "id": "passover-2-1",
+            "type": "note",
+            "midi": 62,
+            "spelling": "D",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 2
+            },
+            "articulation": "accent"
+          },
+          {
+            "id": "passover-2-2",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "passover-2-3",
+            "type": "note",
+            "midi": 66,
+            "spelling": "F#",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 2
+            }
+          },
+          {
+            "id": "passover-2-4",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "passover-2-5",
+            "type": "note",
+            "midi": 62,
+            "spelling": "D",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 2
+            }
+          },
+          {
+            "id": "passover-2-6",
+            "type": "note",
+            "midi": 66,
+            "spelling": "F#",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 2
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "passover-3-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "Em",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 67,
+                "spelling": "G",
+                "position": {
+                  "string": 0,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 2,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 71,
+                "spelling": "B",
+                "position": {
+                  "string": 3,
+                  "fret": 2
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              4,
+              7,
+              11
+            ],
+            "spellings": [
+              "E",
+              "G",
+              "B"
+            ]
+          },
+          {
+            "id": "passover-3-1",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.75,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "passover-3-2",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.25,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "passover-3-3",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 0
+            }
+          },
+          {
+            "id": "passover-3-4",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "passover-3-5",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "passover-3-6",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 0
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "passover-4-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "Em",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 67,
+                "spelling": "G",
+                "position": {
+                  "string": 0,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 2,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 71,
+                "spelling": "B",
+                "position": {
+                  "string": 3,
+                  "fret": 2
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              4,
+              7,
+              11
+            ],
+            "spellings": [
+              "E",
+              "G",
+              "B"
+            ]
+          },
+          {
+            "id": "passover-4-1",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.25,
+            "position": {
+              "string": 0,
+              "fret": 0
+            }
+          },
+          {
+            "id": "passover-4-2",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.25,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "passover-4-3",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "passover-4-4",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.75,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "passover-4-5",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.25,
+            "position": {
+              "string": 0,
+              "fret": 0
+            }
+          },
+          {
+            "id": "passover-4-6",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "passover-4-7",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "passover-5-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "G",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 67,
+                "spelling": "G",
+                "position": {
+                  "string": 0,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 62,
+                "spelling": "D",
+                "position": {
+                  "string": 1,
+                  "fret": 2
+                }
+              },
+              {
+                "midi": 71,
+                "spelling": "B",
+                "position": {
+                  "string": 3,
+                  "fret": 2
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              7,
+              11,
+              2
+            ],
+            "spellings": [
+              "G",
+              "B",
+              "D"
+            ]
+          },
+          {
+            "id": "passover-5-1",
+            "type": "note",
+            "midi": 62,
+            "spelling": "D",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 2
+            }
+          },
+          {
+            "id": "passover-5-2",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "passover-5-3",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 1,
+            "position": {
+              "string": 0,
+              "fret": 0
+            }
+          },
+          {
+            "id": "passover-5-4",
+            "type": "note",
+            "midi": 62,
+            "spelling": "D",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 2
+            }
+          },
+          {
+            "id": "passover-5-5",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "passover-6-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "C",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 67,
+                "spelling": "G",
+                "position": {
+                  "string": 0,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 60,
+                "spelling": "C",
+                "position": {
+                  "string": 1,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 2,
+                  "fret": 0
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              0,
+              4,
+              7
+            ],
+            "spellings": [
+              "C",
+              "E",
+              "G"
+            ]
+          },
+          {
+            "id": "passover-6-1",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 1,
+            "position": {
+              "string": 0,
+              "fret": 0
+            },
+            "articulation": "accent"
+          },
+          {
+            "id": "passover-6-2",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "passover-6-3",
+            "type": "note",
+            "midi": 60,
+            "spelling": "C",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 0
+            }
+          },
+          {
+            "id": "passover-6-4",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "passover-6-5",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 0
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "passover-7-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "Bm",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 62,
+                "spelling": "D",
+                "position": {
+                  "string": 1,
+                  "fret": 2
+                }
+              },
+              {
+                "midi": 66,
+                "spelling": "F#",
+                "position": {
+                  "string": 2,
+                  "fret": 2
+                }
+              },
+              {
+                "midi": 71,
+                "spelling": "B",
+                "position": {
+                  "string": 3,
+                  "fret": 2
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              11,
+              2,
+              6
+            ],
+            "spellings": [
+              "B",
+              "D",
+              "F#"
+            ]
+          },
+          {
+            "id": "passover-7-1",
+            "type": "note",
+            "midi": 66,
+            "spelling": "F#",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 2
+            }
+          },
+          {
+            "id": "passover-7-2",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "passover-7-3",
+            "type": "note",
+            "midi": 62,
+            "spelling": "D",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 2
+            }
+          },
+          {
+            "id": "passover-7-4",
+            "type": "note",
+            "midi": 66,
+            "spelling": "F#",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 2
+            }
+          },
+          {
+            "id": "passover-7-5",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "passover-7-6",
+            "type": "note",
+            "midi": 62,
+            "spelling": "D",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 2
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "passover-8-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "Em",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 67,
+                "spelling": "G",
+                "position": {
+                  "string": 0,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 2,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 71,
+                "spelling": "B",
+                "position": {
+                  "string": 3,
+                  "fret": 2
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              4,
+              7,
+              11
+            ],
+            "spellings": [
+              "E",
+              "G",
+              "B"
+            ]
+          },
+          {
+            "id": "passover-8-1",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.75,
+            "position": {
+              "string": 0,
+              "fret": 0
+            }
+          },
+          {
+            "id": "passover-8-2",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.25,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "passover-8-3",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "passover-8-4",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "passover-8-5",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 0
+            }
+          },
+          {
+            "id": "passover-8-6",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "passover-9-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "C",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 67,
+                "spelling": "G",
+                "position": {
+                  "string": 0,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 60,
+                "spelling": "C",
+                "position": {
+                  "string": 1,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 2,
+                  "fret": 0
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              0,
+              4,
+              7
+            ],
+            "spellings": [
+              "C",
+              "E",
+              "G"
+            ]
+          },
+          {
+            "id": "passover-9-1",
+            "type": "note",
+            "midi": 60,
+            "spelling": "C",
+            "duration": 0.25,
+            "position": {
+              "string": 1,
+              "fret": 0
+            }
+          },
+          {
+            "id": "passover-9-2",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.25,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "passover-9-3",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 0
+            }
+          },
+          {
+            "id": "passover-9-4",
+            "type": "note",
+            "midi": 60,
+            "spelling": "C",
+            "duration": 0.75,
+            "position": {
+              "string": 1,
+              "fret": 0
+            }
+          },
+          {
+            "id": "passover-9-5",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.25,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "passover-9-6",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 0
+            }
+          },
+          {
+            "id": "passover-9-7",
+            "type": "note",
+            "midi": 60,
+            "spelling": "C",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 0
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "passover-10-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "G",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 67,
+                "spelling": "G",
+                "position": {
+                  "string": 0,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 62,
+                "spelling": "D",
+                "position": {
+                  "string": 1,
+                  "fret": 2
+                }
+              },
+              {
+                "midi": 71,
+                "spelling": "B",
+                "position": {
+                  "string": 3,
+                  "fret": 2
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              7,
+              11,
+              2
+            ],
+            "spellings": [
+              "G",
+              "B",
+              "D"
+            ]
+          },
+          {
+            "id": "passover-10-1",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 0
+            },
+            "articulation": "accent"
+          },
+          {
+            "id": "passover-10-2",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "passover-10-3",
+            "type": "note",
+            "midi": 62,
+            "spelling": "D",
+            "duration": 1,
+            "position": {
+              "string": 1,
+              "fret": 2
+            }
+          },
+          {
+            "id": "passover-10-4",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "passover-10-5",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 0
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "passover-11-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "Em",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 67,
+                "spelling": "G",
+                "position": {
+                  "string": 0,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 2,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 71,
+                "spelling": "B",
+                "position": {
+                  "string": 3,
+                  "fret": 2
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              4,
+              7,
+              11
+            ],
+            "spellings": [
+              "E",
+              "G",
+              "B"
+            ]
+          },
+          {
+            "id": "passover-11-1",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 1,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "passover-11-2",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "passover-11-3",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 0
+            }
+          },
+          {
+            "id": "passover-11-4",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "passover-11-5",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "passover-12-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "C",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 67,
+                "spelling": "G",
+                "position": {
+                  "string": 0,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 60,
+                "spelling": "C",
+                "position": {
+                  "string": 1,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 2,
+                  "fret": 0
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              0,
+              4,
+              7
+            ],
+            "spellings": [
+              "C",
+              "E",
+              "G"
+            ]
+          },
+          {
+            "id": "passover-12-1",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 0
+            }
+          },
+          {
+            "id": "passover-12-2",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "passover-12-3",
+            "type": "note",
+            "midi": 60,
+            "spelling": "C",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 0
+            }
+          },
+          {
+            "id": "passover-12-4",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "passover-12-5",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 0
+            }
+          },
+          {
+            "id": "passover-12-6",
+            "type": "note",
+            "midi": 60,
+            "spelling": "C",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 0
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "passover-13-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "Bm",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 62,
+                "spelling": "D",
+                "position": {
+                  "string": 1,
+                  "fret": 2
+                }
+              },
+              {
+                "midi": 66,
+                "spelling": "F#",
+                "position": {
+                  "string": 2,
+                  "fret": 2
+                }
+              },
+              {
+                "midi": 71,
+                "spelling": "B",
+                "position": {
+                  "string": 3,
+                  "fret": 2
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              11,
+              2,
+              6
+            ],
+            "spellings": [
+              "B",
+              "D",
+              "F#"
+            ]
+          },
+          {
+            "id": "passover-13-1",
+            "type": "note",
+            "midi": 66,
+            "spelling": "F#",
+            "duration": 0.75,
+            "position": {
+              "string": 2,
+              "fret": 2
+            }
+          },
+          {
+            "id": "passover-13-2",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.25,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "passover-13-3",
+            "type": "note",
+            "midi": 62,
+            "spelling": "D",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 2
+            }
+          },
+          {
+            "id": "passover-13-4",
+            "type": "note",
+            "midi": 66,
+            "spelling": "F#",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 2
+            }
+          },
+          {
+            "id": "passover-13-5",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "passover-13-6",
+            "type": "note",
+            "midi": 62,
+            "spelling": "D",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 2
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "passover-14-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "Em",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 67,
+                "spelling": "G",
+                "position": {
+                  "string": 0,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 2,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 71,
+                "spelling": "B",
+                "position": {
+                  "string": 3,
+                  "fret": 2
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              4,
+              7,
+              11
+            ],
+            "spellings": [
+              "E",
+              "G",
+              "B"
+            ]
+          },
+          {
+            "id": "passover-14-1",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.25,
+            "position": {
+              "string": 0,
+              "fret": 0
+            },
+            "articulation": "accent"
+          },
+          {
+            "id": "passover-14-2",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.25,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "passover-14-3",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "passover-14-4",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.75,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "passover-14-5",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.25,
+            "position": {
+              "string": 0,
+              "fret": 0
+            }
+          },
+          {
+            "id": "passover-14-6",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "passover-14-7",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "passover-15-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "Em",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 67,
+                "spelling": "G",
+                "position": {
+                  "string": 0,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 2,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 71,
+                "spelling": "B",
+                "position": {
+                  "string": 3,
+                  "fret": 2
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              4,
+              7,
+              11
+            ],
+            "spellings": [
+              "E",
+              "G",
+              "B"
+            ]
+          },
+          {
+            "id": "passover-15-1",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "passover-15-2",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "passover-15-3",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 1,
+            "position": {
+              "string": 0,
+              "fret": 0
+            }
+          },
+          {
+            "id": "passover-15-4",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "passover-15-5",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
