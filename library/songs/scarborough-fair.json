@@ -1,0 +1,1533 @@
+{
+  "format": "ukulele-workbench-arrangement",
+  "schemaVersion": 1,
+  "id": "scarborough-fair",
+  "revision": 1,
+  "title": "Scarborough Fair — Harmony & Technique Study",
+  "artist": "Simon & Garfunkel",
+  "difficulty": "advanced",
+  "tags": [
+    "advanced-repertoire",
+    "original-study",
+    "notation",
+    "fingerstyle"
+  ],
+  "key": "D",
+  "tonalCenter": "E Dorian",
+  "bpm": 96,
+  "tuning": "highG",
+  "description": "An original 16-measure ukulele harmony and technique study associated with “Scarborough Fair”. Not a transcription of its melody, bass riff, lyrics, studio arrangement or original timing. Uses harmonic vocabulary in the song’s concert key; this is a practice tempo.",
+  "body": "Study harmony by measure (not a full song chart): [Em] | [A] | [D] | [Em] | [G] | [A] | [Em] | [D] | [Em] | [G] | [A] | [Em] | [Em] | [D] | [A] | [Em]",
+  "notes": "Original tonal centre: E Dorian. Standard high-G GCEA, no capo. Staff and optional tablature show exact playable fret positions. Modal contrast and measured three-beat fingerstyle. The notated chord/arpeggio figure is newly composed and does not reproduce the recording's melody or signature riffs. Scores may use the relative major’s key signature to notate minor/modal centres.",
+  "score": {
+    "schema": 1,
+    "id": "repertoire-study-scarborough-fair",
+    "title": "Scarborough Fair — Original harmonic study",
+    "tuning": "highG",
+    "meter": "3/4",
+    "key": "D",
+    "tempo": 96,
+    "measures": [
+      {
+        "events": [
+          {
+            "id": "scarborough-fair-0-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "Em",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 67,
+                "spelling": "G",
+                "position": {
+                  "string": 0,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 2,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 71,
+                "spelling": "B",
+                "position": {
+                  "string": 3,
+                  "fret": 2
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              4,
+              7,
+              11
+            ],
+            "spellings": [
+              "E",
+              "G",
+              "B"
+            ]
+          },
+          {
+            "id": "scarborough-fair-0-1",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.25,
+            "position": {
+              "string": 0,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-0-2",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.25,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "scarborough-fair-0-3",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-0-4",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 1,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "scarborough-fair-1-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "A",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 61,
+                "spelling": "C#",
+                "position": {
+                  "string": 1,
+                  "fret": 1
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 2,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 69,
+                "spelling": "A",
+                "position": {
+                  "string": 3,
+                  "fret": 0
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              9,
+              1,
+              4
+            ],
+            "spellings": [
+              "A",
+              "C#",
+              "E"
+            ]
+          },
+          {
+            "id": "scarborough-fair-1-1",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-1-2",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-1-3",
+            "type": "note",
+            "midi": 61,
+            "spelling": "C#",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 1
+            }
+          },
+          {
+            "id": "scarborough-fair-1-4",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "scarborough-fair-2-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "D",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 69,
+                "spelling": "A",
+                "position": {
+                  "string": 0,
+                  "fret": 2
+                }
+              },
+              {
+                "midi": 62,
+                "spelling": "D",
+                "position": {
+                  "string": 1,
+                  "fret": 2
+                }
+              },
+              {
+                "midi": 66,
+                "spelling": "F#",
+                "position": {
+                  "string": 2,
+                  "fret": 2
+                }
+              },
+              {
+                "midi": 69,
+                "spelling": "A",
+                "position": {
+                  "string": 3,
+                  "fret": 0
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              2,
+              6,
+              9
+            ],
+            "spellings": [
+              "D",
+              "F#",
+              "A"
+            ]
+          },
+          {
+            "id": "scarborough-fair-2-1",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.75,
+            "position": {
+              "string": 0,
+              "fret": 2
+            },
+            "articulation": "accent"
+          },
+          {
+            "id": "scarborough-fair-2-2",
+            "type": "note",
+            "midi": 66,
+            "spelling": "F#",
+            "duration": 0.25,
+            "position": {
+              "string": 2,
+              "fret": 2
+            }
+          },
+          {
+            "id": "scarborough-fair-2-3",
+            "type": "note",
+            "midi": 62,
+            "spelling": "D",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 2
+            }
+          },
+          {
+            "id": "scarborough-fair-2-4",
+            "type": "note",
+            "midi": 66,
+            "spelling": "F#",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 2
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "scarborough-fair-3-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "Em",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 67,
+                "spelling": "G",
+                "position": {
+                  "string": 0,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 2,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 71,
+                "spelling": "B",
+                "position": {
+                  "string": 3,
+                  "fret": 2
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              4,
+              7,
+              11
+            ],
+            "spellings": [
+              "E",
+              "G",
+              "B"
+            ]
+          },
+          {
+            "id": "scarborough-fair-3-1",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.25,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-3-2",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.25,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "scarborough-fair-3-3",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-3-4",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 1,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "scarborough-fair-4-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "G",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 67,
+                "spelling": "G",
+                "position": {
+                  "string": 0,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 62,
+                "spelling": "D",
+                "position": {
+                  "string": 1,
+                  "fret": 2
+                }
+              },
+              {
+                "midi": 71,
+                "spelling": "B",
+                "position": {
+                  "string": 3,
+                  "fret": 2
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              7,
+              11,
+              2
+            ],
+            "spellings": [
+              "G",
+              "B",
+              "D"
+            ]
+          },
+          {
+            "id": "scarborough-fair-4-1",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-4-2",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "scarborough-fair-4-3",
+            "type": "note",
+            "midi": 62,
+            "spelling": "D",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 2
+            }
+          },
+          {
+            "id": "scarborough-fair-4-4",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "scarborough-fair-5-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "A",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 61,
+                "spelling": "C#",
+                "position": {
+                  "string": 1,
+                  "fret": 1
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 2,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 69,
+                "spelling": "A",
+                "position": {
+                  "string": 3,
+                  "fret": 0
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              9,
+              1,
+              4
+            ],
+            "spellings": [
+              "A",
+              "C#",
+              "E"
+            ]
+          },
+          {
+            "id": "scarborough-fair-5-1",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.75,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-5-2",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.25,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-5-3",
+            "type": "note",
+            "midi": 61,
+            "spelling": "C#",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 1
+            }
+          },
+          {
+            "id": "scarborough-fair-5-4",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "scarborough-fair-6-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "Em",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 67,
+                "spelling": "G",
+                "position": {
+                  "string": 0,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 2,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 71,
+                "spelling": "B",
+                "position": {
+                  "string": 3,
+                  "fret": 2
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              4,
+              7,
+              11
+            ],
+            "spellings": [
+              "E",
+              "G",
+              "B"
+            ]
+          },
+          {
+            "id": "scarborough-fair-6-1",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.25,
+            "position": {
+              "string": 0,
+              "fret": 0
+            },
+            "articulation": "accent"
+          },
+          {
+            "id": "scarborough-fair-6-2",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.25,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "scarborough-fair-6-3",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-6-4",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 1,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "scarborough-fair-7-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "D",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 69,
+                "spelling": "A",
+                "position": {
+                  "string": 0,
+                  "fret": 2
+                }
+              },
+              {
+                "midi": 62,
+                "spelling": "D",
+                "position": {
+                  "string": 1,
+                  "fret": 2
+                }
+              },
+              {
+                "midi": 66,
+                "spelling": "F#",
+                "position": {
+                  "string": 2,
+                  "fret": 2
+                }
+              },
+              {
+                "midi": 69,
+                "spelling": "A",
+                "position": {
+                  "string": 3,
+                  "fret": 0
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              2,
+              6,
+              9
+            ],
+            "spellings": [
+              "D",
+              "F#",
+              "A"
+            ]
+          },
+          {
+            "id": "scarborough-fair-7-1",
+            "type": "note",
+            "midi": 62,
+            "spelling": "D",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 2
+            }
+          },
+          {
+            "id": "scarborough-fair-7-2",
+            "type": "note",
+            "midi": 66,
+            "spelling": "F#",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 2
+            }
+          },
+          {
+            "id": "scarborough-fair-7-3",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 2
+            }
+          },
+          {
+            "id": "scarborough-fair-7-4",
+            "type": "note",
+            "midi": 62,
+            "spelling": "D",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 2
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "scarborough-fair-8-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "Em",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 67,
+                "spelling": "G",
+                "position": {
+                  "string": 0,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 2,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 71,
+                "spelling": "B",
+                "position": {
+                  "string": 3,
+                  "fret": 2
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              4,
+              7,
+              11
+            ],
+            "spellings": [
+              "E",
+              "G",
+              "B"
+            ]
+          },
+          {
+            "id": "scarborough-fair-8-1",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.75,
+            "position": {
+              "string": 0,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-8-2",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.25,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "scarborough-fair-8-3",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-8-4",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "scarborough-fair-9-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "G",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 67,
+                "spelling": "G",
+                "position": {
+                  "string": 0,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 62,
+                "spelling": "D",
+                "position": {
+                  "string": 1,
+                  "fret": 2
+                }
+              },
+              {
+                "midi": 71,
+                "spelling": "B",
+                "position": {
+                  "string": 3,
+                  "fret": 2
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              7,
+              11,
+              2
+            ],
+            "spellings": [
+              "G",
+              "B",
+              "D"
+            ]
+          },
+          {
+            "id": "scarborough-fair-9-1",
+            "type": "note",
+            "midi": 62,
+            "spelling": "D",
+            "duration": 0.25,
+            "position": {
+              "string": 1,
+              "fret": 2
+            }
+          },
+          {
+            "id": "scarborough-fair-9-2",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.25,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "scarborough-fair-9-3",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-9-4",
+            "type": "note",
+            "midi": 62,
+            "spelling": "D",
+            "duration": 1,
+            "position": {
+              "string": 1,
+              "fret": 2
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "scarborough-fair-10-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "A",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 61,
+                "spelling": "C#",
+                "position": {
+                  "string": 1,
+                  "fret": 1
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 2,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 69,
+                "spelling": "A",
+                "position": {
+                  "string": 3,
+                  "fret": 0
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              9,
+              1,
+              4
+            ],
+            "spellings": [
+              "A",
+              "C#",
+              "E"
+            ]
+          },
+          {
+            "id": "scarborough-fair-10-1",
+            "type": "note",
+            "midi": 61,
+            "spelling": "C#",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 1
+            },
+            "articulation": "accent"
+          },
+          {
+            "id": "scarborough-fair-10-2",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-10-3",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-10-4",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "scarborough-fair-11-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "Em",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 67,
+                "spelling": "G",
+                "position": {
+                  "string": 0,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 2,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 71,
+                "spelling": "B",
+                "position": {
+                  "string": 3,
+                  "fret": 2
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              4,
+              7,
+              11
+            ],
+            "spellings": [
+              "E",
+              "G",
+              "B"
+            ]
+          },
+          {
+            "id": "scarborough-fair-11-1",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.75,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-11-2",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.25,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "scarborough-fair-11-3",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-11-4",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "scarborough-fair-12-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "Em",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 67,
+                "spelling": "G",
+                "position": {
+                  "string": 0,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 2,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 71,
+                "spelling": "B",
+                "position": {
+                  "string": 3,
+                  "fret": 2
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              4,
+              7,
+              11
+            ],
+            "spellings": [
+              "E",
+              "G",
+              "B"
+            ]
+          },
+          {
+            "id": "scarborough-fair-12-1",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.25,
+            "position": {
+              "string": 0,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-12-2",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.25,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "scarborough-fair-12-3",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-12-4",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 1,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "scarborough-fair-13-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "D",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 69,
+                "spelling": "A",
+                "position": {
+                  "string": 0,
+                  "fret": 2
+                }
+              },
+              {
+                "midi": 62,
+                "spelling": "D",
+                "position": {
+                  "string": 1,
+                  "fret": 2
+                }
+              },
+              {
+                "midi": 66,
+                "spelling": "F#",
+                "position": {
+                  "string": 2,
+                  "fret": 2
+                }
+              },
+              {
+                "midi": 69,
+                "spelling": "A",
+                "position": {
+                  "string": 3,
+                  "fret": 0
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              2,
+              6,
+              9
+            ],
+            "spellings": [
+              "D",
+              "F#",
+              "A"
+            ]
+          },
+          {
+            "id": "scarborough-fair-13-1",
+            "type": "note",
+            "midi": 62,
+            "spelling": "D",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 2
+            }
+          },
+          {
+            "id": "scarborough-fair-13-2",
+            "type": "note",
+            "midi": 66,
+            "spelling": "F#",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 2
+            }
+          },
+          {
+            "id": "scarborough-fair-13-3",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 2
+            }
+          },
+          {
+            "id": "scarborough-fair-13-4",
+            "type": "note",
+            "midi": 62,
+            "spelling": "D",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 2
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "scarborough-fair-14-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "A",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 61,
+                "spelling": "C#",
+                "position": {
+                  "string": 1,
+                  "fret": 1
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 2,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 69,
+                "spelling": "A",
+                "position": {
+                  "string": 3,
+                  "fret": 0
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              9,
+              1,
+              4
+            ],
+            "spellings": [
+              "A",
+              "C#",
+              "E"
+            ]
+          },
+          {
+            "id": "scarborough-fair-14-1",
+            "type": "note",
+            "midi": 61,
+            "spelling": "C#",
+            "duration": 0.75,
+            "position": {
+              "string": 1,
+              "fret": 1
+            },
+            "articulation": "accent"
+          },
+          {
+            "id": "scarborough-fair-14-2",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.25,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-14-3",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-14-4",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "scarborough-fair-15-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "Em",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 67,
+                "spelling": "G",
+                "position": {
+                  "string": 0,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 2,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 71,
+                "spelling": "B",
+                "position": {
+                  "string": 3,
+                  "fret": 2
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              4,
+              7,
+              11
+            ],
+            "spellings": [
+              "E",
+              "G",
+              "B"
+            ]
+          },
+          {
+            "id": "scarborough-fair-15-1",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.25,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-15-2",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.25,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "scarborough-fair-15-3",
+            "type": "note",
+            "midi": 67,
+            "spelling": "G",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 0
+            }
+          },
+          {
+            "id": "scarborough-fair-15-4",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 1,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
