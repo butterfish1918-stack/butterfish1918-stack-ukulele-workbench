@@ -31,6 +31,7 @@ export function validateCatalog(value) {
   throw Error('Unsupported song repository catalog');
  if(!text(value.name,120) || !Array.isArray(value.entries) || value.entries.length>MAX_ENTRIES)
   throw Error('Invalid repository name or number of arrangements');
+ if(value.repertoire!==undefined)validateRepertoire(value.repertoire);
  const ids=new Set(), files=new Set();
  for(const item of value.entries){
   if(!item||!slug(item.id)||!Number.isInteger(item.revision)||item.revision<1||!text(item.title,120)||!text(item.artist,120)
@@ -116,4 +117,43 @@ export function copyToSongbook(snapshot,arrangementId,existingSongs,{id,now=new 
   body:source.body,notes:source.notes,score:structuredClone(source.score),updated:now,
   repositoryOrigin:{id:source.id,revision:source.revision,catalogUrl:snapshot.catalogUrl}
  }];
+}
+
+/** A repertoire entry is a verified song request, not a copyrighted transcription.
+ * It has no notation score until an authorized arrangement is provided.
+ */
+export function validateRepertoire(entries){
+ if(!Array.isArray(entries)||entries.length>50)throw Error('Invalid repertoire list');
+ const ids=new Set();
+ for(const item of entries){
+  if(!item||!slug(item.id)||!text(item.title,120)||!text(item.artist,120)
+   ||!text(item.practiceFocus,200)||ids.has(item.id))throw Error('Invalid or duplicate repertoire item');
+  ids.add(item.id);
+ }
+ return true;
+}
+
+/** Idempotently add approved-song metadata as editable personal sketches.
+ * Importing a title never asserts that the app contains the original score.
+ */
+export function importApprovedRepertoire(catalog,existingSongs,{ids=null,now=new Date().toISOString()}={}){
+ validateCatalog(catalog);
+ if(!Array.isArray(existingSongs))throw Error('Invalid local Songbook');
+ const repertoire=catalog.repertoire??[];
+ const selected=ids===null?repertoire:repertoire.filter(item=>ids.includes(item.id));
+ const priorIds=new Set(existingSongs.filter(x=>x.repertoireOrigin?.id).map(x=>x.repertoireOrigin.id));
+ const usedIds=new Set(existingSongs.map(x=>x.id));
+ const additions=[];
+ for(const item of selected){
+  if(priorIds.has(item.id))continue;
+  let id='repertoire-'+item.id,suffix=2;
+  while(usedIds.has(id))id='repertoire-'+item.id+'-'+suffix++;
+  usedIds.add(id);
+  additions.push({
+   id,title:item.title,artist:item.artist,key:'',bpm:null,body:'',
+   notes:'Practice focus: '+item.practiceFocus+'\nNo notation or tablature has been imported. Add your own transcription or an appropriately licensed score in Score Studio.',
+   updated:now,repertoireOrigin:{id:item.id}
+  });
+ }
+ return [...existingSongs,...additions];
 }
