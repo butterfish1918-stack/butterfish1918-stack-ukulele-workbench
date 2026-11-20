@@ -21,7 +21,7 @@ const mockFetch=async (url) => {
 test('bundled starter collection is original, correctly referenced and score-valid',()=>{
  assert.equal(catalog.format,CATALOG_FORMAT);
  assert.equal(song0.format,ARRANGEMENT_FORMAT);
- assert.equal(catalog.entries.length,17);
+ assert.equal(catalog.entries.length,18);
  assert.equal(validateCatalog(catalog),true);
  assert.equal(validateArrangement(song0,catalog.entries[0],validateScore),true);
  assert.equal(validateArrangement(song1,catalog.entries[1],validateScore),true);
@@ -57,7 +57,7 @@ test('a song must match its manifest and have a valid notation score',()=>{
 test('all-or-nothing sync downloads a complete validated repository',async()=>{
  const snapshot=await downloadRepository({source:base,base:'https://example.org/',fetcher:mockFetch,validateScore});
  assert.equal(snapshot.catalogUrl,base);
- assert.equal(Object.keys(snapshot.songs).length,17);
+ assert.equal(Object.keys(snapshot.songs).length,18);
  assert.equal(validateSnapshot(snapshot,validateScore),true);
 });
 test('network failure or a tampered file rejects the entire sync',async()=>{
