@@ -53,6 +53,7 @@ export function validateArrangement(value,metadata,validateScore){
  if(!validBpm(value.bpm)||!text(value.key,20)||!text(value.description,1000)||typeof value.body!=='string'||value.body.length>10000
   ||typeof value.notes!=='string'||value.notes.length>10000||!value.score)throw Error('Invalid song content');
  validateScore(value.score);
+ if(value.tonalCenter!==undefined&&!text(value.tonalCenter,50))throw Error('Invalid tonal centre');
  if(value.score.tuning!==value.tuning||value.score.key!==value.key||value.score.tempo!==value.bpm)
   throw Error('Score tuning, key or tempo does not match arrangement metadata');
  return true;
@@ -113,7 +114,7 @@ export function copyToSongbook(snapshot,arrangementId,existingSongs,{id,now=new 
  if(!source)throw Error('Arrangement not found');
  if(!text(id,120)||existingSongs.some(x=>x.id===id))throw Error('Choose a unique local song ID');
  return [...existingSongs,{
-  id,title:source.title,artist:source.artist,key:source.key,bpm:source.bpm,
+  id,title:source.title,artist:source.artist,key:source.tonalCenter??source.key,bpm:source.bpm,
   body:source.body,notes:source.notes,score:structuredClone(source.score),updated:now,
   repositoryOrigin:{id:source.id,revision:source.revision,catalogUrl:snapshot.catalogUrl}
  }];
