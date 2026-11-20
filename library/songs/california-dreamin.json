@@ -1,0 +1,1837 @@
+{
+  "format": "ukulele-workbench-arrangement",
+  "schemaVersion": 1,
+  "id": "california-dreamin",
+  "revision": 1,
+  "title": "California Dreamin' — Harmony & Technique Study",
+  "artist": "The Mamas & the Papas",
+  "difficulty": "advanced",
+  "tags": [
+    "advanced-repertoire",
+    "original-study",
+    "notation",
+    "minor-harmony"
+  ],
+  "key": "E",
+  "tonalCenter": "C# minor",
+  "bpm": 116,
+  "tuning": "highG",
+  "description": "An original 16-measure ukulele harmony and technique study associated with “California Dreamin'”. Not a transcription of its melody, bass riff, lyrics, studio arrangement or original timing. Uses harmonic vocabulary in the song’s concert key; this is a practice tempo.",
+  "body": "Study harmony by measure (not a full song chart): [C#m] | [B] | [A] | [E] | [C#m] | [B] | [A] | [G#7] | [C#m] | [B] | [A] | [E] | [F#m] | [G#7] | [C#m] | [C#m]",
+  "notes": "Original tonal centre: C# minor. Standard high-G GCEA, no capo. Staff and optional tablature show exact playable fret positions. Concert-pitch C-sharp minor, chromatic dominant and flute-register articulation. The notated chord/arpeggio figure is newly composed and does not reproduce the recording's melody or signature riffs. Scores may use the relative major’s key signature to notate minor/modal centres.",
+  "score": {
+    "schema": 1,
+    "id": "repertoire-study-california-dreamin",
+    "title": "California Dreamin' — Original harmonic study",
+    "tuning": "highG",
+    "meter": "4/4",
+    "key": "E",
+    "tempo": 116,
+    "measures": [
+      {
+        "events": [
+          {
+            "id": "california-dreamin-0-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "C#m",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 68,
+                "spelling": "G#",
+                "position": {
+                  "string": 0,
+                  "fret": 1
+                }
+              },
+              {
+                "midi": 61,
+                "spelling": "C#",
+                "position": {
+                  "string": 1,
+                  "fret": 1
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 2,
+                  "fret": 0
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              1,
+              4,
+              8
+            ],
+            "spellings": [
+              "C#",
+              "E",
+              "G#"
+            ]
+          },
+          {
+            "id": "california-dreamin-0-1",
+            "type": "note",
+            "midi": 68,
+            "spelling": "G#",
+            "duration": 1,
+            "position": {
+              "string": 0,
+              "fret": 1
+            }
+          },
+          {
+            "id": "california-dreamin-0-2",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "california-dreamin-0-3",
+            "type": "note",
+            "midi": 61,
+            "spelling": "C#",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 1
+            }
+          },
+          {
+            "id": "california-dreamin-0-4",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "california-dreamin-0-5",
+            "type": "note",
+            "midi": 68,
+            "spelling": "G#",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 1
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "california-dreamin-1-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "B",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 63,
+                "spelling": "D#",
+                "position": {
+                  "string": 1,
+                  "fret": 3
+                }
+              },
+              {
+                "midi": 66,
+                "spelling": "F#",
+                "position": {
+                  "string": 2,
+                  "fret": 2
+                }
+              },
+              {
+                "midi": 71,
+                "spelling": "B",
+                "position": {
+                  "string": 3,
+                  "fret": 2
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              11,
+              3,
+              6
+            ],
+            "spellings": [
+              "B",
+              "D#",
+              "F#"
+            ]
+          },
+          {
+            "id": "california-dreamin-1-1",
+            "type": "note",
+            "midi": 66,
+            "spelling": "F#",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 2
+            }
+          },
+          {
+            "id": "california-dreamin-1-2",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "california-dreamin-1-3",
+            "type": "note",
+            "midi": 63,
+            "spelling": "D#",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 3
+            }
+          },
+          {
+            "id": "california-dreamin-1-4",
+            "type": "note",
+            "midi": 66,
+            "spelling": "F#",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 2
+            }
+          },
+          {
+            "id": "california-dreamin-1-5",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "california-dreamin-1-6",
+            "type": "note",
+            "midi": 63,
+            "spelling": "D#",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 3
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "california-dreamin-2-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "A",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 61,
+                "spelling": "C#",
+                "position": {
+                  "string": 1,
+                  "fret": 1
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 2,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 69,
+                "spelling": "A",
+                "position": {
+                  "string": 3,
+                  "fret": 0
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              9,
+              1,
+              4
+            ],
+            "spellings": [
+              "A",
+              "C#",
+              "E"
+            ]
+          },
+          {
+            "id": "california-dreamin-2-1",
+            "type": "note",
+            "midi": 61,
+            "spelling": "C#",
+            "duration": 0.75,
+            "position": {
+              "string": 1,
+              "fret": 1
+            },
+            "articulation": "accent"
+          },
+          {
+            "id": "california-dreamin-2-2",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.25,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "california-dreamin-2-3",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "california-dreamin-2-4",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "california-dreamin-2-5",
+            "type": "note",
+            "midi": 61,
+            "spelling": "C#",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 1
+            }
+          },
+          {
+            "id": "california-dreamin-2-6",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "california-dreamin-3-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "E",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 71,
+                "spelling": "B",
+                "position": {
+                  "string": 0,
+                  "fret": 4
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 1,
+                  "fret": 4
+                }
+              },
+              {
+                "midi": 68,
+                "spelling": "G#",
+                "position": {
+                  "string": 2,
+                  "fret": 4
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              4,
+              8,
+              11
+            ],
+            "spellings": [
+              "E",
+              "G#",
+              "B"
+            ]
+          },
+          {
+            "id": "california-dreamin-3-1",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.25,
+            "position": {
+              "string": 1,
+              "fret": 4
+            }
+          },
+          {
+            "id": "california-dreamin-3-2",
+            "type": "note",
+            "midi": 68,
+            "spelling": "G#",
+            "duration": 0.25,
+            "position": {
+              "string": 2,
+              "fret": 4
+            }
+          },
+          {
+            "id": "california-dreamin-3-3",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 4
+            }
+          },
+          {
+            "id": "california-dreamin-3-4",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.75,
+            "position": {
+              "string": 1,
+              "fret": 4
+            }
+          },
+          {
+            "id": "california-dreamin-3-5",
+            "type": "note",
+            "midi": 68,
+            "spelling": "G#",
+            "duration": 0.25,
+            "position": {
+              "string": 2,
+              "fret": 4
+            }
+          },
+          {
+            "id": "california-dreamin-3-6",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 4
+            }
+          },
+          {
+            "id": "california-dreamin-3-7",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 4
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "california-dreamin-4-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "C#m",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 68,
+                "spelling": "G#",
+                "position": {
+                  "string": 0,
+                  "fret": 1
+                }
+              },
+              {
+                "midi": 61,
+                "spelling": "C#",
+                "position": {
+                  "string": 1,
+                  "fret": 1
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 2,
+                  "fret": 0
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              1,
+              4,
+              8
+            ],
+            "spellings": [
+              "C#",
+              "E",
+              "G#"
+            ]
+          },
+          {
+            "id": "california-dreamin-4-1",
+            "type": "note",
+            "midi": 68,
+            "spelling": "G#",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 1
+            }
+          },
+          {
+            "id": "california-dreamin-4-2",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "california-dreamin-4-3",
+            "type": "note",
+            "midi": 61,
+            "spelling": "C#",
+            "duration": 1,
+            "position": {
+              "string": 1,
+              "fret": 1
+            }
+          },
+          {
+            "id": "california-dreamin-4-4",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "california-dreamin-4-5",
+            "type": "note",
+            "midi": 68,
+            "spelling": "G#",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 1
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "california-dreamin-5-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "B",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 63,
+                "spelling": "D#",
+                "position": {
+                  "string": 1,
+                  "fret": 3
+                }
+              },
+              {
+                "midi": 66,
+                "spelling": "F#",
+                "position": {
+                  "string": 2,
+                  "fret": 2
+                }
+              },
+              {
+                "midi": 71,
+                "spelling": "B",
+                "position": {
+                  "string": 3,
+                  "fret": 2
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              11,
+              3,
+              6
+            ],
+            "spellings": [
+              "B",
+              "D#",
+              "F#"
+            ]
+          },
+          {
+            "id": "california-dreamin-5-1",
+            "type": "note",
+            "midi": 66,
+            "spelling": "F#",
+            "duration": 1,
+            "position": {
+              "string": 2,
+              "fret": 2
+            }
+          },
+          {
+            "id": "california-dreamin-5-2",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "california-dreamin-5-3",
+            "type": "note",
+            "midi": 63,
+            "spelling": "D#",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 3
+            }
+          },
+          {
+            "id": "california-dreamin-5-4",
+            "type": "note",
+            "midi": 66,
+            "spelling": "F#",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 2
+            }
+          },
+          {
+            "id": "california-dreamin-5-5",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "california-dreamin-6-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "A",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 61,
+                "spelling": "C#",
+                "position": {
+                  "string": 1,
+                  "fret": 1
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 2,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 69,
+                "spelling": "A",
+                "position": {
+                  "string": 3,
+                  "fret": 0
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              9,
+              1,
+              4
+            ],
+            "spellings": [
+              "A",
+              "C#",
+              "E"
+            ]
+          },
+          {
+            "id": "california-dreamin-6-1",
+            "type": "note",
+            "midi": 61,
+            "spelling": "C#",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 1
+            },
+            "articulation": "accent"
+          },
+          {
+            "id": "california-dreamin-6-2",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "california-dreamin-6-3",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "california-dreamin-6-4",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "california-dreamin-6-5",
+            "type": "note",
+            "midi": 61,
+            "spelling": "C#",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 1
+            }
+          },
+          {
+            "id": "california-dreamin-6-6",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "california-dreamin-7-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "G#7",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 75,
+                "spelling": "D#",
+                "position": {
+                  "string": 0,
+                  "fret": 8
+                }
+              },
+              {
+                "midi": 68,
+                "spelling": "G#",
+                "position": {
+                  "string": 1,
+                  "fret": 8
+                }
+              },
+              {
+                "midi": 72,
+                "spelling": "B#",
+                "position": {
+                  "string": 2,
+                  "fret": 8
+                }
+              },
+              {
+                "midi": 78,
+                "spelling": "F#",
+                "position": {
+                  "string": 3,
+                  "fret": 9
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              8,
+              0,
+              3,
+              6
+            ],
+            "spellings": [
+              "G#",
+              "B#",
+              "D#",
+              "F#"
+            ]
+          },
+          {
+            "id": "california-dreamin-7-1",
+            "type": "note",
+            "midi": 68,
+            "spelling": "G#",
+            "duration": 0.75,
+            "position": {
+              "string": 1,
+              "fret": 8
+            }
+          },
+          {
+            "id": "california-dreamin-7-2",
+            "type": "note",
+            "midi": 72,
+            "spelling": "B#",
+            "duration": 0.25,
+            "position": {
+              "string": 2,
+              "fret": 8
+            }
+          },
+          {
+            "id": "california-dreamin-7-3",
+            "type": "note",
+            "midi": 75,
+            "spelling": "D#",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 8
+            }
+          },
+          {
+            "id": "california-dreamin-7-4",
+            "type": "note",
+            "midi": 68,
+            "spelling": "G#",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 8
+            }
+          },
+          {
+            "id": "california-dreamin-7-5",
+            "type": "note",
+            "midi": 72,
+            "spelling": "B#",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 8
+            }
+          },
+          {
+            "id": "california-dreamin-7-6",
+            "type": "note",
+            "midi": 75,
+            "spelling": "D#",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 8
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "california-dreamin-8-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "C#m",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 68,
+                "spelling": "G#",
+                "position": {
+                  "string": 0,
+                  "fret": 1
+                }
+              },
+              {
+                "midi": 61,
+                "spelling": "C#",
+                "position": {
+                  "string": 1,
+                  "fret": 1
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 2,
+                  "fret": 0
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              1,
+              4,
+              8
+            ],
+            "spellings": [
+              "C#",
+              "E",
+              "G#"
+            ]
+          },
+          {
+            "id": "california-dreamin-8-1",
+            "type": "note",
+            "midi": 68,
+            "spelling": "G#",
+            "duration": 0.25,
+            "position": {
+              "string": 0,
+              "fret": 1
+            }
+          },
+          {
+            "id": "california-dreamin-8-2",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.25,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "california-dreamin-8-3",
+            "type": "note",
+            "midi": 61,
+            "spelling": "C#",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 1
+            }
+          },
+          {
+            "id": "california-dreamin-8-4",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.75,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "california-dreamin-8-5",
+            "type": "note",
+            "midi": 68,
+            "spelling": "G#",
+            "duration": 0.25,
+            "position": {
+              "string": 0,
+              "fret": 1
+            }
+          },
+          {
+            "id": "california-dreamin-8-6",
+            "type": "note",
+            "midi": 61,
+            "spelling": "C#",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 1
+            }
+          },
+          {
+            "id": "california-dreamin-8-7",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "california-dreamin-9-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "B",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 63,
+                "spelling": "D#",
+                "position": {
+                  "string": 1,
+                  "fret": 3
+                }
+              },
+              {
+                "midi": 66,
+                "spelling": "F#",
+                "position": {
+                  "string": 2,
+                  "fret": 2
+                }
+              },
+              {
+                "midi": 71,
+                "spelling": "B",
+                "position": {
+                  "string": 3,
+                  "fret": 2
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              11,
+              3,
+              6
+            ],
+            "spellings": [
+              "B",
+              "D#",
+              "F#"
+            ]
+          },
+          {
+            "id": "california-dreamin-9-1",
+            "type": "note",
+            "midi": 66,
+            "spelling": "F#",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 2
+            }
+          },
+          {
+            "id": "california-dreamin-9-2",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          },
+          {
+            "id": "california-dreamin-9-3",
+            "type": "note",
+            "midi": 63,
+            "spelling": "D#",
+            "duration": 1,
+            "position": {
+              "string": 1,
+              "fret": 3
+            }
+          },
+          {
+            "id": "california-dreamin-9-4",
+            "type": "note",
+            "midi": 66,
+            "spelling": "F#",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 2
+            }
+          },
+          {
+            "id": "california-dreamin-9-5",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 2
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "california-dreamin-10-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "A",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 61,
+                "spelling": "C#",
+                "position": {
+                  "string": 1,
+                  "fret": 1
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 2,
+                  "fret": 0
+                }
+              },
+              {
+                "midi": 69,
+                "spelling": "A",
+                "position": {
+                  "string": 3,
+                  "fret": 0
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              9,
+              1,
+              4
+            ],
+            "spellings": [
+              "A",
+              "C#",
+              "E"
+            ]
+          },
+          {
+            "id": "california-dreamin-10-1",
+            "type": "note",
+            "midi": 61,
+            "spelling": "C#",
+            "duration": 1,
+            "position": {
+              "string": 1,
+              "fret": 1
+            },
+            "articulation": "accent"
+          },
+          {
+            "id": "california-dreamin-10-2",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "california-dreamin-10-3",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "california-dreamin-10-4",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "california-dreamin-10-5",
+            "type": "note",
+            "midi": 61,
+            "spelling": "C#",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 1
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "california-dreamin-11-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "E",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 71,
+                "spelling": "B",
+                "position": {
+                  "string": 0,
+                  "fret": 4
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 1,
+                  "fret": 4
+                }
+              },
+              {
+                "midi": 68,
+                "spelling": "G#",
+                "position": {
+                  "string": 2,
+                  "fret": 4
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              4,
+              8,
+              11
+            ],
+            "spellings": [
+              "E",
+              "G#",
+              "B"
+            ]
+          },
+          {
+            "id": "california-dreamin-11-1",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 4
+            }
+          },
+          {
+            "id": "california-dreamin-11-2",
+            "type": "note",
+            "midi": 68,
+            "spelling": "G#",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 4
+            }
+          },
+          {
+            "id": "california-dreamin-11-3",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 4
+            }
+          },
+          {
+            "id": "california-dreamin-11-4",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 4
+            }
+          },
+          {
+            "id": "california-dreamin-11-5",
+            "type": "note",
+            "midi": 68,
+            "spelling": "G#",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 4
+            }
+          },
+          {
+            "id": "california-dreamin-11-6",
+            "type": "note",
+            "midi": 71,
+            "spelling": "B",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 4
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "california-dreamin-12-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "F#m",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 73,
+                "spelling": "C#",
+                "position": {
+                  "string": 0,
+                  "fret": 6
+                }
+              },
+              {
+                "midi": 66,
+                "spelling": "F#",
+                "position": {
+                  "string": 1,
+                  "fret": 6
+                }
+              },
+              {
+                "midi": 69,
+                "spelling": "A",
+                "position": {
+                  "string": 3,
+                  "fret": 0
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              6,
+              9,
+              1
+            ],
+            "spellings": [
+              "F#",
+              "A",
+              "C#"
+            ]
+          },
+          {
+            "id": "california-dreamin-12-1",
+            "type": "note",
+            "midi": 73,
+            "spelling": "C#",
+            "duration": 0.75,
+            "position": {
+              "string": 0,
+              "fret": 6
+            }
+          },
+          {
+            "id": "california-dreamin-12-2",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.25,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "california-dreamin-12-3",
+            "type": "note",
+            "midi": 66,
+            "spelling": "F#",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 6
+            }
+          },
+          {
+            "id": "california-dreamin-12-4",
+            "type": "note",
+            "midi": 69,
+            "spelling": "A",
+            "duration": 0.5,
+            "position": {
+              "string": 3,
+              "fret": 0
+            }
+          },
+          {
+            "id": "california-dreamin-12-5",
+            "type": "note",
+            "midi": 73,
+            "spelling": "C#",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 6
+            }
+          },
+          {
+            "id": "california-dreamin-12-6",
+            "type": "note",
+            "midi": 66,
+            "spelling": "F#",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 6
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "california-dreamin-13-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "G#7",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 75,
+                "spelling": "D#",
+                "position": {
+                  "string": 0,
+                  "fret": 8
+                }
+              },
+              {
+                "midi": 68,
+                "spelling": "G#",
+                "position": {
+                  "string": 1,
+                  "fret": 8
+                }
+              },
+              {
+                "midi": 72,
+                "spelling": "B#",
+                "position": {
+                  "string": 2,
+                  "fret": 8
+                }
+              },
+              {
+                "midi": 78,
+                "spelling": "F#",
+                "position": {
+                  "string": 3,
+                  "fret": 9
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              8,
+              0,
+              3,
+              6
+            ],
+            "spellings": [
+              "G#",
+              "B#",
+              "D#",
+              "F#"
+            ]
+          },
+          {
+            "id": "california-dreamin-13-1",
+            "type": "note",
+            "midi": 68,
+            "spelling": "G#",
+            "duration": 0.25,
+            "position": {
+              "string": 1,
+              "fret": 8
+            }
+          },
+          {
+            "id": "california-dreamin-13-2",
+            "type": "note",
+            "midi": 72,
+            "spelling": "B#",
+            "duration": 0.25,
+            "position": {
+              "string": 2,
+              "fret": 8
+            }
+          },
+          {
+            "id": "california-dreamin-13-3",
+            "type": "note",
+            "midi": 75,
+            "spelling": "D#",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 8
+            }
+          },
+          {
+            "id": "california-dreamin-13-4",
+            "type": "note",
+            "midi": 68,
+            "spelling": "G#",
+            "duration": 0.75,
+            "position": {
+              "string": 1,
+              "fret": 8
+            }
+          },
+          {
+            "id": "california-dreamin-13-5",
+            "type": "note",
+            "midi": 72,
+            "spelling": "B#",
+            "duration": 0.25,
+            "position": {
+              "string": 2,
+              "fret": 8
+            }
+          },
+          {
+            "id": "california-dreamin-13-6",
+            "type": "note",
+            "midi": 75,
+            "spelling": "D#",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 8
+            }
+          },
+          {
+            "id": "california-dreamin-13-7",
+            "type": "note",
+            "midi": 68,
+            "spelling": "G#",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 8
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "california-dreamin-14-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "C#m",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 68,
+                "spelling": "G#",
+                "position": {
+                  "string": 0,
+                  "fret": 1
+                }
+              },
+              {
+                "midi": 61,
+                "spelling": "C#",
+                "position": {
+                  "string": 1,
+                  "fret": 1
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 2,
+                  "fret": 0
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              1,
+              4,
+              8
+            ],
+            "spellings": [
+              "C#",
+              "E",
+              "G#"
+            ]
+          },
+          {
+            "id": "california-dreamin-14-1",
+            "type": "note",
+            "midi": 68,
+            "spelling": "G#",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 1
+            },
+            "articulation": "accent"
+          },
+          {
+            "id": "california-dreamin-14-2",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "california-dreamin-14-3",
+            "type": "note",
+            "midi": 61,
+            "spelling": "C#",
+            "duration": 1,
+            "position": {
+              "string": 1,
+              "fret": 1
+            }
+          },
+          {
+            "id": "california-dreamin-14-4",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "california-dreamin-14-5",
+            "type": "note",
+            "midi": 68,
+            "spelling": "G#",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 1
+            }
+          }
+        ]
+      },
+      {
+        "events": [
+          {
+            "id": "california-dreamin-15-0",
+            "type": "chord",
+            "duration": 1,
+            "symbol": "C#m",
+            "stroke": "down",
+            "notes": [
+              {
+                "midi": 68,
+                "spelling": "G#",
+                "position": {
+                  "string": 0,
+                  "fret": 1
+                }
+              },
+              {
+                "midi": 61,
+                "spelling": "C#",
+                "position": {
+                  "string": 1,
+                  "fret": 1
+                }
+              },
+              {
+                "midi": 64,
+                "spelling": "E",
+                "position": {
+                  "string": 2,
+                  "fret": 0
+                }
+              }
+            ],
+            "voicing": "generated",
+            "pcs": [
+              1,
+              4,
+              8
+            ],
+            "spellings": [
+              "C#",
+              "E",
+              "G#"
+            ]
+          },
+          {
+            "id": "california-dreamin-15-1",
+            "type": "note",
+            "midi": 61,
+            "spelling": "C#",
+            "duration": 1,
+            "position": {
+              "string": 1,
+              "fret": 1
+            }
+          },
+          {
+            "id": "california-dreamin-15-2",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          },
+          {
+            "id": "california-dreamin-15-3",
+            "type": "note",
+            "midi": 68,
+            "spelling": "G#",
+            "duration": 0.5,
+            "position": {
+              "string": 0,
+              "fret": 1
+            }
+          },
+          {
+            "id": "california-dreamin-15-4",
+            "type": "note",
+            "midi": 61,
+            "spelling": "C#",
+            "duration": 0.5,
+            "position": {
+              "string": 1,
+              "fret": 1
+            }
+          },
+          {
+            "id": "california-dreamin-15-5",
+            "type": "note",
+            "midi": 64,
+            "spelling": "E",
+            "duration": 0.5,
+            "position": {
+              "string": 2,
+              "fret": 0
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
