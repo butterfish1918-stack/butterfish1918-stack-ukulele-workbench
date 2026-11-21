@@ -49,7 +49,7 @@ function rhythmicRecipe(style,beats){
   return ['c','n','n'];
  }
  if(beats===3){
-  if(style==='compound-drive')return ['c','c','c','c','c','c'];
+  if(style==='compound-drive')return ['c','c','n','c','c','n'];
   if(style==='compound-picked')return ['n','n','n','n','n','n'];
   return ['c','n','n','c','n','n'];
  }
