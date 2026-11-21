@@ -323,7 +323,7 @@
         {
           "name": "Introduction",
           "style": "skank",
-          "repeat": 2,
+          "repeat": 1,
           "bars": [
             [
               "Am"
@@ -335,7 +335,9 @@
               "C"
             ],
             [
-              "G",
+              "G"
+            ],
+            [
               "Am"
             ],
             [
@@ -352,7 +354,7 @@
         {
           "name": "Verse 1",
           "style": "skank",
-          "repeat": 3,
+          "repeat": 2,
           "bars": [
             [
               "Am"
@@ -364,7 +366,9 @@
               "C"
             ],
             [
-              "G",
+              "G"
+            ],
+            [
               "Am"
             ],
             [
@@ -381,7 +385,7 @@
         {
           "name": "Refrain 1",
           "style": "drive",
-          "repeat": 2,
+          "repeat": 1,
           "bars": [
             [
               "Am"
@@ -393,7 +397,9 @@
               "C"
             ],
             [
-              "G",
+              "G"
+            ],
+            [
               "Am"
             ],
             [
@@ -410,7 +416,7 @@
         {
           "name": "Verse 2",
           "style": "skank",
-          "repeat": 3,
+          "repeat": 2,
           "bars": [
             [
               "Am"
@@ -422,7 +428,9 @@
               "C"
             ],
             [
-              "G",
+              "G"
+            ],
+            [
               "Am"
             ],
             [
@@ -439,7 +447,7 @@
         {
           "name": "Refrain 2",
           "style": "drive",
-          "repeat": 2,
+          "repeat": 1,
           "bars": [
             [
               "Am"
@@ -451,7 +459,9 @@
               "C"
             ],
             [
-              "G",
+              "G"
+            ],
+            [
               "Am"
             ],
             [
@@ -468,7 +478,7 @@
         {
           "name": "Bridge",
           "style": "strum",
-          "repeat": 2,
+          "repeat": 1,
           "bars": [
             [
               "Am"
@@ -499,7 +509,7 @@
         {
           "name": "Final refrain",
           "style": "drive",
-          "repeat": 2,
+          "repeat": 1,
           "bars": [
             [
               "Am"
@@ -511,7 +521,9 @@
               "C"
             ],
             [
-              "G",
+              "G"
+            ],
+            [
               "Am"
             ],
             [
@@ -1672,7 +1684,7 @@
         {
           "name": "Introduction",
           "style": "picked",
-          "repeat": 2,
+          "repeat": 1,
           "bars": [
             [
               "Am"
@@ -1734,7 +1746,7 @@
         {
           "name": "Verse 2",
           "style": "picked",
-          "repeat": 2,
+          "repeat": 1,
           "bars": [
             [
               "Am"
@@ -1827,7 +1839,7 @@
         {
           "name": "Instrumental",
           "style": "piano",
-          "repeat": 2,
+          "repeat": 1,
           "bars": [
             [
               "Am"
@@ -1858,7 +1870,7 @@
         {
           "name": "Final verse",
           "style": "picked",
-          "repeat": 2,
+          "repeat": 1,
           "bars": [
             [
               "Am"
@@ -2071,7 +2083,7 @@
         {
           "name": "Acoustic introduction",
           "style": "finger",
-          "repeat": 2,
+          "repeat": 1,
           "bars": [
             [
               "Am"
@@ -2096,7 +2108,7 @@
         {
           "name": "Verse 1",
           "style": "finger",
-          "repeat": 3,
+          "repeat": 2,
           "bars": [
             [
               "Am"
@@ -2143,7 +2155,7 @@
         {
           "name": "Verse 2",
           "style": "finger",
-          "repeat": 3,
+          "repeat": 2,
           "bars": [
             [
               "Am"
@@ -2190,7 +2202,7 @@
         {
           "name": "Verse 3",
           "style": "finger",
-          "repeat": 3,
+          "repeat": 2,
           "bars": [
             [
               "Am"
@@ -2264,10 +2276,10 @@
     {
       "id": "everybody-wants-to-rule-the-world",
       "key": "D",
-      "centre": "D major (concert pitch slightly sharp on recording)",
-      "bpm": 112,
+      "centre": "D major (recording slightly sharp)",
+      "bpm": 168,
       "meter": "6/8",
-      "tech": "Two 6/8 bars represent one original 12/8 bar; sustained Dmaj7–G harmonic shuttle, shuffle subdivisions.",
+      "tech": "One notated 6/8 measure is half an original 12/8 bar. Playback quarter-note tempo 168 approximates dotted-quarter pulse 112 BPM. Dmaj7–G shuttle and shuffle subdivisions.",
       "source": "https://freebasstranscriptions.com/transcriptions/tears-for-fears-everybody-wants-to-rule-the-world/",
       "sections": [
         {
@@ -2474,7 +2486,7 @@
         {
           "name": "Verse 1",
           "style": "strum",
-          "repeat": 3,
+          "repeat": 2,
           "bars": [
             [
               "C#m"
@@ -2524,7 +2536,7 @@
         {
           "name": "Verse 2",
           "style": "strum",
-          "repeat": 3,
+          "repeat": 2,
           "bars": [
             [
               "C#m"
@@ -2549,7 +2561,7 @@
         {
           "name": "Instrumental space",
           "style": "picked",
-          "repeat": 2,
+          "repeat": 1,
           "bars": [
             [
               "C#m"
@@ -2574,7 +2586,7 @@
         {
           "name": "Refrain 2",
           "style": "drive",
-          "repeat": 2,
+          "repeat": 1,
           "bars": [
             [
               "C#m"
