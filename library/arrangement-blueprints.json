@@ -1,0 +1,2624 @@
+{
+  "schemaVersion": 1,
+  "description": "Verified harmonic/song-section references used to build adapted high-G ukulele accompaniment. Not licensed song transcriptions or exact guitar riffs.",
+  "tracks": [
+    {
+      "id": "isolation",
+      "key": "C",
+      "centre": "C major (G-centred harmony)",
+      "bpm": 148,
+      "meter": "4/4",
+      "tech": "Synth/bass-derived syncopation; clipped G–F ostinato; deliberately bright chromatic chorus.",
+      "source": "https://en.wikipedia.org/wiki/Isolation_(Joy_Division_song)",
+      "sections": [
+        {
+          "name": "Intro",
+          "style": "ostinato",
+          "repeat": 2,
+          "bars": [
+            [
+              "G"
+            ],
+            [
+              "F"
+            ],
+            [
+              "G"
+            ],
+            [
+              "G"
+            ]
+          ]
+        },
+        {
+          "name": "Verse A",
+          "style": "sync",
+          "repeat": 3,
+          "bars": [
+            [
+              "G"
+            ],
+            [
+              "F"
+            ],
+            [
+              "G"
+            ],
+            [
+              "G"
+            ]
+          ]
+        },
+        {
+          "name": "Chorus A",
+          "style": "drive",
+          "repeat": 2,
+          "bars": [
+            [
+              "B"
+            ],
+            [
+              "A"
+            ],
+            [
+              "G"
+            ],
+            [
+              "F"
+            ],
+            [
+              "G"
+            ]
+          ]
+        },
+        {
+          "name": "Verse B",
+          "style": "sync",
+          "repeat": 3,
+          "bars": [
+            [
+              "G"
+            ],
+            [
+              "F"
+            ],
+            [
+              "G"
+            ],
+            [
+              "G"
+            ]
+          ]
+        },
+        {
+          "name": "Chorus B",
+          "style": "drive",
+          "repeat": 2,
+          "bars": [
+            [
+              "B"
+            ],
+            [
+              "A"
+            ],
+            [
+              "G"
+            ],
+            [
+              "F"
+            ],
+            [
+              "G"
+            ]
+          ]
+        },
+        {
+          "name": "Coda",
+          "style": "ostinato",
+          "repeat": 1,
+          "bars": [
+            [
+              "G"
+            ],
+            [
+              "F"
+            ],
+            [
+              "G"
+            ],
+            [
+              "G"
+            ],
+            [
+              "G"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "love-will-tear-us-apart",
+      "key": "D",
+      "centre": "D major",
+      "bpm": 147,
+      "meter": "4/4",
+      "tech": "Brisk down-up groove with Em–Dsus4 colour and clear Bm–A resolution.",
+      "source": "https://ukutabs.com/j/joy-division/love-will-tear-us-apart/",
+      "sections": [
+        {
+          "name": "Introduction",
+          "style": "drive",
+          "repeat": 2,
+          "bars": [
+            [
+              "Em"
+            ],
+            [
+              "Dsus4"
+            ],
+            [
+              "Bm"
+            ],
+            [
+              "A"
+            ]
+          ]
+        },
+        {
+          "name": "Verse 1",
+          "style": "drive",
+          "repeat": 2,
+          "bars": [
+            [
+              "Em"
+            ],
+            [
+              "Dsus4"
+            ],
+            [
+              "Bm"
+            ],
+            [
+              "A"
+            ]
+          ]
+        },
+        {
+          "name": "Chorus 1",
+          "style": "strum",
+          "repeat": 2,
+          "bars": [
+            [
+              "Em"
+            ],
+            [
+              "Dsus4"
+            ],
+            [
+              "D"
+            ],
+            [
+              "Bm"
+            ],
+            [
+              "A"
+            ]
+          ]
+        },
+        {
+          "name": "Verse 2",
+          "style": "drive",
+          "repeat": 2,
+          "bars": [
+            [
+              "Em"
+            ],
+            [
+              "Dsus4"
+            ],
+            [
+              "Bm"
+            ],
+            [
+              "A"
+            ]
+          ]
+        },
+        {
+          "name": "Chorus 2",
+          "style": "strum",
+          "repeat": 2,
+          "bars": [
+            [
+              "Em"
+            ],
+            [
+              "Dsus4"
+            ],
+            [
+              "D"
+            ],
+            [
+              "Bm"
+            ],
+            [
+              "A"
+            ]
+          ]
+        },
+        {
+          "name": "Middle passage",
+          "style": "pulse",
+          "repeat": 1,
+          "bars": [
+            [
+              "A"
+            ],
+            [
+              "Em"
+            ],
+            [
+              "D"
+            ],
+            [
+              "Dsus4"
+            ]
+          ]
+        },
+        {
+          "name": "Final chorus",
+          "style": "strum",
+          "repeat": 2,
+          "bars": [
+            [
+              "Em"
+            ],
+            [
+              "Dsus4"
+            ],
+            [
+              "D"
+            ],
+            [
+              "Bm"
+            ],
+            [
+              "A"
+            ]
+          ]
+        },
+        {
+          "name": "Outro",
+          "style": "drive",
+          "repeat": 1,
+          "bars": [
+            [
+              "Em"
+            ],
+            [
+              "Dsus4"
+            ],
+            [
+              "D"
+            ],
+            [
+              "Bm"
+            ],
+            [
+              "A"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "the-passenger",
+      "key": "C",
+      "centre": "A minor",
+      "bpm": 135,
+      "meter": "4/4",
+      "tech": "Muted beats and dry off-beat chord attacks; alternation of G and E at the cycle ending.",
+      "source": "https://uketunes.wordpress.com/2019/01/20/the-passenger-iggy-pop/",
+      "sections": [
+        {
+          "name": "Introduction",
+          "style": "skank",
+          "repeat": 2,
+          "bars": [
+            [
+              "Am"
+            ],
+            [
+              "F"
+            ],
+            [
+              "C"
+            ],
+            [
+              "G",
+              "Am"
+            ],
+            [
+              "F"
+            ],
+            [
+              "C"
+            ],
+            [
+              "E"
+            ]
+          ]
+        },
+        {
+          "name": "Verse 1",
+          "style": "skank",
+          "repeat": 3,
+          "bars": [
+            [
+              "Am"
+            ],
+            [
+              "F"
+            ],
+            [
+              "C"
+            ],
+            [
+              "G",
+              "Am"
+            ],
+            [
+              "F"
+            ],
+            [
+              "C"
+            ],
+            [
+              "E"
+            ]
+          ]
+        },
+        {
+          "name": "Refrain 1",
+          "style": "drive",
+          "repeat": 2,
+          "bars": [
+            [
+              "Am"
+            ],
+            [
+              "F"
+            ],
+            [
+              "C"
+            ],
+            [
+              "G",
+              "Am"
+            ],
+            [
+              "F"
+            ],
+            [
+              "C"
+            ],
+            [
+              "E"
+            ]
+          ]
+        },
+        {
+          "name": "Verse 2",
+          "style": "skank",
+          "repeat": 3,
+          "bars": [
+            [
+              "Am"
+            ],
+            [
+              "F"
+            ],
+            [
+              "C"
+            ],
+            [
+              "G",
+              "Am"
+            ],
+            [
+              "F"
+            ],
+            [
+              "C"
+            ],
+            [
+              "E"
+            ]
+          ]
+        },
+        {
+          "name": "Refrain 2",
+          "style": "drive",
+          "repeat": 2,
+          "bars": [
+            [
+              "Am"
+            ],
+            [
+              "F"
+            ],
+            [
+              "C"
+            ],
+            [
+              "G",
+              "Am"
+            ],
+            [
+              "F"
+            ],
+            [
+              "C"
+            ],
+            [
+              "E"
+            ]
+          ]
+        },
+        {
+          "name": "Bridge",
+          "style": "strum",
+          "repeat": 2,
+          "bars": [
+            [
+              "Am"
+            ],
+            [
+              "F"
+            ],
+            [
+              "Am"
+            ],
+            [
+              "F"
+            ],
+            [
+              "C"
+            ],
+            [
+              "E"
+            ],
+            [
+              "C"
+            ],
+            [
+              "E"
+            ]
+          ]
+        },
+        {
+          "name": "Final refrain",
+          "style": "drive",
+          "repeat": 2,
+          "bars": [
+            [
+              "Am"
+            ],
+            [
+              "F"
+            ],
+            [
+              "C"
+            ],
+            [
+              "G",
+              "Am"
+            ],
+            [
+              "F"
+            ],
+            [
+              "C"
+            ],
+            [
+              "E"
+            ]
+          ]
+        },
+        {
+          "name": "Outro",
+          "style": "skank",
+          "repeat": 1,
+          "bars": [
+            [
+              "Am"
+            ],
+            [
+              "F"
+            ],
+            [
+              "C"
+            ],
+            [
+              "E"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "passover",
+      "key": "G",
+      "centre": "E minor / E suspended modal",
+      "bpm": 130,
+      "meter": "4/4",
+      "tech": "Open suspended voicings, E pedal tones and an E–D–C–B harmonic descent.",
+      "source": "https://www.cifraclub.com/joy-division/passover/",
+      "sections": [
+        {
+          "name": "Pedal introduction",
+          "style": "drone",
+          "repeat": 2,
+          "bars": [
+            [
+              "Esus2"
+            ],
+            [
+              "Dsus2"
+            ],
+            [
+              "C"
+            ],
+            [
+              "Bsus2"
+            ]
+          ]
+        },
+        {
+          "name": "Verse 1",
+          "style": "picked",
+          "repeat": 3,
+          "bars": [
+            [
+              "Esus2"
+            ],
+            [
+              "Dsus2"
+            ],
+            [
+              "C"
+            ],
+            [
+              "Bsus2"
+            ]
+          ]
+        },
+        {
+          "name": "Instrumental",
+          "style": "ostinato",
+          "repeat": 2,
+          "bars": [
+            [
+              "Esus2"
+            ],
+            [
+              "Dsus2"
+            ],
+            [
+              "C"
+            ],
+            [
+              "Bsus2"
+            ]
+          ]
+        },
+        {
+          "name": "Verse 2",
+          "style": "picked",
+          "repeat": 3,
+          "bars": [
+            [
+              "Esus2"
+            ],
+            [
+              "Dsus2"
+            ],
+            [
+              "C"
+            ],
+            [
+              "E"
+            ]
+          ]
+        },
+        {
+          "name": "Bridge",
+          "style": "drive",
+          "repeat": 2,
+          "bars": [
+            [
+              "Em"
+            ],
+            [
+              "C"
+            ],
+            [
+              "Dsus2"
+            ],
+            [
+              "E"
+            ]
+          ]
+        },
+        {
+          "name": "Verse 3",
+          "style": "picked",
+          "repeat": 3,
+          "bars": [
+            [
+              "Esus2"
+            ],
+            [
+              "Dsus2"
+            ],
+            [
+              "C"
+            ],
+            [
+              "Bsus2"
+            ]
+          ]
+        },
+        {
+          "name": "Last verse",
+          "style": "drone",
+          "repeat": 2,
+          "bars": [
+            [
+              "Esus2"
+            ],
+            [
+              "Dsus2"
+            ],
+            [
+              "C"
+            ],
+            [
+              "E"
+            ]
+          ]
+        },
+        {
+          "name": "Outro",
+          "style": "ostinato",
+          "repeat": 1,
+          "bars": [
+            [
+              "Esus2"
+            ],
+            [
+              "Dsus2"
+            ],
+            [
+              "C"
+            ],
+            [
+              "Em"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "spellbound",
+      "key": "F",
+      "centre": "D minor",
+      "bpm": 160,
+      "meter": "4/4",
+      "tech": "Fast, relentless picked texture for verses against wider full chord hits F–G–Bb–A–G in chorus.",
+      "source": "https://www.guitartabs.cc/tabs/s/siouxsie_and_the_banshees/spellbound_tab.html",
+      "sections": [
+        {
+          "name": "Guitar introduction",
+          "style": "picked",
+          "repeat": 2,
+          "bars": [
+            [
+              "Dm"
+            ],
+            [
+              "Dm"
+            ],
+            [
+              "Bb"
+            ],
+            [
+              "Dm"
+            ]
+          ]
+        },
+        {
+          "name": "Verse 1",
+          "style": "picked",
+          "repeat": 3,
+          "bars": [
+            [
+              "Dm"
+            ],
+            [
+              "Dm"
+            ],
+            [
+              "Bb"
+            ],
+            [
+              "Dm"
+            ]
+          ]
+        },
+        {
+          "name": "Chorus 1",
+          "style": "drive",
+          "repeat": 2,
+          "bars": [
+            [
+              "F"
+            ],
+            [
+              "G"
+            ],
+            [
+              "Bb"
+            ],
+            [
+              "A"
+            ],
+            [
+              "G"
+            ]
+          ]
+        },
+        {
+          "name": "Post-chorus",
+          "style": "ostinato",
+          "repeat": 1,
+          "bars": [
+            [
+              "Dm"
+            ],
+            [
+              "C"
+            ],
+            [
+              "Bb"
+            ],
+            [
+              "A"
+            ]
+          ]
+        },
+        {
+          "name": "Verse 2",
+          "style": "picked",
+          "repeat": 3,
+          "bars": [
+            [
+              "Dm"
+            ],
+            [
+              "Dm"
+            ],
+            [
+              "Bb"
+            ],
+            [
+              "Dm"
+            ]
+          ]
+        },
+        {
+          "name": "Chorus 2",
+          "style": "drive",
+          "repeat": 2,
+          "bars": [
+            [
+              "F"
+            ],
+            [
+              "G"
+            ],
+            [
+              "Bb"
+            ],
+            [
+              "A"
+            ],
+            [
+              "G"
+            ]
+          ]
+        },
+        {
+          "name": "Instrumental",
+          "style": "picked",
+          "repeat": 2,
+          "bars": [
+            [
+              "Dm"
+            ],
+            [
+              "F"
+            ],
+            [
+              "G"
+            ],
+            [
+              "Bb"
+            ],
+            [
+              "A"
+            ],
+            [
+              "G"
+            ]
+          ]
+        },
+        {
+          "name": "Final chorus",
+          "style": "drive",
+          "repeat": 2,
+          "bars": [
+            [
+              "F"
+            ],
+            [
+              "G"
+            ],
+            [
+              "Bb"
+            ],
+            [
+              "A"
+            ],
+            [
+              "G"
+            ]
+          ]
+        },
+        {
+          "name": "Outro",
+          "style": "picked",
+          "repeat": 1,
+          "bars": [
+            [
+              "Dm"
+            ],
+            [
+              "Bb"
+            ],
+            [
+              "A"
+            ],
+            [
+              "Dm"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a-forest",
+      "key": "C",
+      "centre": "A minor",
+      "bpm": 104,
+      "meter": "4/4",
+      "tech": "Hypnotic Am–C–F–Dm picking and contrasting chromatic B–C–F#m bridge.",
+      "source": "https://en.wikipedia.org/wiki/A_Forest",
+      "sections": [
+        {
+          "name": "Instrumental introduction",
+          "style": "picked",
+          "repeat": 3,
+          "bars": [
+            [
+              "Am"
+            ],
+            [
+              "C"
+            ],
+            [
+              "F"
+            ],
+            [
+              "Dm"
+            ]
+          ]
+        },
+        {
+          "name": "Verse 1",
+          "style": "ostinato",
+          "repeat": 4,
+          "bars": [
+            [
+              "Am"
+            ],
+            [
+              "C"
+            ],
+            [
+              "F"
+            ],
+            [
+              "Dm"
+            ]
+          ]
+        },
+        {
+          "name": "Verse 2",
+          "style": "ostinato",
+          "repeat": 4,
+          "bars": [
+            [
+              "Am"
+            ],
+            [
+              "C"
+            ],
+            [
+              "F"
+            ],
+            [
+              "Dm"
+            ]
+          ]
+        },
+        {
+          "name": "Bridge",
+          "style": "drive",
+          "repeat": 1,
+          "bars": [
+            [
+              "B"
+            ],
+            [
+              "C"
+            ],
+            [
+              "F#m"
+            ],
+            [
+              "C"
+            ],
+            [
+              "B"
+            ],
+            [
+              "C"
+            ]
+          ]
+        },
+        {
+          "name": "Instrumental break",
+          "style": "picked",
+          "repeat": 3,
+          "bars": [
+            [
+              "Am"
+            ],
+            [
+              "C"
+            ],
+            [
+              "F"
+            ],
+            [
+              "Dm"
+            ]
+          ]
+        },
+        {
+          "name": "Final verse",
+          "style": "ostinato",
+          "repeat": 4,
+          "bars": [
+            [
+              "Am"
+            ],
+            [
+              "C"
+            ],
+            [
+              "F"
+            ],
+            [
+              "Dm"
+            ]
+          ]
+        },
+        {
+          "name": "Outro vamp",
+          "style": "picked",
+          "repeat": 3,
+          "bars": [
+            [
+              "Am"
+            ],
+            [
+              "C"
+            ],
+            [
+              "F"
+            ],
+            [
+              "Dm"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "life-on-mars",
+      "key": "F",
+      "centre": "F major moving to Bb major",
+      "bpm": 104,
+      "meter": "4/4",
+      "tech": "Chromatic harmonies, piano-derived cadence and the shift toward Bb major for the chorus; chord symbols omit low bass inversions.",
+      "source": "https://mtosmt.org/issues/mto.17.23.4/mto.17.23.4.ferrandino.html",
+      "sections": [
+        {
+          "name": "Verse A",
+          "style": "piano",
+          "repeat": 2,
+          "bars": [
+            [
+              "F"
+            ],
+            [
+              "Am"
+            ],
+            [
+              "F7"
+            ],
+            [
+              "D7"
+            ],
+            [
+              "Gm"
+            ],
+            [
+              "Bb"
+            ],
+            [
+              "C7"
+            ],
+            [
+              "F"
+            ]
+          ]
+        },
+        {
+          "name": "Verse B",
+          "style": "piano",
+          "repeat": 1,
+          "bars": [
+            [
+              "F"
+            ],
+            [
+              "Am"
+            ],
+            [
+              "F7"
+            ],
+            [
+              "D7"
+            ],
+            [
+              "Gm"
+            ],
+            [
+              "Bb"
+            ],
+            [
+              "C7"
+            ],
+            [
+              "F"
+            ]
+          ]
+        },
+        {
+          "name": "Pre-chorus",
+          "style": "piano",
+          "repeat": 2,
+          "bars": [
+            [
+              "Ab"
+            ],
+            [
+              "Db"
+            ],
+            [
+              "Fm"
+            ],
+            [
+              "Ab7"
+            ],
+            [
+              "Db"
+            ],
+            [
+              "Bbm"
+            ],
+            [
+              "Ab"
+            ],
+            [
+              "C7"
+            ]
+          ]
+        },
+        {
+          "name": "Chorus",
+          "style": "strum",
+          "repeat": 2,
+          "bars": [
+            [
+              "Bb"
+            ],
+            [
+              "Eb"
+            ],
+            [
+              "Gm"
+            ],
+            [
+              "F"
+            ],
+            [
+              "Bb"
+            ],
+            [
+              "Eb"
+            ],
+            [
+              "Gm"
+            ],
+            [
+              "C7"
+            ]
+          ]
+        },
+        {
+          "name": "Instrumental turnaround",
+          "style": "piano",
+          "repeat": 1,
+          "bars": [
+            [
+              "F"
+            ],
+            [
+              "D7"
+            ],
+            [
+              "Gm"
+            ],
+            [
+              "Bbm"
+            ]
+          ]
+        },
+        {
+          "name": "Verse reprise",
+          "style": "piano",
+          "repeat": 2,
+          "bars": [
+            [
+              "F"
+            ],
+            [
+              "Am"
+            ],
+            [
+              "F7"
+            ],
+            [
+              "D7"
+            ],
+            [
+              "Gm"
+            ],
+            [
+              "Bb"
+            ],
+            [
+              "C7"
+            ],
+            [
+              "F"
+            ]
+          ]
+        },
+        {
+          "name": "Chorus reprise",
+          "style": "strum",
+          "repeat": 2,
+          "bars": [
+            [
+              "Bb"
+            ],
+            [
+              "Eb"
+            ],
+            [
+              "Gm"
+            ],
+            [
+              "F"
+            ],
+            [
+              "Bb"
+            ],
+            [
+              "Eb"
+            ],
+            [
+              "C7"
+            ],
+            [
+              "Bb"
+            ]
+          ]
+        },
+        {
+          "name": "Coda",
+          "style": "piano",
+          "repeat": 1,
+          "bars": [
+            [
+              "Bb"
+            ],
+            [
+              "Eb"
+            ],
+            [
+              "Ebm"
+            ],
+            [
+              "Bb"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "blackbird",
+      "key": "G",
+      "centre": "G major",
+      "bpm": 94,
+      "meter": "4/4",
+      "tech": "Two-register fingerstyle imitation, stepwise chord motion and changing bridge harmony; simplified global 4/4 meter.",
+      "source": "https://www.learningtoplaytheguitar.net/transcriptions/blackbird-beatles.pdf",
+      "sections": [
+        {
+          "name": "Opening figure",
+          "style": "finger",
+          "repeat": 2,
+          "bars": [
+            [
+              "G"
+            ],
+            [
+              "C"
+            ],
+            [
+              "G"
+            ],
+            [
+              "C"
+            ]
+          ]
+        },
+        {
+          "name": "Verse 1",
+          "style": "finger",
+          "repeat": 2,
+          "bars": [
+            [
+              "G"
+            ],
+            [
+              "C"
+            ],
+            [
+              "A7"
+            ],
+            [
+              "D7"
+            ],
+            [
+              "G"
+            ],
+            [
+              "C"
+            ],
+            [
+              "G"
+            ],
+            [
+              "D7"
+            ]
+          ]
+        },
+        {
+          "name": "Bridge",
+          "style": "finger",
+          "repeat": 2,
+          "bars": [
+            [
+              "G"
+            ],
+            [
+              "F"
+            ],
+            [
+              "Em"
+            ],
+            [
+              "Dm"
+            ],
+            [
+              "C"
+            ],
+            [
+              "Bb"
+            ],
+            [
+              "C"
+            ],
+            [
+              "D7"
+            ]
+          ]
+        },
+        {
+          "name": "Verse 2",
+          "style": "finger",
+          "repeat": 2,
+          "bars": [
+            [
+              "G"
+            ],
+            [
+              "C"
+            ],
+            [
+              "A7"
+            ],
+            [
+              "D7"
+            ],
+            [
+              "G"
+            ],
+            [
+              "C"
+            ],
+            [
+              "G"
+            ],
+            [
+              "D7"
+            ]
+          ]
+        },
+        {
+          "name": "Reprise",
+          "style": "finger",
+          "repeat": 2,
+          "bars": [
+            [
+              "G"
+            ],
+            [
+              "F"
+            ],
+            [
+              "Em"
+            ],
+            [
+              "Dm"
+            ],
+            [
+              "C"
+            ],
+            [
+              "Bb"
+            ],
+            [
+              "A"
+            ],
+            [
+              "D7"
+            ]
+          ]
+        },
+        {
+          "name": "Ending",
+          "style": "finger",
+          "repeat": 1,
+          "bars": [
+            [
+              "G"
+            ],
+            [
+              "C"
+            ],
+            [
+              "G"
+            ],
+            [
+              "G"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "space-oddity",
+      "key": "C",
+      "centre": "C major",
+      "bpm": 80,
+      "meter": "4/4",
+      "tech": "Restrained Fmaj7–Em intro, busy verse, weightier harmonic refrain, and bright instrumental rising chords.",
+      "source": "https://www.ukulele-tabs.com/uke-songs/david-bowie/space-oddity-uke-tab-44847.html",
+      "sections": [
+        {
+          "name": "Introduction",
+          "style": "space",
+          "repeat": 2,
+          "bars": [
+            [
+              "Fmaj7"
+            ],
+            [
+              "Em"
+            ]
+          ]
+        },
+        {
+          "name": "Verse 1",
+          "style": "picked",
+          "repeat": 2,
+          "bars": [
+            [
+              "C"
+            ],
+            [
+              "Em"
+            ],
+            [
+              "Am"
+            ],
+            [
+              "G"
+            ],
+            [
+              "Fmaj7"
+            ],
+            [
+              "Em"
+            ],
+            [
+              "Am"
+            ],
+            [
+              "D7"
+            ]
+          ]
+        },
+        {
+          "name": "Refrain 1",
+          "style": "strum",
+          "repeat": 2,
+          "bars": [
+            [
+              "Fmaj7"
+            ],
+            [
+              "Em"
+            ],
+            [
+              "A"
+            ],
+            [
+              "C"
+            ],
+            [
+              "D"
+            ],
+            [
+              "E7"
+            ]
+          ]
+        },
+        {
+          "name": "Verse 2",
+          "style": "picked",
+          "repeat": 2,
+          "bars": [
+            [
+              "C"
+            ],
+            [
+              "Em"
+            ],
+            [
+              "Am"
+            ],
+            [
+              "G"
+            ],
+            [
+              "Fmaj7"
+            ],
+            [
+              "Em"
+            ],
+            [
+              "Am"
+            ],
+            [
+              "D7"
+            ]
+          ]
+        },
+        {
+          "name": "Refrain 2",
+          "style": "strum",
+          "repeat": 2,
+          "bars": [
+            [
+              "Fmaj7"
+            ],
+            [
+              "Em"
+            ],
+            [
+              "A"
+            ],
+            [
+              "C"
+            ],
+            [
+              "D"
+            ],
+            [
+              "E7"
+            ]
+          ]
+        },
+        {
+          "name": "Middle movement",
+          "style": "space",
+          "repeat": 2,
+          "bars": [
+            [
+              "Bbmaj7"
+            ],
+            [
+              "Am"
+            ],
+            [
+              "G"
+            ],
+            [
+              "F"
+            ]
+          ]
+        },
+        {
+          "name": "Instrumental",
+          "style": "piano",
+          "repeat": 2,
+          "bars": [
+            [
+              "Fmaj7"
+            ],
+            [
+              "Em"
+            ],
+            [
+              "A"
+            ],
+            [
+              "C"
+            ],
+            [
+              "D"
+            ],
+            [
+              "E7"
+            ]
+          ]
+        },
+        {
+          "name": "Outro",
+          "style": "space",
+          "repeat": 1,
+          "bars": [
+            [
+              "Fmaj7"
+            ],
+            [
+              "Em"
+            ],
+            [
+              "C"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "while-my-guitar-gently-weeps",
+      "key": "C",
+      "centre": "A minor, A major middle section",
+      "bpm": 110,
+      "meter": "4/4",
+      "tech": "Descending chord movement in minor verses and a luminous A-major middle section. No Clapton solo transcription.",
+      "source": "https://www.musicradar.com/music-tech/recording/i-was-with-eric-clapton-and-said-why-dont-you-come-to-the-studio-and-play-on-this-song-he-said-oh-no-i-cant-do-that-nobodys-ever-played-on-a-beatles-record-the-theory-behind-the-beatles-while-my-guitar-gently-weeps",
+      "sections": [
+        {
+          "name": "Introduction",
+          "style": "picked",
+          "repeat": 2,
+          "bars": [
+            [
+              "Am"
+            ],
+            [
+              "G"
+            ],
+            [
+              "D"
+            ],
+            [
+              "F"
+            ],
+            [
+              "Am"
+            ],
+            [
+              "G"
+            ],
+            [
+              "F"
+            ],
+            [
+              "E7"
+            ]
+          ]
+        },
+        {
+          "name": "Verse 1",
+          "style": "picked",
+          "repeat": 2,
+          "bars": [
+            [
+              "Am"
+            ],
+            [
+              "G"
+            ],
+            [
+              "D"
+            ],
+            [
+              "F"
+            ],
+            [
+              "Am"
+            ],
+            [
+              "G"
+            ],
+            [
+              "C"
+            ],
+            [
+              "E7"
+            ]
+          ]
+        },
+        {
+          "name": "Verse 2",
+          "style": "picked",
+          "repeat": 2,
+          "bars": [
+            [
+              "Am"
+            ],
+            [
+              "G"
+            ],
+            [
+              "D"
+            ],
+            [
+              "F"
+            ],
+            [
+              "Am"
+            ],
+            [
+              "G"
+            ],
+            [
+              "C"
+            ],
+            [
+              "E7"
+            ]
+          ]
+        },
+        {
+          "name": "Middle (A major)",
+          "style": "strum",
+          "repeat": 2,
+          "bars": [
+            [
+              "A"
+            ],
+            [
+              "C#m"
+            ],
+            [
+              "F#m"
+            ],
+            [
+              "Bm"
+            ],
+            [
+              "E7"
+            ],
+            [
+              "A"
+            ],
+            [
+              "E7"
+            ],
+            [
+              "A"
+            ]
+          ]
+        },
+        {
+          "name": "Verse 3",
+          "style": "picked",
+          "repeat": 2,
+          "bars": [
+            [
+              "Am"
+            ],
+            [
+              "G"
+            ],
+            [
+              "D"
+            ],
+            [
+              "F"
+            ],
+            [
+              "Am"
+            ],
+            [
+              "G"
+            ],
+            [
+              "C"
+            ],
+            [
+              "E7"
+            ]
+          ]
+        },
+        {
+          "name": "Instrumental",
+          "style": "piano",
+          "repeat": 2,
+          "bars": [
+            [
+              "Am"
+            ],
+            [
+              "G"
+            ],
+            [
+              "D"
+            ],
+            [
+              "F"
+            ],
+            [
+              "Am"
+            ],
+            [
+              "G"
+            ],
+            [
+              "F"
+            ],
+            [
+              "E7"
+            ]
+          ]
+        },
+        {
+          "name": "Final verse",
+          "style": "picked",
+          "repeat": 2,
+          "bars": [
+            [
+              "Am"
+            ],
+            [
+              "G"
+            ],
+            [
+              "D"
+            ],
+            [
+              "F"
+            ],
+            [
+              "Am"
+            ],
+            [
+              "G"
+            ],
+            [
+              "C"
+            ],
+            [
+              "E7"
+            ]
+          ]
+        },
+        {
+          "name": "Outro",
+          "style": "strum",
+          "repeat": 1,
+          "bars": [
+            [
+              "Am"
+            ],
+            [
+              "G"
+            ],
+            [
+              "F"
+            ],
+            [
+              "E7"
+            ],
+            [
+              "Am"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "wish-you-were-here",
+      "key": "G",
+      "centre": "G major",
+      "bpm": 64,
+      "meter": "4/4",
+      "tech": "Sparse Em7–G–A7sus4 guitar intro, separated lead/accompaniment attacks, stronger C–D–Am verse.",
+      "source": "https://openguitarchords.com/songs/wish-you-were-here-chords",
+      "sections": [
+        {
+          "name": "Guitar introduction",
+          "style": "finger",
+          "repeat": 3,
+          "bars": [
+            [
+              "Em7"
+            ],
+            [
+              "G"
+            ],
+            [
+              "A7sus4"
+            ],
+            [
+              "G"
+            ]
+          ]
+        },
+        {
+          "name": "Instrumental",
+          "style": "picked",
+          "repeat": 2,
+          "bars": [
+            [
+              "Em7"
+            ],
+            [
+              "G"
+            ],
+            [
+              "A7sus4"
+            ],
+            [
+              "G"
+            ]
+          ]
+        },
+        {
+          "name": "Verse 1",
+          "style": "strum",
+          "repeat": 2,
+          "bars": [
+            [
+              "C"
+            ],
+            [
+              "D"
+            ],
+            [
+              "Am"
+            ],
+            [
+              "G"
+            ],
+            [
+              "D"
+            ],
+            [
+              "C"
+            ],
+            [
+              "Am"
+            ],
+            [
+              "G"
+            ]
+          ]
+        },
+        {
+          "name": "Instrumental return",
+          "style": "finger",
+          "repeat": 2,
+          "bars": [
+            [
+              "Em7"
+            ],
+            [
+              "G"
+            ],
+            [
+              "A7sus4"
+            ],
+            [
+              "G"
+            ]
+          ]
+        },
+        {
+          "name": "Verse 2",
+          "style": "strum",
+          "repeat": 2,
+          "bars": [
+            [
+              "C"
+            ],
+            [
+              "D"
+            ],
+            [
+              "Am"
+            ],
+            [
+              "G"
+            ],
+            [
+              "D"
+            ],
+            [
+              "C"
+            ],
+            [
+              "Am"
+            ],
+            [
+              "G"
+            ]
+          ]
+        },
+        {
+          "name": "Instrumental outro",
+          "style": "finger",
+          "repeat": 3,
+          "bars": [
+            [
+              "Em7"
+            ],
+            [
+              "G"
+            ],
+            [
+              "A7sus4"
+            ],
+            [
+              "G"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "babe-im-gonna-leave-you",
+      "key": "C",
+      "centre": "A minor",
+      "bpm": 82,
+      "meter": "4/4",
+      "tech": "Six-note guitar-derived arpeggiation and chromatic descending A–G–F#–F–E bass idea, octave-shifted to high-G.",
+      "source": "https://www.jonmaclennan.com/blog/babe-i-m-gonna-leave-you-led-zeppelin-guitar-lesson-tutorial",
+      "sections": [
+        {
+          "name": "Acoustic introduction",
+          "style": "finger",
+          "repeat": 2,
+          "bars": [
+            [
+              "Am"
+            ],
+            [
+              "Am"
+            ],
+            [
+              "G"
+            ],
+            [
+              "D7"
+            ],
+            [
+              "F"
+            ],
+            [
+              "E"
+            ]
+          ]
+        },
+        {
+          "name": "Verse 1",
+          "style": "finger",
+          "repeat": 3,
+          "bars": [
+            [
+              "Am"
+            ],
+            [
+              "Am"
+            ],
+            [
+              "G"
+            ],
+            [
+              "D7"
+            ],
+            [
+              "F"
+            ],
+            [
+              "E"
+            ]
+          ]
+        },
+        {
+          "name": "Climactic refrain",
+          "style": "drive",
+          "repeat": 2,
+          "bars": [
+            [
+              "Am"
+            ],
+            [
+              "G"
+            ],
+            [
+              "D7"
+            ],
+            [
+              "F"
+            ],
+            [
+              "E"
+            ]
+          ]
+        },
+        {
+          "name": "Verse 2",
+          "style": "finger",
+          "repeat": 3,
+          "bars": [
+            [
+              "Am"
+            ],
+            [
+              "Am"
+            ],
+            [
+              "G"
+            ],
+            [
+              "D7"
+            ],
+            [
+              "F"
+            ],
+            [
+              "E"
+            ]
+          ]
+        },
+        {
+          "name": "Instrumental rise",
+          "style": "drive",
+          "repeat": 2,
+          "bars": [
+            [
+              "Am"
+            ],
+            [
+              "G"
+            ],
+            [
+              "D7"
+            ],
+            [
+              "F"
+            ],
+            [
+              "E"
+            ]
+          ]
+        },
+        {
+          "name": "Verse 3",
+          "style": "finger",
+          "repeat": 3,
+          "bars": [
+            [
+              "Am"
+            ],
+            [
+              "Am"
+            ],
+            [
+              "G"
+            ],
+            [
+              "D7"
+            ],
+            [
+              "F"
+            ],
+            [
+              "E"
+            ]
+          ]
+        },
+        {
+          "name": "Final climax",
+          "style": "drive",
+          "repeat": 2,
+          "bars": [
+            [
+              "Am"
+            ],
+            [
+              "G"
+            ],
+            [
+              "D7"
+            ],
+            [
+              "F"
+            ],
+            [
+              "E"
+            ]
+          ]
+        },
+        {
+          "name": "Outro",
+          "style": "finger",
+          "repeat": 1,
+          "bars": [
+            [
+              "Am"
+            ],
+            [
+              "G"
+            ],
+            [
+              "D7"
+            ],
+            [
+              "F"
+            ],
+            [
+              "E"
+            ],
+            [
+              "Am"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "everybody-wants-to-rule-the-world",
+      "key": "D",
+      "centre": "D major (concert pitch slightly sharp on recording)",
+      "bpm": 112,
+      "meter": "6/8",
+      "tech": "Two 6/8 bars represent one original 12/8 bar; sustained Dmaj7–G harmonic shuttle, shuffle subdivisions.",
+      "source": "https://freebasstranscriptions.com/transcriptions/tears-for-fears-everybody-wants-to-rule-the-world/",
+      "sections": [
+        {
+          "name": "Introduction",
+          "style": "compound",
+          "repeat": 3,
+          "bars": [
+            [
+              "Dmaj7"
+            ],
+            [
+              "G"
+            ]
+          ]
+        },
+        {
+          "name": "Verse 1",
+          "style": "compound",
+          "repeat": 4,
+          "bars": [
+            [
+              "Dmaj7"
+            ],
+            [
+              "G"
+            ]
+          ]
+        },
+        {
+          "name": "Pre-refrain",
+          "style": "compound-drive",
+          "repeat": 2,
+          "bars": [
+            [
+              "F#m"
+            ],
+            [
+              "G"
+            ],
+            [
+              "Em"
+            ],
+            [
+              "F#m"
+            ]
+          ]
+        },
+        {
+          "name": "Refrain",
+          "style": "compound-drive",
+          "repeat": 3,
+          "bars": [
+            [
+              "Em"
+            ],
+            [
+              "F#m"
+            ],
+            [
+              "G"
+            ],
+            [
+              "A"
+            ],
+            [
+              "Dmaj7"
+            ],
+            [
+              "G"
+            ]
+          ]
+        },
+        {
+          "name": "Verse 2",
+          "style": "compound",
+          "repeat": 4,
+          "bars": [
+            [
+              "Dmaj7"
+            ],
+            [
+              "G"
+            ]
+          ]
+        },
+        {
+          "name": "Refrain 2",
+          "style": "compound-drive",
+          "repeat": 3,
+          "bars": [
+            [
+              "Em"
+            ],
+            [
+              "F#m"
+            ],
+            [
+              "G"
+            ],
+            [
+              "A"
+            ],
+            [
+              "Dmaj7"
+            ],
+            [
+              "G"
+            ]
+          ]
+        },
+        {
+          "name": "Instrumental passage",
+          "style": "compound-picked",
+          "repeat": 3,
+          "bars": [
+            [
+              "Dmaj7"
+            ],
+            [
+              "G"
+            ],
+            [
+              "F#m"
+            ],
+            [
+              "G"
+            ]
+          ]
+        },
+        {
+          "name": "Final refrain",
+          "style": "compound-drive",
+          "repeat": 3,
+          "bars": [
+            [
+              "Em"
+            ],
+            [
+              "F#m"
+            ],
+            [
+              "G"
+            ],
+            [
+              "A"
+            ],
+            [
+              "Dmaj7"
+            ],
+            [
+              "G"
+            ]
+          ]
+        },
+        {
+          "name": "Outro",
+          "style": "compound",
+          "repeat": 2,
+          "bars": [
+            [
+              "Dmaj7"
+            ],
+            [
+              "G"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "california-dreamin",
+      "key": "E",
+      "centre": "C# minor (sounding pitch, no capo)",
+      "bpm": 114,
+      "meter": "4/4",
+      "tech": "Taut minor-key guitar rhythm, suspension before G#7, with bright E-major relative motion. No recording flute-solo transcription.",
+      "source": "https://www.modernguitartuition.com/all-posts/how-to-play-california-dreaming-by-the-mamas-and-the-papas",
+      "sections": [
+        {
+          "name": "Introduction",
+          "style": "picked",
+          "repeat": 2,
+          "bars": [
+            [
+              "C#m"
+            ],
+            [
+              "B"
+            ],
+            [
+              "A"
+            ],
+            [
+              "E"
+            ],
+            [
+              "G#sus4"
+            ],
+            [
+              "G#7"
+            ]
+          ]
+        },
+        {
+          "name": "Verse 1",
+          "style": "strum",
+          "repeat": 3,
+          "bars": [
+            [
+              "C#m"
+            ],
+            [
+              "B"
+            ],
+            [
+              "A"
+            ],
+            [
+              "E"
+            ],
+            [
+              "G#sus4"
+            ],
+            [
+              "G#7"
+            ]
+          ]
+        },
+        {
+          "name": "Refrain 1",
+          "style": "drive",
+          "repeat": 2,
+          "bars": [
+            [
+              "C#m"
+            ],
+            [
+              "B"
+            ],
+            [
+              "A"
+            ],
+            [
+              "E"
+            ],
+            [
+              "G#sus4"
+            ],
+            [
+              "G#7"
+            ]
+          ]
+        },
+        {
+          "name": "Verse 2",
+          "style": "strum",
+          "repeat": 3,
+          "bars": [
+            [
+              "C#m"
+            ],
+            [
+              "B"
+            ],
+            [
+              "A"
+            ],
+            [
+              "E"
+            ],
+            [
+              "G#sus4"
+            ],
+            [
+              "G#7"
+            ]
+          ]
+        },
+        {
+          "name": "Instrumental space",
+          "style": "picked",
+          "repeat": 2,
+          "bars": [
+            [
+              "C#m"
+            ],
+            [
+              "B"
+            ],
+            [
+              "A"
+            ],
+            [
+              "E"
+            ],
+            [
+              "G#sus4"
+            ],
+            [
+              "G#7"
+            ]
+          ]
+        },
+        {
+          "name": "Refrain 2",
+          "style": "drive",
+          "repeat": 2,
+          "bars": [
+            [
+              "C#m"
+            ],
+            [
+              "B"
+            ],
+            [
+              "A"
+            ],
+            [
+              "E"
+            ],
+            [
+              "G#sus4"
+            ],
+            [
+              "G#7"
+            ]
+          ]
+        },
+        {
+          "name": "Ending",
+          "style": "strum",
+          "repeat": 1,
+          "bars": [
+            [
+              "C#m"
+            ],
+            [
+              "B"
+            ],
+            [
+              "A"
+            ],
+            [
+              "G#7"
+            ],
+            [
+              "C#m"
+            ]
+          ]
+        }
+      ]
+    }
+  ]
+}
