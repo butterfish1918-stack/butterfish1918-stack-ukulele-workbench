@@ -27,7 +27,7 @@ for(const track of plans.tracks){
   const listing=catalog.entries.find(x=>x.id===track.id);
   if(!listing||JSON.stringify(listing)!==JSON.stringify(entry))
    throw Error('Catalog mismatch: '+track.id);
- }else await writeFile(resolve(root,path),JSON.stringify(arrangement,null,2)+'\n','utf8');
+ }else await writeFile(resolve(root,path),JSON.stringify(arrangement)+'\n','utf8');
  console.log((check?'CHECK ':'BUILT ')+track.id+' ('+arrangement.score.measures.length+' bars)');
  built++;
 }
