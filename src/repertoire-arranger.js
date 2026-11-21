@@ -62,9 +62,9 @@ function rhythmicRecipe(style,beats){
   return ['c','c','c','c'];
  }
  switch(style){
- case 'skank':return ['r','c','r','c','r','c','r','c'];
- case 'sync':return ['r','c','n','c','r','c','n','c'];
- case 'drive':return ['c','c','c','c','c','c','c','c'];
+ case 'skank':return [['r',1],['c',1],['r',1],['c',1]];
+ case 'sync':return ['r','c',['n',1],'r','c',['n',1]];
+ case 'drive':return ['c','c',['c',1],'c','c',['c',1]];
  case 'strum':return [['c',1],['c',.5],['c',.5],['c',1],['c',.5],['c',.5]];
  case 'picked':case 'finger':return ['n','n','n','n','n','n','n','n'];
  case 'ostinato':return ['n','n',['c',1],'n','n',['c',1]];
