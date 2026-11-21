@@ -1,4 +1,16 @@
-# Ukulele Workbench v1.6.0 Preview — Connected Song Repository
+# Ukulele Workbench v1.8.0 Preview — Section-Based Song Accompaniments
+
+## Song-structured high-G accompaniments (14 modern recordings)
+
+The fifteen approved practice titles remain unchanged. For fourteen modern copyrighted titles, the earlier sixteen-bar generic studies were replaced by **section-based high-G accompaniment scores** (revision 2). These capture published song harmonies and musical sections, using different ukulele patterns for fingerpicking, chord strumming, suspended textures, off-beat strokes and compound metre. Each score includes labelled sections, exact GCEA fret positions, and chord shapes, with no transcribed lyrics or lead-line riffs. They are playable *adaptations* for an experienced guitarist, **not certified transcriptions of the record's guitar lines**; the precise recording arrangement, bass inversions and vocal melodies cannot always be recreated on four re-entrant strings.
+
+The rhythm engine presently supports 4/4, 3/4 and 6/8. For **Everybody Wants to Rule the World**, every two 6/8 measures represent one original 12/8 bar. Quarter-note playback at 168 BPM gives roughly 112 dotted-quarter beats per minute. The older complete historic melody arrangement of Scarborough Fair remains as the preferred score for that title.
+
+Rebuild the fourteen files with `node scripts/build-repertoire-accompaniments.mjs`, or run `npm run qa:arrangements` to verify score data and section metadata against `library/arrangement-blueprints.json`. Song updates use stable IDs and increment `revision`, leaving previous personal song copies untouched. The new score files stay within the original 150,000-character download cap.
+
+---
+
+
 
 ## Approved repertoire — 15 selected songs and a historical full melody
 
