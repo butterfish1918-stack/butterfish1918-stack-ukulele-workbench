@@ -2298,7 +2298,7 @@
         {
           "name": "Verse 1",
           "style": "compound",
-          "repeat": 4,
+          "repeat": 3,
           "bars": [
             [
               "Dmaj7"
@@ -2355,7 +2355,7 @@
         {
           "name": "Verse 2",
           "style": "compound",
-          "repeat": 4,
+          "repeat": 3,
           "bars": [
             [
               "Dmaj7"
@@ -2393,7 +2393,7 @@
         {
           "name": "Instrumental passage",
           "style": "compound-picked",
-          "repeat": 3,
+          "repeat": 2,
           "bars": [
             [
               "Dmaj7"
@@ -2412,7 +2412,7 @@
         {
           "name": "Final refrain",
           "style": "compound-drive",
-          "repeat": 3,
+          "repeat": 2,
           "bars": [
             [
               "Em"
