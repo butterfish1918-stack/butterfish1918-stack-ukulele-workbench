@@ -54,3 +54,11 @@ test('compound-time and chromatic source details remain distinct',()=>{
  const passover=get('passover');
  assert.ok(passover.score.measures.some(bar=>bar.events.some(e=>e.type==='chord'&&e.symbol==='Esus2')));
 });
+
+test('long scores use section navigation and updates do not hide newer catalog revisions',()=>{
+ const app=readFileSync(new URL('../src/app.js',import.meta.url),'utf8');
+ assert.match(app,/data-repo-section/);
+ assert.match(app,/data-song-section/);
+ assert.match(app,/repositoryOrigin\.revision===state\.repositorySnapshot\.songs/);
+ assert.match(app,/songScoreSections/);
+});
