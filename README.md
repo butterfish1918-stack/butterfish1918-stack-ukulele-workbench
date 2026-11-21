@@ -1,4 +1,13 @@
-# Ukulele Workbench v1.8.0 Preview — Section-Based Song Accompaniments
+# Ukulele Workbench v1.8.1 Preview — Source-Based Guitar Part Adaptation
+
+## Recorded guitar parts versus chord accompaniments
+
+The fourteen modern-song scores remain **harmony-led accompaniments**, not accurate transcriptions of the original recorded guitar parts. The new **Score Studio → Adapt Guitar Notes (JSON)** feature accepts *supplied six-string guitar note-and-rhythm data* and maps the original note sequence to high-G GCEA ukulele, using a voice-leading algorithm and reporting octave shifts. It does not reconstruct riffs from chord symbols, and it refuses polyphonic guitar events rather than dropping notes without warning. Download the original-data template directly in Score Studio.
+
+To complete source-accurate adaptations of the fourteen modern recordings, first obtain authorized original guitar tab or notation for each part; use the [source-guitar adaptation instructions](GUITAR_PART_ADAPTATION.md) and validate the resulting lead/picking part by ear against the recording. The current converter handles only a single guitar voice at a time, so full multi-voice riffs may require the score editor to gain polyphonic support.
+
+---
+
 
 ## Song-structured high-G accompaniments (14 modern recordings)
 
