@@ -35,7 +35,7 @@ let progressionPlayback=null,techniquePlayback=null,rhythmLabPlayback=null,ac=nu
 const pageNames={explorer:'Fretboard & Theory',progression:'Progression Builder',notation:'Notation Academy',technique:'Technique Academy',rhythm:'Rhythm Studio',songbook:'My Songbook',practice:'Practice Room',score:'Score Studio'};
 const songs=()=>read('songs',[]),progress=()=>read('progress',[]);
 function initialRepository(){const cached=read('repositorySnapshot',null);try{if(cached&&validateSnapshot(cached,validateScore))return cached}catch{}return structuredClone(BUNDLED_LIBRARY)}
-state.songbookView='mine';state.repositorySnapshot=initialRepository();state.repoSelectedId=state.repositorySnapshot.catalog.entries[0]?.id??null;state.repositorySource=read('repositorySource',DEFAULT_CATALOG_URL);state.repoSyncing=false;state.repoError=null;state.repoQuery='';state.repoDifficulty='all';
+state.songbookView='mine';state.repositorySnapshot=initialRepository();state.repoSelectedId=state.repositorySnapshot.catalog.entries[0]?.id??null;state.repositorySource=read('repositorySource',DEFAULT_CATALOG_URL);state.repoSyncing=false;state.repoError=null;state.repoQuery='';state.repoDifficulty='all';state.repoSectionIndex=0;
 function loadProgression(){const saved=read('progressionDraft',null);try{if(saved&&validateProgression(saved))return saved}catch{}return createProgression({tuning:TUNINGS[state.tuning]?state.tuning:'highG'});}
 state.progression=loadProgression();
 function updateProgression(next){try{validateProgression(next);stopProgression();state.progression=next;store('progressionDraft',next);render();return true}catch(e){toast(e.message);return false}}
@@ -395,6 +395,9 @@ function mySongbook(){const all=songs(),current=all.find(x=>x.id===state.songOpe
 <div class="subtle-rule"></div><div class="score-actions"><button class="btn compact ghost" data-action="import-backup">↑ Restore backup</button><input type="file" accept=".json,application/json" id="backupFile" hidden></div><p class="hint-text">Songs are kept in this browser's local storage. Export regular backups; clearing browser data can delete them. Import will replace existing songs only after confirmation.</p></section><section class="panel panel-pad"><div class="panel-title"><h2>Song practice preview</h2></div>${current&&!state.editing?`<div class="eyebrow">NOW OPEN</div><h2 style="font:26px Georgia,serif">${h(current.title)}</h2><p class="small-text">${h(current.artist||'Original arrangement')} · ${h(current.key||'Key not set')}${current.bpm?' · '+current.bpm+' BPM':''}</p><pre style="white-space:pre-wrap;font:13px/1.9 ui-monospace,monospace;color:#e5d2a3;background:#14261e;padding:15px;border-radius:8px;min-height:100px">${h(current.body||'No chord sketch yet.')}</pre><p class="small-text">${h(current.notes||'No practice notes.')}</p>${current.score?`<div class="score-holder score-editor-view song-score-preview">${renderScoreView(current.score,{mode:state.display})}</div><button class="btn gold compact" data-action="load-song-score">𝄞 Edit notation score</button>`:''}<div class="score-actions"><button class="btn compact" data-action="edit-song">✎ Edit</button><button class="btn compact" data-action="delete-song">Delete</button></div>`:`<div class="callout"><strong>Notation-first roadmap:</strong> Score Studio now stores a single-voice staff score alongside optional lyric/chord sketches. A professionally engraved score editor, full MusicXML support, and independent voices remain future milestones.</div><hr class="divider"><p class="small-text">JSON backup is the lossless app backup. Score Studio now supports a limited single-part MusicXML interchange; unsupported notation is rejected rather than discarded.</p>`}</section></div>`}
 function repositorySongbook(){
  const snapshot=state.repositorySnapshot, all=snapshot.catalog.entries, current=snapshot.songs[state.repoSelectedId]??null;
+ const sections=Array.isArray(current?.sections)?current.sections:[];
+ const activeSection=sections[Math.min(state.repoSectionIndex,Math.max(0,sections.length-1))];
+ const previewScore=activeSection?{...current.score,measures:current.score.measures.slice(activeSection.startBar-1,activeSection.endBar)}:current?.score;
  return `${hero('REMOTE REPERTOIRE / OFFLINE CACHE','Load your <em>next challenge.</em>','Arrangements maintained in a separate repository. Sync downloads validated score files; copying a song creates an independent local arrangement that updates cannot overwrite.',`${all.length} ARRANGEMENTS · ${h(snapshot.catalog.name)}`)}
  <div class="panel panel-pad repo-source-panel"><div class="panel-title"><h2>Song repository</h2><span class="sub-label">ONE-WAY DOWNLOAD</span></div>
  <label for="repositoryUrl">Catalog address (relative to app, GitHub Pages or raw GitHub HTTPS)</label>
@@ -405,14 +408,15 @@ function repositorySongbook(){
  ${all.length?`<div class="song-list repo-song-list">${all.map(item=>`<div data-repo-row data-search="${h([item.title,item.artist,...item.tags].join(' ').toLowerCase())}" data-difficulty="${h(item.difficulty)}" class="song-row ${item.id===state.repoSelectedId?'repo-selected':''}"><div class="song-initial">♪</div><div class="song-title"><b>${h(item.title)}</b><small>${h(item.artist)} · ${h(item.difficulty)} · rev ${item.revision}</small></div><button class="btn compact" data-repo="${h(item.id)}" aria-label="Preview ${h(item.title)}">Preview</button></div>`).join('')}</div>`:`<p class="small-text">Repository has no arrangements yet.</p>`}
  <p class="hint-text">The repository is separate from My Songbook. Sync replaces only cached reference arrangements, never your imported songs, annotations or progress.</p></section>
  <section class="panel panel-pad"><div class="panel-title"><h2>${current?'Arrangement preview':'Select a score'}</h2></div>
- ${current?`<div class="eyebrow">${h(current.difficulty)} / REVISION ${current.revision}</div><h2 class="repo-song-heading">${h(current.title)}</h2><p class="small-text">${h(current.artist)} · ${h(current.tonalCenter||current.key||'Key not set')}${current.bpm?' · '+current.bpm+' BPM':''} · ${h(current.tuning)}</p><p class="small-text">${h(current.description)}</p><div class="repo-tags">${current.tags.map(t=>`<span>${h(t)}</span>`).join('')}</div><div class="score-holder score-editor-view repo-score-preview">${renderScoreView(current.score,{mode:state.display})}</div><p class="small-text">${h(current.notes)}</p><div class="score-actions"><button class="btn gold" data-action="repo-import">＋ Copy to My Songbook</button><button class="btn ghost" data-action="repo-view-mine">My Songbook →</button></div>`:`<p class="small-text">Select an arrangement to see its musical score.</p>`}
+ ${current?`<div class="eyebrow">${h(current.difficulty)} / REVISION ${current.revision}</div><h2 class="repo-song-heading">${h(current.title)}</h2><p class="small-text">${h(current.artist)} · ${h(current.tonalCenter||current.key||'Key not set')}${current.bpm?' · '+current.bpm+' BPM':''} · ${h(current.tuning)}</p><p class="small-text">${h(current.description)}</p><div class="repo-tags">${current.tags.map(t=>`<span>${h(t)}</span>`).join('')}</div>${sections.length?`<p class="small-text">Sections · select one to preview; copying always imports the entire score (${current.score.measures.length} bars).</p><div class="repo-tags" role="group" aria-label="Choose practice section">${sections.map((sec,i)=>`<button class="btn compact ${activeSection===sec?'gold':'ghost'}" data-repo-section="${i}" aria-pressed="${activeSection===sec}">${h(sec.label)} (${sec.startBar}–${sec.endBar})</button>`).join('')}</div>`:''}
+ <div class="score-holder score-editor-view repo-score-preview">${renderScoreView(previewScore,{mode:state.display})}</div><p class="small-text">${h(current.notes)}</p><div class="score-actions"><button class="btn gold" data-action="repo-import">＋ Copy to My Songbook</button><button class="btn ghost" data-action="repo-view-mine">My Songbook →</button></div>`:`<p class="small-text">Select an arrangement to see its musical score.</p>`}
  </section></div>`;
 }
 function repertoireItems(){return state.repositorySnapshot.catalog.repertoire??BUNDLED_LIBRARY.catalog.repertoire??[];}
 function repertoireScoreId(item){return item.preferredArrangementId||item.id;}
 function approvedRepertoireSongbook(){
  const items=repertoireItems();
- const owned=new Set(songs().map(s=>s.repositoryOrigin?.id).filter(Boolean));
+ const owned=new Set(songs().filter(s=>s.repositoryOrigin?.id&&s.repositoryOrigin.revision===state.repositorySnapshot.songs[s.repositoryOrigin.id]?.revision).map(s=>s.repositoryOrigin.id));
  return `${hero('APPROVED PRACTICE SONGS','Your <em>repertoire.</em>','Your selected songs include original harmony studies and, where public-domain material permits, documented traditional melodies. The studies are not transcriptions of the protected recordings.',`${items.length} APPROVED SONGS · ORIGINAL STUDIES`)}
  <section class="panel panel-pad"><div class="panel-title"><h2>Approved repertoire</h2><button class="btn gold compact" data-action="repertoire-import-all">＋ Import available practice studies</button></div>
  <p class="small-text">Sync the Repository Library to access all the available scores. These include original technique studies and one complete historical version of Scarborough Fair; the latter is not Simon & Garfunkel’s arrangement. Copying imports notation and optional tablature as independent local scores. Previously copied songs are not replaced.</p>
@@ -430,7 +434,7 @@ async function syncLibrary(){
   state.repoSyncing=true;state.repoError=null;render();
   const snapshot=await downloadRepository({source:url,base:location.href,validateScore});
   if(!store('repositorySnapshot',snapshot))throw Error('Could not cache arrangements; the previous repository remains available');
-  state.repositorySnapshot=snapshot;
+  state.repositorySnapshot=snapshot;state.repoSectionIndex=0;
   if(!snapshot.songs[state.repoSelectedId])state.repoSelectedId=snapshot.catalog.entries[0]?.id??null;
   toast(`Synced ${snapshot.catalog.entries.length} arrangement(s); your songs are unchanged`);
  }catch(err){state.repoError=`Sync failed: ${err.message}. The last validated library is unchanged.`;toast('Repository sync failed; cached songs are intact')}
@@ -453,7 +457,7 @@ function addApprovedSongs(ids=null){
   let next=songs(),added=0;
   for(const item of items){
    const arrangementId=repertoireScoreId(item);
-   if(next.some(s=>s.repositoryOrigin?.id===arrangementId))continue;
+   if(next.some(s=>s.repositoryOrigin?.id===arrangementId && s.repositoryOrigin.revision===state.repositorySnapshot.songs[arrangementId]?.revision))continue;
    if(!state.repositorySnapshot.songs[arrangementId])continue;
    const id='repertoire-study-copy-'+(globalThis.crypto?.randomUUID?.()??Date.now()+'-'+Math.floor(Math.random()*1e6))+'-'+added;
    next=copyToSongbook(state.repositorySnapshot,arrangementId,next,{id,validateScore});
@@ -636,7 +640,8 @@ function handleClick(e){const node=e.target.closest('[data-prog-degree],[data-pr
  if(node.dataset.techDisplay){state.techDisplay=node.dataset.techDisplay;store('techDisplay',state.techDisplay);render();return}
  if(node.dataset.techNote){const {score}=techniqueScore(currentTechnique().id,state.tuning);const found=findEvent(score,node.dataset.techNote);if(found){state.techEventId=found.event.id;if(found.event.type!=='rest')synthEvent(found.event,audio().currentTime+.012,60/(state.techTempo||currentTechnique().tempo));render()}return}
  if(node.dataset.techRating){const rated=recordTechniquePractice(techniqueProgress(),currentTechnique().id,node.dataset.techRating);if(store('techniqueProgress',rated)){toast('Practice attempt recorded');render()}return}
- if(node.dataset.repo){state.repoSelectedId=node.dataset.repo;render();return}
+ if(node.dataset.repo){state.repoSelectedId=node.dataset.repo;state.repoSectionIndex=0;render();return}
+  if(node.dataset.repoSection!==undefined){state.repoSectionIndex=Number(node.dataset.repoSection)||0;render();return}
   if(node.dataset.repertoire){addApprovedSongs([node.dataset.repertoire]);return}
  if(node.dataset.song){state.songOpen=node.dataset.song;state.editing=false;render();return}
  if(node.dataset.action){const action=node.dataset.action;switch(action){
