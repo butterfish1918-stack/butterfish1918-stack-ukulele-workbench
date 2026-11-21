@@ -1,7 +1,7 @@
 {
   "format": "ukulele-workbench-catalog",
   "schemaVersion": 1,
-  "name": "Ukulele Workbench — Starter Library",
+  "name": "Ukulele Workbench — Approved Song Accompaniments",
   "entries": [
     {
       "id": "first-melody-study",
@@ -31,155 +31,166 @@
     },
     {
       "id": "isolation",
-      "revision": 1,
-      "title": "Isolation — Harmony & Technique Study",
+      "revision": 2,
+      "title": "Isolation — Ukulele Song-Form Accompaniment",
       "artist": "Joy Division",
       "difficulty": "advanced",
       "tags": [
-        "advanced-repertoire",
-        "original-study",
+        "song-form",
+        "high-g",
+        "accompaniment",
         "notation",
-        "fingerstyle"
+        "adaptation"
       ],
       "file": "songs/isolation.json"
     },
     {
       "id": "love-will-tear-us-apart",
-      "revision": 1,
-      "title": "Love Will Tear Us Apart — Harmony & Technique Study",
+      "revision": 2,
+      "title": "Love Will Tear Us Apart — Ukulele Song-Form Accompaniment",
       "artist": "Joy Division",
       "difficulty": "advanced",
       "tags": [
-        "advanced-repertoire",
-        "original-study",
+        "song-form",
+        "high-g",
+        "accompaniment",
         "notation",
-        "fingerstyle"
+        "adaptation"
       ],
       "file": "songs/love-will-tear-us-apart.json"
     },
     {
       "id": "the-passenger",
-      "revision": 1,
-      "title": "The Passenger — Harmony & Technique Study",
+      "revision": 2,
+      "title": "The Passenger — Ukulele Song-Form Accompaniment",
       "artist": "Iggy Pop",
-      "difficulty": "intermediate",
+      "difficulty": "advanced",
       "tags": [
-        "advanced-repertoire",
-        "original-study",
+        "song-form",
+        "high-g",
+        "accompaniment",
         "notation",
-        "minor-harmony"
+        "adaptation"
       ],
       "file": "songs/the-passenger.json"
     },
     {
       "id": "passover",
-      "revision": 1,
-      "title": "Passover — Harmony & Technique Study",
+      "revision": 2,
+      "title": "Passover — Ukulele Song-Form Accompaniment",
       "artist": "Joy Division",
       "difficulty": "advanced",
       "tags": [
-        "advanced-repertoire",
-        "original-study",
+        "song-form",
+        "high-g",
+        "accompaniment",
         "notation",
-        "minor-harmony"
+        "adaptation"
       ],
       "file": "songs/passover.json"
     },
     {
       "id": "spellbound",
-      "revision": 1,
-      "title": "Spellbound — Harmony & Technique Study",
+      "revision": 2,
+      "title": "Spellbound — Ukulele Song-Form Accompaniment",
       "artist": "Siouxsie and the Banshees",
       "difficulty": "advanced",
       "tags": [
-        "advanced-repertoire",
-        "original-study",
+        "song-form",
+        "high-g",
+        "accompaniment",
         "notation",
-        "minor-harmony"
+        "adaptation"
       ],
       "file": "songs/spellbound.json"
     },
     {
       "id": "a-forest",
-      "revision": 1,
-      "title": "A Forest — Harmony & Technique Study",
+      "revision": 2,
+      "title": "A Forest — Ukulele Song-Form Accompaniment",
       "artist": "The Cure",
       "difficulty": "advanced",
       "tags": [
-        "advanced-repertoire",
-        "original-study",
+        "song-form",
+        "high-g",
+        "accompaniment",
         "notation",
-        "minor-harmony"
+        "adaptation"
       ],
       "file": "songs/a-forest.json"
     },
     {
       "id": "life-on-mars",
-      "revision": 1,
-      "title": "Life on Mars? — Harmony & Technique Study",
+      "revision": 2,
+      "title": "Life on Mars? — Ukulele Song-Form Accompaniment",
       "artist": "David Bowie",
       "difficulty": "advanced",
       "tags": [
-        "advanced-repertoire",
-        "original-study",
+        "song-form",
+        "high-g",
+        "accompaniment",
         "notation",
-        "fingerstyle"
+        "adaptation"
       ],
       "file": "songs/life-on-mars.json"
     },
     {
       "id": "blackbird",
-      "revision": 1,
-      "title": "Blackbird — Harmony & Technique Study",
+      "revision": 2,
+      "title": "Blackbird — Ukulele Song-Form Accompaniment",
       "artist": "The Beatles",
       "difficulty": "advanced",
       "tags": [
-        "advanced-repertoire",
-        "original-study",
+        "song-form",
+        "high-g",
+        "accompaniment",
         "notation",
-        "fingerstyle"
+        "adaptation"
       ],
       "file": "songs/blackbird.json"
     },
     {
       "id": "space-oddity",
-      "revision": 1,
-      "title": "Space Oddity — Harmony & Technique Study",
+      "revision": 2,
+      "title": "Space Oddity — Ukulele Song-Form Accompaniment",
       "artist": "David Bowie",
       "difficulty": "advanced",
       "tags": [
-        "advanced-repertoire",
-        "original-study",
+        "song-form",
+        "high-g",
+        "accompaniment",
         "notation",
-        "fingerstyle"
+        "adaptation"
       ],
       "file": "songs/space-oddity.json"
     },
     {
       "id": "while-my-guitar-gently-weeps",
-      "revision": 1,
-      "title": "While My Guitar Gently Weeps — Harmony & Technique Study",
+      "revision": 2,
+      "title": "While My Guitar Gently Weeps — Ukulele Song-Form Accompaniment",
       "artist": "The Beatles",
       "difficulty": "advanced",
       "tags": [
-        "advanced-repertoire",
-        "original-study",
+        "song-form",
+        "high-g",
+        "accompaniment",
         "notation",
-        "minor-harmony"
+        "adaptation"
       ],
       "file": "songs/while-my-guitar-gently-weeps.json"
     },
     {
       "id": "wish-you-were-here",
-      "revision": 1,
-      "title": "Wish You Were Here — Harmony & Technique Study",
+      "revision": 2,
+      "title": "Wish You Were Here — Ukulele Song-Form Accompaniment",
       "artist": "Pink Floyd",
-      "difficulty": "intermediate",
+      "difficulty": "advanced",
       "tags": [
-        "advanced-repertoire",
-        "original-study",
+        "song-form",
+        "high-g",
+        "accompaniment",
         "notation",
-        "fingerstyle"
+        "adaptation"
       ],
       "file": "songs/wish-you-were-here.json"
     },
@@ -199,43 +210,46 @@
     },
     {
       "id": "babe-im-gonna-leave-you",
-      "revision": 1,
-      "title": "Babe I'm Gonna Leave You — Harmony & Technique Study",
+      "revision": 2,
+      "title": "Babe I'm Gonna Leave You — Ukulele Song-Form Accompaniment",
       "artist": "Led Zeppelin",
       "difficulty": "advanced",
       "tags": [
-        "advanced-repertoire",
-        "original-study",
+        "song-form",
+        "high-g",
+        "accompaniment",
         "notation",
-        "minor-harmony"
+        "adaptation"
       ],
       "file": "songs/babe-im-gonna-leave-you.json"
     },
     {
       "id": "everybody-wants-to-rule-the-world",
-      "revision": 1,
-      "title": "Everybody Wants to Rule the World — Harmony & Technique Study",
+      "revision": 2,
+      "title": "Everybody Wants to Rule the World — Ukulele Song-Form Accompaniment",
       "artist": "Tears for Fears",
       "difficulty": "advanced",
       "tags": [
-        "advanced-repertoire",
-        "original-study",
-        "compound-meter",
-        "fingerstyle"
+        "song-form",
+        "high-g",
+        "accompaniment",
+        "notation",
+        "adaptation"
       ],
       "file": "songs/everybody-wants-to-rule-the-world.json"
     },
     {
       "id": "california-dreamin",
-      "revision": 1,
-      "title": "California Dreamin' — Harmony & Technique Study",
+      "revision": 2,
+      "title": "California Dreamin' — Ukulele Song-Form Accompaniment",
       "artist": "The Mamas & the Papas",
       "difficulty": "advanced",
       "tags": [
-        "advanced-repertoire",
-        "original-study",
+        "song-form",
+        "high-g",
+        "accompaniment",
         "notation",
-        "minor-harmony"
+        "adaptation"
       ],
       "file": "songs/california-dreamin.json"
     },

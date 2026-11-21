@@ -33,6 +33,7 @@ jobs:
         run: |
           npm test
           npm run qa:library
+          npm run qa:arrangements
 
       - name: Assemble a lean static site
         shell: bash
