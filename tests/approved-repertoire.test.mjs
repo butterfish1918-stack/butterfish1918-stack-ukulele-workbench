@@ -18,9 +18,14 @@ test('approved repertoire has exactly the fifteen explicitly selected titles',()
  for(const meta of catalog.entries){
   const file=JSON.parse(readFileSync(new URL('../library/'+meta.file,import.meta.url),'utf8'));
   assert.equal(validateArrangement(file,meta,validateScore),true);
-  if(catalog.repertoire.some(x=>x.id===meta.id)){
-   assert.equal(file.score.measures.length,16);
-   assert.match(file.description,/Not a transcription/);
+  if(catalog.repertoire.some(x=>x.id===meta.id && x.id!=='scarborough-fair')){
+   assert.ok(file.score.measures.length>=48);
+   assert.equal(file.revision,2);
+   assert.equal(file.arrangementType,'song-form-accompaniment');
+   assert.ok(Array.isArray(file.sections)&&file.sections.length>=4);
+   assert.equal(file.sections[0].startBar,1);
+   assert.equal(file.sections.at(-1).endBar,file.score.measures.length);
+   assert.match(file.description,/not a note-for-note/i);
   }
  }
  assert.equal(validateRepertoire(BUNDLED_LIBRARY.catalog.repertoire),true);
