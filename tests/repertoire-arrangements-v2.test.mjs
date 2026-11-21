@@ -62,3 +62,15 @@ test('long scores use section navigation and updates do not hide newer catalog r
  assert.match(app,/repositoryOrigin\.revision===state\.repositorySnapshot\.songs/);
  assert.match(app,/songScoreSections/);
 });
+
+test('recorded guitar-part fidelity is not claimed by harmony-only studies',()=>{
+ const app=readFileSync(new URL('../src/app.js',import.meta.url),'utf8');
+ assert.match(app,/score-import-guitar/);
+ assert.match(app,/loadGuitarPartFile/);
+ assert.match(app,/guitarPartFile/);
+ assert.match(app,/guitar-source adapter|guitar-source|guitar notes/i);
+ const sw=readFileSync(new URL('../sw.js',import.meta.url),'utf8');
+ assert.match(sw,/src\/guitar-adaptation\.js/);
+ const readme=readFileSync(new URL('../README.md',import.meta.url),'utf8');
+ assert.match(readme,/not accurate transcriptions/i);
+});
