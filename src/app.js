@@ -489,7 +489,7 @@ function songLyricEditor(){
 }
 function preparedSongSelection(song,label,sections,index){
  const chosen=effectiveSongArrangement(song),active=chosen.arrangement;
- const preview=state.songPracticeScope==='full'?active.score:sectionScore(active.score,sections,index);
+ const preview=state.songPracticeScope!=='section'?active.score:sectionScore(active.score,sections,index);
  const parts=arrangementModeTracks(active,state.songArrangementMode);
  return {score:active.score,preview,label,body:song.body||'',section:sections[index],sectionIndex:index,sections,arrangement:active,parts,verifiedGuitar:chosen.verifiedGuitar,sourceGuitar:chosen.source};
 }
@@ -522,8 +522,8 @@ function renderSongArrangementSheets(arrangement,sections,index,containerClass){
  const visible=tracks.filter(track=>track.id==='ukulele'||(state.songArrangementMode==='ensemble'&&state.songVisibleParts[track.id]===true));
  const barChords=chartChordsPerBar(arrangement);
  const readingCues=readingCuesForSong(arrangement,sections);
- const offset=state.songPracticeScope==='full'?0:(sections[index]?.startBar??1)-1;
- const shown=visible.map(track=>({...track,shown:state.songPracticeScope==='full'?track.score:sectionScore(track.score,sections,index)}));
+ const offset=state.songPracticeScope!=='section'?0:(sections[index]?.startBar??1)-1;
+ const shown=visible.map(track=>({...track,shown:state.songPracticeScope!=='section'?track.score:sectionScore(track.score,sections,index)}));
  const staffOptions=part=>({
   mode:part.id==='ukulele'?state.display:'notation',
   showNames:state.songShowNoteNames&&part.id!=='drums',
@@ -1421,6 +1421,28 @@ function handleClick(e){const node=e.target.closest('[data-prog-degree],[data-pr
   const next={...state.songLyricsById};delete next[lyricKey(song)];
   if(!store('songLyricsById',next))break;
   state.songLyricsById=next;state.songLyricEditorOpen=false;render();toast('Local lyric cues cleared');
+ }break;
+ case 'song-practice-set-ab':{
+  const selection=activeSongPractice();if(!selection)return;
+  try{const range=validateLoopRange(selection.score.measures.length,Number($('#songPracticeA')?.value),Number($('#songPracticeB')?.value));
+   state.songPracticeRanges={...state.songPracticeRanges,[currentPracticeSongId()]:range};
+   store('songPracticeRanges',state.songPracticeRanges);stopSongPractice();
+   state.songPracticeScope='ab';state.songPracticeLoop=true;store('songPracticeLoop',true);render();toast('Practising bars '+range.start+'–'+range.end);
+  }catch(error){toast(error.message)}
+ }break;
+ case 'song-practice-resume':{
+  const selection=activeSongPractice(),saved=state.songBookmarks[currentPracticeSongId()];
+  if(!selection||!saved)return;
+  try{const range=validateLoopRange(selection.score.measures.length,saved.bar,selection.score.measures.length);
+   stopSongPractice();state.songPracticeRanges={...state.songPracticeRanges,[currentPracticeSongId()]:range};
+   store('songPracticeRanges',state.songPracticeRanges);
+   state.songPracticeScope='ab';state.songPracticeLoop=false;store('songPracticeLoop',false);render();
+   playSongPractice();
+  }catch(error){toast(error.message)}
+ }break;
+ case 'song-practice-bookmark':{
+  const selection=activeSongPractice();
+  if(selection){const bar=songPracticePlayback?.lastBar||currentPracticeBarRange(selection)?.start||1;saveCurrentSongBookmark(bar);render();toast('Bookmark saved at bar '+bar)}
  }break;
  case 'song-practice-play':playSongPractice();break;
  case 'song-practice-stop':stopSongPractice();render();break;
