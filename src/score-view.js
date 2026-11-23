@@ -133,17 +133,47 @@ function renderBeams(groups,events,xs,selectedId,playingId){
 }
 
 /** Returns HTML containing one synchronized SVG. A click on staff or tab carries data-event-id. */
-export function renderScoreView(score,{mode='notation',selectedEventId=null,playingEventId=null,showNames=false,annotations=null}={}){
+/** Paginated stave systems instead of an ever-widening SVG.
+ * One dense measure or two/three light measures per system; browser width
+ * determines physical scaling, but the SVG never overflows horizontally.
+ */
+export function scoreSystems(score,{maxSystemWidth=710,maxBarsPerSystem=3}={}){
+ if(!score?.measures?.length)return [];
+ const systems=[];
+ let from=0,total=115,bars=0;
+ const maxWidth=Math.max(420,Number(maxSystemWidth)||710);
+ const limit=Math.max(1,Math.min(4,Number(maxBarsPerSystem)||3));
+ for(let i=0;i<score.measures.length;i++){
+  const bar=score.measures[i];
+  const width=Math.max(185,Math.round(70+bar.events.length*38));
+  if(bars>0&&(total+width>maxWidth || bars>=limit)){
+   systems.push({start:from,end:i});
+   from=i;total=115;bars=0;
+  }
+  total+=width;bars++;
+ }
+ systems.push({start:from,end:score.measures.length});
+ return systems;
+}
+export function renderScoreView(score,{mode='notation',selectedEventId=null,playingEventId=null,showNames=false,annotations=null,layout='strip',measureOffset=0}={}){
+ if(layout==='systems'&&score?.measures?.length){
+  const systems=scoreSystems(score);
+  return `<div class="score-systems" role="group" aria-label="Multi-line sheet music: ${systems.length} stave systems, ${score.measures.length} measures">${systems.map(({start,end})=>{
+   const single={...score,measures:score.measures.slice(start,end)};
+   return `<div class="score-system" role="group" aria-label="Measures ${measureOffset+start+1} to ${measureOffset+end}">${renderScoreView(single,{mode,selectedEventId,playingEventId,showNames,annotations,layout:'compact',measureOffset:measureOffset+start})}</div>`;
+  }).join('')}</div>`;
+ }
+
  const showNotation=mode!=='tab',showTab=mode!=='notation';
  const meter=score.meter.split('/');
  const key=score.key??'C',keyCount=Math.abs(KEY_SIGNATURES[key]);
  const extra=keyCount*14;
- const segments=score.measures.map((bar,i)=>({bar,i,width:Math.max(205,Math.round(90+bar.events.length*61))}));
+ const segments=score.measures.map((bar,i)=>({bar,i,width:layout==='compact'?Math.max(185,Math.round(70+bar.events.length*38)):Math.max(205,Math.round(90+bar.events.length*61))}));
  const width=125+extra+segments.reduce((a,s)=>a+s.width,0)+25;
  const height=showNotation&&showTab?347:showNotation?202:189;
  const tabTop=showNotation?226:62;
  const bottom=102,top=54;
- let out=`<svg class="composed-score" role="group" aria-label="${esc(score.title)} in ${esc(score.meter)}, ${score.measures.length} measures" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" style="min-width:${Math.min(1450,Math.max(400,width*.83))}px" ><rect width="${width}" height="${height}" fill="#eee8db"/>`;
+ let out=`<svg class="composed-score" role="group" aria-label="${esc(score.title)} in ${esc(score.meter)}, ${score.measures.length} measures" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" style="${layout==='compact'?'width:100%;min-width:0;max-width:100%;':'min-width:'+Math.min(1450,Math.max(400,width*.83))+'px;'}" ><rect width="${width}" height="${height}" fill="#eee8db"/>`;
  out+=`<text x="16" y="22" fill="#4b6150" font-size="12" font-weight="700">${esc(score.title)}</text><text x="${width-20}" y="22" text-anchor="end" fill="#60705e" font-size="11">${esc(score.tuning==='highG'?'HIGH G':score.tuning==='lowG'?'LOW G':'BARITONE')} · ${esc(score.tempo)} BPM</text>`;
  if(showNotation){
   for(let y=top;y<=bottom;y+=12)out+=`<line x1="16" x2="${width-20}" y1="${y}" y2="${y}" stroke="#637469" stroke-width=".85"/>`;
@@ -165,7 +195,7 @@ export function renderScoreView(score,{mode='notation',selectedEventId=null,play
  for(const seg of segments){
   const {bar,i,width:barWidth}=seg;
   const start=x,end=x+barWidth;
-  out+=`<text x="${start+9}" y="40" fill="#849386" font-size="10">${i+1}</text>`;
+  out+=`<text x="${start+9}" y="40" fill="#849386" font-size="10">${measureOffset+i+1}</text>`;
   const count=Math.max(bar.events.length,1);
   let elapsed=0;
   const cap=measureBeats(score.meter),span=barWidth-64;
@@ -182,7 +212,7 @@ export function renderScoreView(score,{mode='notation',selectedEventId=null,play
     const y=ev.type==='rest'?82:ev.type==='note'?staffYForSpelling(ev.midi,ev.spelling,bottom):82;
     const mark=ev.type==='rest'?restGlyph(px,82,ev.duration):ev.type==='chord'?chordGlyph(px,ev,accidentals[j],selected||playing):noteGlyph(px,y,ev,selected||playing,{beamed:beamed.has(j),accidental:accidentals[j]})+(ev.articulation?articulationGlyph(px,y,ev.articulation):'');
     if(selected||playing)out+=`<rect x="${px-23}" y="32" width="46" height="117" rx="7" fill="${playing?'#84b295':'#e1b879'}" opacity=".24"/>`;
-    out+=`<g class="score-event ${selected?'selected':''} ${playing?'playing':''}" role="button" tabindex="0" data-event-id="${esc(ev.id)}" aria-label="${ev.type==='rest'?'Rest':ev.type==='chord'?`Chord ${esc(ev.symbol)}, ${esc(ev.stroke)}stroke`:`Note ${esc(ev.spelling)}${esc(midiName(ev.midi).slice(-1))}`} ${esc(ev.duration)} quarter beats, measure ${i+1}"><rect x="${px-28}" y="25" width="56" height="123" fill="transparent"/>${mark}</g>`;
+    out+=`<g class="score-event ${selected?'selected':''} ${playing?'playing':''}" role="button" tabindex="0" data-event-id="${esc(ev.id)}" aria-label="${ev.type==='rest'?'Rest':ev.type==='chord'?`Chord ${esc(ev.symbol)}, ${esc(ev.stroke)}stroke`:`Note ${esc(ev.spelling)}${esc(midiName(ev.midi).slice(-1))}`} ${esc(ev.duration)} quarter beats, measure ${measureOffset+i+1}"><rect x="${px-28}" y="25" width="56" height="123" fill="transparent"/>${mark}</g>`;
     if(annotations?.[ev.id]&&ev.type!=='rest')out+=`<text class="score-tech-fingering" x="${px}" y="162" fill="#3c5e48" font-size="12" font-weight="700" text-anchor="middle">${esc(annotations[ev.id])}</text>`;
     if(showNames&&ev.type==='note')out+=`<text x="${px}" y="174" fill="#456047" font-size="11" font-weight="700" text-anchor="middle">${esc(ev.spelling)}</text>`;
    }
