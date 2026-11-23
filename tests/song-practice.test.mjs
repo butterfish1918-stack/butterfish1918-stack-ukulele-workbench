@@ -23,3 +23,16 @@ test('practice tempo scales playback without changing written score',()=>{
  assert.throws(()=>practiceTempo(120,30),/Invalid/);
  assert.equal(score.tempo,100);
 });
+
+import {extractChordSymbols,chordPitchClasses} from '../src/song-practice.js';
+test('extracts the chord chart for Blackbird-style fingerpicking scores without inventing melody notes',()=>{
+ const text="Opening figure: G | C | G | C (repeat 2×)\nVerse 1: G | C | A7 | D7\nBridge: G | F | Em | Dm | Bb";
+ assert.deepEqual(extractChordSymbols(text),['G','C','A7','D7','F','Em','Dm','Bb']);
+ assert.deepEqual(chordPitchClasses('G'),[7,11,2]);
+ assert.deepEqual(chordPitchClasses('A7'),[9,1,4,7]);
+ assert.deepEqual(chordPitchClasses('Em'),[4,7,11]);
+ assert.equal(chordPitchClasses('H7'),null);
+});
+test('supports the ChordPro bracket format for traditional arrangements',()=>{
+ assert.deepEqual(extractChordSymbols('Intro: [Em] [C] [D] [Em]'),['Em','C','D']);
+});
