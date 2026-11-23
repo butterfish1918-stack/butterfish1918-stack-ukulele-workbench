@@ -137,7 +137,7 @@ function renderBeams(groups,events,xs,selectedId,playingId){
  * One dense measure or two/three light measures per system; browser width
  * determines physical scaling, but the SVG never overflows horizontally.
  */
-export function scoreSystems(score,{maxSystemWidth=710,maxBarsPerSystem=3}={}){
+export function scoreSystems(score,{maxSystemWidth=490,maxBarsPerSystem=3}={}){
  if(!score?.measures?.length)return [];
  const systems=[];
  let from=0,total=115,bars=0;
@@ -157,7 +157,8 @@ export function scoreSystems(score,{maxSystemWidth=710,maxBarsPerSystem=3}={}){
 }
 export function renderScoreView(score,{mode='notation',selectedEventId=null,playingEventId=null,showNames=false,annotations=null,layout='strip',measureOffset=0}={}){
  if(layout==='systems'&&score?.measures?.length){
-  const systems=scoreSystems(score);
+  const desktop=typeof window!=='undefined'&&window.innerWidth>=820;
+  const systems=scoreSystems(score,{maxSystemWidth:desktop?840:490,maxBarsPerSystem:desktop?4:2});
   return `<div class="score-systems" role="group" aria-label="Multi-line sheet music: ${systems.length} stave systems, ${score.measures.length} measures">${systems.map(({start,end})=>{
    const single={...score,measures:score.measures.slice(start,end)};
    return `<div class="score-system" data-first-measure="${measureOffset+start+1}" data-last-measure="${measureOffset+end}" role="group" aria-label="Measures ${measureOffset+start+1} to ${measureOffset+end}">${renderScoreView(single,{mode,selectedEventId,playingEventId,showNames,annotations,layout:'compact',measureOffset:measureOffset+start})}</div>`;
