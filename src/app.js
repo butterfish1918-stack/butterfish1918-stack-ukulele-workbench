@@ -7,7 +7,7 @@ import {prepareBackupRestore,commitBackupRestore} from './storage-safety.js';
 import {inspectDevice} from './device-qa.js';
 import {BUNDLED_LIBRARY} from './library-seed.js';
 import {attachApprovedRepertoireScores} from './repertoire-migration.js';
-import {DEFAULT_CATALOG_URL,catalogUrl,validateSnapshot,downloadRepository,copyToSongbook} from './song-library.js';
+import {DEFAULT_CATALOG_URL,catalogUrl,validateSnapshot,downloadRepository,downloadSingleApprovedArrangement,copyToSongbook} from './song-library.js';
 import {exportMusicXML,importMusicXML} from './musicxml.js';
 import {adaptGuitarPart,exampleGuitarSource} from './guitar-adaptation.js';
 import {createHistory,commitHistory,undoHistory,redoHistory,canUndo,canRedo} from './history.js';
@@ -37,7 +37,7 @@ let progressionPlayback=null,techniquePlayback=null,rhythmLabPlayback=null,ac=nu
 const pageNames={explorer:'Fretboard & Theory',progression:'Progression Builder',notation:'Notation Academy',technique:'Technique Academy',rhythm:'Rhythm Studio',songbook:'My Songbook',practice:'Practice Room',score:'Score Studio'};
 const songs=()=>read('songs',[]),progress=()=>read('progress',[]);
 function initialRepository(){const cached=read('repositorySnapshot',null);try{if(cached&&validateSnapshot(cached,validateScore))return cached}catch{}return structuredClone(BUNDLED_LIBRARY)}
-state.songbookView='mine';state.songSectionIndex=0;state.songLoadingId=null;state.songLoadError=null;state.repertoireSelectedId='isolation';state.repertoireSectionIndex=0;state.repositorySnapshot=initialRepository();state.repoSelectedId=state.repositorySnapshot.catalog.entries[0]?.id??null;state.repositorySource=read('repositorySource',DEFAULT_CATALOG_URL);state.repoSyncing=false;state.repoError=null;state.repoQuery='';state.repoDifficulty='all';state.repoSectionIndex=0;
+state.songbookView='mine';state.songSectionIndex=0;state.songLoadingId=null;state.songLoadError=null;state.repertoireSelectedId='isolation';state.repertoireSectionIndex=0;state.repertoireLoadingId=null;state.repertoirePreviewSnapshots={};state.repositorySnapshot=initialRepository();state.repoSelectedId=state.repositorySnapshot.catalog.entries[0]?.id??null;state.repositorySource=read('repositorySource',DEFAULT_CATALOG_URL);state.repoSyncing=false;state.repoError=null;state.repoQuery='';state.repoDifficulty='all';state.repoSectionIndex=0;
 function loadProgression(){const saved=read('progressionDraft',null);try{if(saved&&validateProgression(saved))return saved}catch{}return createProgression({tuning:TUNINGS[state.tuning]?state.tuning:'highG'});}
 state.progression=loadProgression();
 function updateProgression(next){try{validateProgression(next);stopProgression();state.progression=next;store('progressionDraft',next);render();return true}catch(e){toast(e.message);return false}}
@@ -431,11 +431,28 @@ function repositorySongbook(){
 }
 function repertoireItems(){return state.repositorySnapshot.catalog.repertoire??BUNDLED_LIBRARY.catalog.repertoire??[];}
 function repertoireScoreId(item){return item.preferredArrangementId||item.id;}
+function snapshotForRepertoireItem(item){return state.repositorySnapshot.songs[repertoireScoreId(item)]?state.repositorySnapshot:state.repertoirePreviewSnapshots[item.id]??null;}
+function availableArrangementForItem(item){return snapshotForRepertoireItem(item)?.songs[repertoireScoreId(item)]??null;}
+async function ensureApprovedArrangement(item){
+ const existing=snapshotForRepertoireItem(item);
+ if(existing)return existing;
+ if(location.protocol==='file:')throw Error('Open the hosted HTTPS app to download practice scores. The standalone file preview cannot sync.');
+ const result=await downloadSingleApprovedArrangement({source:state.repositorySource,base:location.href,repertoireId:item.id,validateScore});
+ state.repertoirePreviewSnapshots[item.id]=result;
+ return result;
+}
+async function selectRepertoireSong(item){
+ state.repertoireSelectedId=item.id;state.repertoireSectionIndex=0;state.repoError=null;
+ if(availableArrangementForItem(item)){render();return}
+ state.repertoireLoadingId=item.id;render();
+ try{await ensureApprovedArrangement(item)}catch(error){state.repoError=error.message;toast('Could not load this song score')}
+ finally{state.repertoireLoadingId=null;if(state.page==='songbook')render()}
+}
 function approvedRepertoireSongbook(){
  const items=repertoireItems();
- const owned=new Set(songs().filter(s=>s.repositoryOrigin?.id&&s.repositoryOrigin.revision===state.repositorySnapshot.songs[s.repositoryOrigin.id]?.revision).map(s=>s.repositoryOrigin.id));
+ const owned=new Set(songs().filter(s=>s.score && s.repertoireOrigin?.id).map(s=>s.repertoireOrigin.id));
  const selected=items.find(item=>item.id===state.repertoireSelectedId)||items[0]||null;
- const arrangement=selected?state.repositorySnapshot.songs[repertoireScoreId(selected)]??null:null;
+ const arrangement=selected?availableArrangementForItem(selected):null;
  const sections=Array.isArray(arrangement?.sections)&&arrangement.sections.length?arrangement.sections:songScoreSections(arrangement?.score);
  const activeSection=sections[Math.min(state.repertoireSectionIndex,Math.max(0,sections.length-1))];
  const previewScore=activeSection?{...arrangement.score,measures:arrangement.score.measures.slice(activeSection.startBar-1,activeSection.endBar)}:arrangement?.score;
@@ -444,8 +461,8 @@ function approvedRepertoireSongbook(){
  <p class="small-text">Choose <strong>View score</strong> to read an arrangement without copying it. Use <strong>Add to My Songbook</strong> to keep your own editable copy. No existing personal copies are overwritten. To read optional tablature, change the notation display setting.</p>
  ${state.repoError?`<p class="small-text" role="alert">${h(state.repoError)}</p>`:''}
  <div class="song-list">${items.map(item=>{
- const scoreId=repertoireScoreId(item),available=!!state.repositorySnapshot.songs[scoreId],isOwned=owned.has(scoreId);
- return `<div class="song-row ${selected?.id===item.id?'repo-selected':''}"><div class="song-initial">♫</div><div class="song-title"><b>${h(item.title)}</b><small>${h(item.artist)} · ${h(item.practiceFocus)} · ${available?(item.preferredArrangementId?'Complete historical tune':'Ukulele accompaniment'):'Score not loaded yet'}</small></div><button type="button" class="btn compact" data-repertoire-preview="${h(item.id)}" aria-label="View score for ${h(item.title)}">View score</button><button type="button" class="btn compact ${isOwned?'ghost':'gold'}" data-repertoire="${h(item.id)}" ${isOwned||!available?'disabled':''}>${isOwned?'Already added':available?'Add':'Load first'}</button></div>`;
+ const scoreId=repertoireScoreId(item),available=!!availableArrangementForItem(item),isOwned=owned.has(item.id);
+ return `<div class="song-row ${selected?.id===item.id?'repo-selected':''}"><div class="song-initial">♫</div><div class="song-title"><b>${h(item.title)}</b><small>${h(item.artist)} · ${h(item.practiceFocus)} · ${isOwned?'Saved in My Songbook':available?(item.preferredArrangementId?'Complete historical tune':'Ukulele accompaniment'):'Open to load accompaniment'}</small></div><button type="button" class="btn compact" data-repertoire-preview="${h(item.id)}" aria-label="View score for ${h(item.title)}">View score</button><button type="button" class="btn compact ${isOwned?'ghost':'gold'}" data-repertoire="${h(item.id)}" ${isOwned?'disabled':''}>${isOwned?'Already added':available?'Add':'Load & add'}</button></div>`;
  }).join('')}</div></section>
  <section class="panel panel-pad"><div class="panel-title"><h2>Practice score</h2></div>
  ${selected?`<h2 class="repo-song-heading">${h(selected.title)}</h2><p class="small-text">${h(selected.artist)} · ${h(selected.practiceFocus)}</p>`:''}
@@ -455,7 +472,7 @@ function approvedRepertoireSongbook(){
  <div class="score-holder score-editor-view repo-score-preview">${renderScoreView(previewScore,{mode:state.display})}</div>
  <p class="small-text" style="white-space:pre-wrap">${h(arrangement.body||'')}</p><p class="small-text" style="white-space:pre-wrap">${h(arrangement.notes||'')}</p>
  <div class="score-actions"><button type="button" class="btn gold" data-repertoire="${h(selected.id)}" ${owned.has(repertoireScoreId(selected))?'disabled':''}>${owned.has(repertoireScoreId(selected))?'Already in My Songbook':'＋ Add to My Songbook'}</button></div>`:
- `<p class="small-text">${state.repoSyncing?'Downloading the musical scores…':state.repoError?'The library could not be loaded; try Load / refresh scores above.':'This score has not been loaded. Choose Load / refresh scores above to fetch the notation, chord progressions and fingerings.'}</p>`}
+ `<p class="small-text">${state.repertoireLoadingId===selected?.id?'Loading this song’s musical score…':state.repoError?h(state.repoError):'Choose View score to fetch notation, chord progressions and fingerings for this song.'}</p>`}
  </section></div>`;
 }
 function songbook(){return `<div class="repo-tabs" role="group" aria-label="Songbook collections"><button class="btn ${state.songbookView==='mine'?'gold':'ghost'}" data-action="repo-view-mine" aria-pressed="${state.songbookView==='mine'}">My Songbook</button><button class="btn ${state.songbookView==='repertoire'?'gold':'ghost'}" data-action="repo-view-repertoire" aria-pressed="${state.songbookView==='repertoire'}">Approved Songs <span class="repo-count">${repertoireItems().length}</span></button><button class="btn ${state.songbookView==='repository'?'gold':'ghost'}" data-action="repo-view-repository" aria-pressed="${state.songbookView==='repository'}">Repository Library <span class="repo-count">${state.repositorySnapshot.catalog.entries.length}</span></button></div>${state.songbookView==='repository'?repositorySongbook():state.songbookView==='repertoire'?approvedRepertoireSongbook():mySongbook()}`;}
@@ -467,14 +484,9 @@ async function loadApprovedScoreForPersonalSong(songId){
  if(!item)return;
  state.songLoadingId=songId;state.songLoadError=null;render();
  try{
-  const arrangementId=repertoireScoreId(item);
-  if(!state.repositorySnapshot.songs[arrangementId]){
-   if(location.protocol==='file:')throw Error('This standalone preview cannot sync scores. Open the hosted app over HTTPS.');
-   await syncLibrary();
-  }
-  if(!state.repositorySnapshot.songs[arrangementId])throw Error('The score is unavailable. Open Repository Library and run Sync Library; check the reported error.');
-  const applied=attachApprovedRepertoireScores(state.repositorySnapshot,songs(),{ids:[item.id]});
-  if(!applied.upgraded)throw Error('The song was not updated. Try Sync Library.');
+  const snapshot=await ensureApprovedArrangement(item);
+  const applied=attachApprovedRepertoireScores(snapshot,songs(),{ids:[item.id]});
+  if(!applied.upgraded)throw Error('The song was not updated. Try opening it again.');
   if(!store('songs',applied.songs))throw Error('Browser storage is full or unavailable. Export a backup before freeing storage.');
   toast('Notation and chord accompaniment attached to your existing song');
  }catch(error){state.songLoadError=error.message;toast('Practice score could not be loaded')}
@@ -506,27 +518,28 @@ function copyRepositorySong(){
   state.songOpen=id;state.songbookView='mine';state.songSectionIndex=0;state.editing=false;render();toast('Independent copy saved in My Songbook');
  }catch(err){toast(`Could not import arrangement: ${err.message}`)}
 }
-function addApprovedSongs(ids=null){
+async function addApprovedSongs(ids=null){
  try{
   const items=repertoireItems().filter(item=>ids===null||ids.includes(item.id));
-  const upgraded=attachApprovedRepertoireScores(state.repositorySnapshot,songs(),{ids:items.map(item=>item.id)});
-  let next=upgraded.songs,added=0;
+  let next=songs(),added=0,upgraded=0;
   for(const item of items){
+   if(next.some(song=>song.score && song.repertoireOrigin?.id===item.id))continue;
+   const snapshot=await ensureApprovedArrangement(item);
    const arrangementId=repertoireScoreId(item);
-   if(next.some(s=>s.repertoireOrigin?.id===item.id && s.score))continue;
-   if(next.some(s=>s.repositoryOrigin?.id===arrangementId && s.repositoryOrigin.revision===state.repositorySnapshot.songs[arrangementId]?.revision))continue;
-   if(!state.repositorySnapshot.songs[arrangementId])continue;
+   const migrated=attachApprovedRepertoireScores(snapshot,next,{ids:[item.id]});
+   if(migrated.upgraded){next=migrated.songs;upgraded+=migrated.upgraded;continue}
+   if(next.some(song=>song.repositoryOrigin?.id===arrangementId))continue;
    const id='repertoire-study-copy-'+(globalThis.crypto?.randomUUID?.()??Date.now()+'-'+Math.floor(Math.random()*1e6))+'-'+added;
-   next=copyToSongbook(state.repositorySnapshot,arrangementId,next,{id,validateScore});
+   next=copyToSongbook(snapshot,arrangementId,next,{id,validateScore});
    next.at(-1).repertoireOrigin={id:item.id};
    added++;
   }
-  if(!added&&!upgraded.upgraded){toast('No new scores available. Use Load / refresh scores to download arrangements.');return;}
-  if(!store('songs',next)){toast('Could not save arrangements. Browser storage may be full; export a backup.');return}
-  const lastUpdated=next.find(s=>s.id===state.songOpen && s.score) || next.at(-1);
+  if(!added&&!upgraded){toast('All selected arrangements are already in My Songbook.');return}
+  if(!store('songs',next)){toast('Could not save scores. Browser storage may be full; export a backup.');return}
+  const lastUpdated=next.find(song=>song.id===state.songOpen && song.score) || next.at(-1);
   state.songOpen=lastUpdated?.id??null;state.songbookView='mine';state.editing=false;state.songLoadError=null;render();
-  toast((added+upgraded.upgraded)+' scored '+(added+upgraded.upgraded===1?'song':'songs')+' added to My Songbook');
- }catch(err){toast('Study import failed: '+err.message)}
+  toast((added+upgraded)+' scored '+(added+upgraded===1?'song':'songs')+' added to My Songbook');
+ }catch(err){toast('Score import failed: '+err.message)}
 }
 function fmtBeats(n){return Number(n).toLocaleString(undefined,{maximumFractionDigits:2})}
 function scoreFretboard(){
@@ -700,7 +713,7 @@ function handleClick(e){const node=e.target.closest('[data-prog-degree],[data-pr
  if(node.dataset.techRating){const rated=recordTechniquePractice(techniqueProgress(),currentTechnique().id,node.dataset.techRating);if(store('techniqueProgress',rated)){toast('Practice attempt recorded');render()}return}
  if(node.dataset.repo){state.repoSelectedId=node.dataset.repo;state.repoSectionIndex=0;render();return}
   if(node.dataset.repoSection!==undefined){state.repoSectionIndex=Number(node.dataset.repoSection)||0;render();return}
-  if(node.dataset.repertoirePreview){state.repertoireSelectedId=node.dataset.repertoirePreview;state.repertoireSectionIndex=0;render();return}
+  if(node.dataset.repertoirePreview){const item=repertoireItems().find(x=>x.id===node.dataset.repertoirePreview);if(item)selectRepertoireSong(item);return}
  if(node.dataset.repertoireSection!==undefined){state.repertoireSectionIndex=Number(node.dataset.repertoireSection)||0;render();return}
  if(node.dataset.repertoire){addApprovedSongs([node.dataset.repertoire]);return}
  if(node.dataset.song){state.songOpen=node.dataset.song;state.songSectionIndex=0;state.songLoadError=null;state.editing=false;render();const selected=songs().find(song=>song.id===state.songOpen);if(selected && !selected.score && selected.repertoireOrigin?.id)loadApprovedScoreForPersonalSong(selected.id);return}
