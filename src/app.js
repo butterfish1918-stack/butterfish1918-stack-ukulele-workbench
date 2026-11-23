@@ -155,7 +155,7 @@ function chordSvg(voicing,tuningKey=state.tuning){if(!voicing)return `<div class
 function chordSection(){const chords=harmonizedChords(state.root,state.scale,state.chordExtension);if(!chords.length)return `<p class="small-text">Five- and six-tone scales don't define a unique seven-chord diatonic harmonization. Choose a seven-note scale to explore its triads.</p>`;
  state.chordDegree=Math.min(state.chordDegree,6);const current=chords[state.chordDegree],voicings=chordVoicings(current.pcs,state.tuning),voice=voicings[Math.min(state.chordIndex,voicings.length-1)];return `<div class="panel-pad"><div class="panel-title"><h2>Chords in this key</h2>${tabbar([['3','Triads'],['4','Sevenths']],String(state.chordExtension),'data-extension')}</div><p class="panel-desc">Diatonic harmony, shown with playable ukulele voicings.</p><div class="chord-grid">${chords.map((c,i)=>`<button class="chord-tile ${i===state.chordDegree?'selected':''}" data-degree="${i}"><b>${h(c.name)}</b><small>${['I','II','III','IV','V','VI','VII'][i]} · ${h(c.quality)}</small></button>`).join('')}</div><div class="chord-display"><div class="chord-diagram">${chordSvg(voice)}</div><div class="chord-copy"><h3>${h(current.name)}</h3><p>Notes: ${current.notes.map(h).join(' · ')}<br>${voicings.length} suggested position${voicings.length===1?'':'s'}</p><div class="score-actions"><button class="btn compact" data-action="play-chord">▶ Hear chord</button><button class="btn compact ghost" data-action="next-voicing">Other shape ↻</button><button class="btn compact" data-action="prog-add-explorer">＋ Use in progression</button><button class="btn compact ghost" data-nav="progression">Builder →</button></div>${voice?`<span class="mini-pill">Frets ${h(voice.frets.map(v=>v<0?'×':v).join('–'))}</span>`:''}</div></div></div>`}
 function advancedTheoryPanel(){
- const pitches=spelledScale(state.root,state.scale).slice(0,3).map(x=>x.midi).filter(Number.isInteger);
+ const pitches=[0,2,4].map(i=>spelledScale(state.root,state.scale)[i]).filter(Boolean).map(x=>60+x.pc).filter(Number.isInteger);
  const chord=pitches.length>=3?pitches:[60,64,67];
  const inversions=chordInversions(chord),arpeggio=arpeggioDegrees(chord);
  const ear=nextEarTrainingQuestion(state.earSeed);
@@ -1531,7 +1531,7 @@ function handleClick(e){const node=e.target.closest('[data-prog-degree],[data-pr
  case 'import-backup':$('#backupFile')?.click();break;
  case 'device-check':inspectDevice({browserLocation:window.location,environment:navigator,storage:window.localStorage,cacheStorage:window.caches,secureContext:window.isSecureContext}).then(result=>{deviceReport=result;if(state.page==='practice')render()}).catch(error=>toast(`Device check unavailable: ${error.message}`));break;
  case 'theory-play-inversion':{
-  const chord=spelledScale(state.root,state.scale).slice(0,3).map(x=>x.midi);
+  const chord=[0,2,4].map(i=>spelledScale(state.root,state.scale)[i]).filter(Boolean).map(x=>60+x.pc);
   const pitches=chord.filter(Number.isInteger).length===3?chord:[60,64,67];
   const selected=chordInversions(pitches)[Number(node.dataset.inversion)||0];
   if(selected){const t=audio().currentTime+.05;selected.forEach((pitch,i)=>synth(pitch,t+i*.05,1.1,.09))}
