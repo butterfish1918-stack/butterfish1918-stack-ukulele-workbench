@@ -15,3 +15,18 @@ test('invalid score metadata and pitch are rejected',()=>{
  assert.throws(()=>validateScoreDocument({...doc,parts:[]}));
  assert.throws(()=>validateScoreDocument({...doc,meter:'99/4'}));
 });
+
+test('a voice rejects measure overflow and implicit second voices',()=>{
+ const sample=structuredClone(doc);
+ sample.parts[0].voices[0].measures[0].events[0].duration=5;
+ assert.throws(()=>validateScoreDocument(sample),/overflow/);
+ const overlap=structuredClone(doc);
+ overlap.parts[0].voices[0].measures[0].events.push({type:'note',midi:67,onset:.5,duration:1});
+ assert.throws(()=>validateScoreDocument(overlap),/Overlapping events/);
+});
+test('simultaneous chord tones are valid in one voice while separate voices overlap freely',()=>{
+ const sample=structuredClone(doc);
+ const original=sample.parts[0].voices[0].measures[0].events[0];
+ sample.parts[0].voices[0].measures[0].events.push({...original,midi:67});
+ assert.equal(validateScoreDocument(sample),true);
+});
