@@ -96,7 +96,7 @@ export function validateScore(score) {
       if(ev.slurToNext&&ev.tieToNext)throw new Error('A note cannot have both a tie and a slur to the same following event');
       if(ev.articulation!==undefined&&!ARTICULATIONS.includes(ev.articulation))throw new Error('Invalid articulation');
       if(ev.type==='note'){
-        if(!Number.isInteger(ev.midi)||ev.midi<36||ev.midi>96)throw new Error('Invalid MIDI pitch');
+        if(!Number.isInteger(ev.midi)||ev.midi<(score.clef==='bass8vb'?24:36)||ev.midi>96)throw new Error('Invalid MIDI pitch');
         if(typeof ev.spelling!=='string'||!/^([A-G])([#b]{0,2})$/.test(ev.spelling)||notePc(ev.spelling)!==mod(ev.midi,12))throw new Error('Invalid spelling for the sounding pitch');
         if(ev.position!==null&&ev.position!==undefined){
           const p=ev.position;
