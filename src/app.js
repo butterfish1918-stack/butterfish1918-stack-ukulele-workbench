@@ -3,7 +3,7 @@ import {createScore,validateScore,appendEvent,insertEvent,appendMeasure,findEven
 import {renderScoreView,scoreSystems} from './score-view.js';
 import {prepareUkuleleSamples,playUkuleleSample} from './ukulele-samples.js';
 import {prepareBackingSamples,playBackingSample} from './instrument-samples.js';
-import {SONG_ARRANGEMENT_MODES,arrangementModeTracks} from './arrangement-modes.js';
+import {SONG_ARRANGEMENT_MODES,arrangementModeTracks,chartChordsPerBar} from './arrangement-modes.js';
 import {engravingPlan,loadVexFlow,renderEngravedScore} from './engraving.js';
 import {estimateFundamental} from './tuner-dsp.js';
 import {prepareBackupRestore,commitBackupRestore} from './storage-safety.js';
@@ -454,6 +454,7 @@ function songArrangementSwitch(){
 }
 function renderSongArrangementSheets(arrangement,sections,index,containerClass){
  const tracks=arrangementModeTracks(effectiveSongArrangement(arrangement).arrangement,state.songArrangementMode);
+ const barChords=chartChordsPerBar(arrangement);
  const offset=state.songPracticeScope==='full'?0:(sections[index]?.startBar??1)-1;
  const selected=tracks.map(track=>({...track,shown:state.songPracticeScope==='full'?track.score:sectionScore(track.score,sections,index)}));
  if(state.songArrangementMode==='ensemble'){
@@ -465,7 +466,7 @@ function renderSongArrangementSheets(arrangement,sections,index,containerClass){
       const score={...part.shown,measures:part.shown.measures.slice(start,end)};
       return `<div class="song-score-track" data-score-part="${part.id}">
        <div class="song-track-title"><strong>${h(part.label)}</strong><span>${h(part.source)}</span></div>
-       <div class="score-holder score-editor-view ${containerClass}">${renderScoreView(score,{mode:part.id==='ukulele'?state.display:'notation',layout:'systems',measureOffset:offset+start})}</div>
+       <div class="score-holder score-editor-view ${containerClass}">${renderScoreView(score,{mode:part.id==='ukulele'?state.display:'notation',layout:'systems',measureOffset:offset+start,chordSymbols:part.id==='ukulele'?barChords.slice(offset+start,offset+end):null})}</div>
       </div>`;
     }).join('')}
    </section>`
@@ -473,7 +474,7 @@ function renderSongArrangementSheets(arrangement,sections,index,containerClass){
  }
  return `${selected.filter(track=>track.id==='ukulele').map(track=>
  `<div class="song-score-track" data-score-part="${track.id}"><div class="song-track-title"><strong>${h(track.label)}</strong><span>${h(track.source)}</span></div>
-  <div class="score-holder score-editor-view ${containerClass}">${renderScoreView(track.shown,{mode:state.display,layout:'systems',measureOffset:offset})}</div></div>`
+  <div class="score-holder score-editor-view ${containerClass}">${renderScoreView(track.shown,{mode:state.display,layout:'systems',measureOffset:offset,chordSymbols:barChords.slice(offset,offset+track.shown.measures.length)})}</div></div>`
  ).join('')}`;
 }
 function activeSongPractice(){
