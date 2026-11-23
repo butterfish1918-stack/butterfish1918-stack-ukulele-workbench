@@ -1,6 +1,13 @@
-# Ukulele Workbench 1.11.0 BETA — Imported Ensemble Playback and Polyphonic Beams
+# Ukulele Workbench 1.11.1 BETA — Source-backed Ensemble Import and Playback
 
 The user-requested P0/P1/P2 feature set is being integrated into the existing v1.10 feature modules, not replaced by demonstration-only screens.
+
+## Additions to 1.11.1
+- **My Songbook → instrument part import:** The owner may attach a locally supplied single-instrument MusicXML or score JSON to an existing personal song. Bar count, meter and tempo must match; the canonical ukulele score remains untouched. Imported notes are treated as *unverified* until independently checked, and cannot be attached to public approved songs directly.
+- **Real source over generated accompaniment:** An attached bass, piano, drum, guitar, flute, strings, synth or vocal part takes precedence over harmonic practice reconstructions. Private songs can include a supplied part even without commercial recording credits.
+- **Improved mix:** The new imported-ensemble player includes independent mute and level controls. Acoustic drum samples are explicitly prepared so percussion parts are not silent merely because the files were never decoded.
+- **Strict counterpoint and meter checks:** Multi-part score validation catches events extending outside their bar and accidental overlaps in a single voice, while retaining same-onset chord notes and deliberately overlapping separate voices.
+- **Documented limit:** A personal source is not authenticated by uploading it; complete copyrighted original scores must still be authorized. Automated browser tests are not physical Android audio/tuner verification.
 
 ## New in 1.11.0
 - **Multi-part MusicXML playback inside Score Studio:** Imported instruments and independent rhythmic voices are performed against a single absolute-beat clock. Notes sharing an onset play together; original instrument, pitch, note length, basic dynamics, and articulation length survive. Original parts remain source-provided—not guessed from a chord chart.
