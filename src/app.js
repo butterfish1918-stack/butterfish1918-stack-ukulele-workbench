@@ -516,21 +516,82 @@ function songPracticeControls(preview,body=''){
  if(!preview)return '';
  const guide=songPracticeGuide(preview,body);
  const parts=activeSongPractice()?.parts||[];
- const playing=!!songPracticePlayback;
+ const playing=!!songPracticePlayback,paused=!!songPracticePlayback?.paused;
  return `<div class="song-rehearsal" aria-label="Song practice and audio playback">
- <div class="panel-title"><h2>Listen and practise</h2><span class="sub-label">UKULELE REFERENCE SYNTH</span></div>
- <p class="small-text">Listen to recorded ukulele notes and chords, practise slowly, or repeat a section. Sounds are real instrument samples (CC0 FreePats), not the commercial recording.</p>
+ <div class="panel-title"><h2>Listen and practise</h2><span class="sub-label">RECORDED INSTRUMENTS</span></div>
+ <p class="small-text">Listen to recorded ukulele notes and chords, practise slowly, or repeat a section. Real instrument recordings are used for available parts. Double-tap the score to pause, then single-tap to resume. The floating controls stay available.</p>
  <div class="song-rehearsal-controls">
-  <button type="button" class="btn gold" data-action="song-practice-play" aria-pressed="${playing}">${state.songSampleLoading?'Loading ukulele samples…':playing?'■ Stop listening':'▶ Listen to score'}</button>
+  <button type="button" class="btn gold" data-action="song-practice-play" aria-pressed="${playing}">${state.songSampleLoading?'Loading samples…':paused?'▶ Resume':playing?'Ⅱ Pause':'▶ Listen to score'}</button>
+  ${playing?'<button type="button" class="btn ghost" data-action="song-practice-stop">■ Stop</button>':''}
   <button type="button" class="btn ${state.songPracticeLoop?'gold':'ghost'}" data-action="song-practice-loop" aria-pressed="${state.songPracticeLoop}">${state.songPracticeLoop?'↻ Loop on':'↻ Loop off'}</button>
   <label class="control">Playback range<select id="songPracticeScope"><option value="section" ${state.songPracticeScope==='section'?'selected':''}>Selected section</option><option value="full" ${state.songPracticeScope==='full'?'selected':''}>Whole arrangement</option></select></label>
   <label class="control">Practice speed<select id="songPracticeSpeed">${[60,75,90,100,110,125].map(n=>`<option value="${n}" ${state.songPracticeSpeed===n?'selected':''}>${n}%</option>`).join('')}</select></label>
  </div>
  ${parts.length>1?`<div class="song-track-mixer" role="group" aria-label="Choose audible instruments"><strong>Audible tracks</strong><div class="repo-tags">${parts.map(part=>`<button type="button" class="btn compact ${state.songPartEnabled[part.id]!==false?'gold':'ghost'}" data-song-part-toggle="${part.id}" aria-pressed="${state.songPartEnabled[part.id]!==false}">${h(part.label.split(' · ')[0])}: ${state.songPartEnabled[part.id]!==false?'on':'muted'}</button>`).join('')}</div></div>`:''}
  <div class="song-practice-display">${tabbar([['notation','Notation'],['dual','Notation + tab'],['tab','Tab only']],state.display,'data-display')}</div>
- <p class="small-text" id="songPracticeStatus" role="status" aria-live="polite">${playing?'Playing recorded ukulele…':state.songSampleLoading?'Loading ukulele recordings…':state.songSampleFallback?'Some notes unavailable; a backup sound is being used.':'Ready. Tap written notes and chords to hear the recorded ukulele.'}</p>
+ <p class="small-text" id="songPracticeStatus" role="status" aria-live="polite">${paused?'Paused — single tap the score to resume.':playing?'Playing sampled ensemble…':state.songSampleLoading?'Loading recordings…':state.songSampleFallback?'Some notes unavailable; a backup sound is being used.':'Ready. Tap written notes and chords to hear the recorded ukulele.'}</p>
  ${guide.length?`<div class="song-chord-guide"><strong>Chord fingerings — ${h(TUNINGS[preview.tuning].names.join(' · '))} string order</strong><p class="small-text">Tap a chord to hear its written ukulele fingering.</p><div class="repo-tags">${guide.map(chord=>`<button type="button" class="btn compact ghost" data-practice-chord="${h(chord.symbol)}" title="Listen to ${h(chord.symbol)} chord"><b>${h(chord.symbol)}</b> &nbsp;${h(chord.frets)}</button>`).join('')}</div></div>`:''}
  </div>`;
+}
+
+function songPlaybackDock(){
+ if(!songPracticePlayback||state.page!=='songbook')return '';
+ const paused=songPracticePlayback.paused;
+ return `<div id="songPlaybackDock" class="song-playback-dock" role="group" aria-label="Persistent score playback controls">
+  <span id="songPlaybackDockPosition" class="song-dock-position">Score playback</span>
+  <button type="button" class="btn gold" data-action="song-practice-play">${paused?'▶ Resume':'Ⅱ Pause'}</button>
+  <button type="button" class="btn" data-action="song-practice-stop">■ Stop</button>
+ </div>`;
+}
+function syncSongPlaybackControls(){
+ const run=songPracticePlayback,paused=!!run?.paused;
+ document.querySelectorAll('[data-action="song-practice-play"]').forEach(button=>{
+  button.textContent=run?(paused?'▶ Resume':'Ⅱ Pause'):'▶ Listen to score';
+  button.setAttribute('aria-pressed',run&&!paused?'true':'false');
+ });
+ const dock=document.querySelector('#songPlaybackDock');
+ if(!run) dock?.remove();
+ else if(dock){
+  const label=dock.querySelector('#songPlaybackDockPosition');
+  if(label)label.textContent=paused?'Paused · tap score to resume':run.lastBar?'Bar '+run.lastBar+' · '+(run.totalBars)+' bars':'Playing score';
+ }
+ const status=$('#songPracticeStatus');
+ if(status&&run?.paused)status.textContent='Paused — single-tap the score to resume, or press Resume.';
+}
+async function toggleSongPracticePause(){
+ const run=songPracticePlayback;
+ if(!run)return;
+ try{
+  if(run.paused){await run.audioContext.resume();if(songPracticePlayback!==run)return;run.paused=false;}
+  else{await run.audioContext.suspend();if(songPracticePlayback!==run)return;run.paused=true;}
+  syncSongPlaybackControls();
+ }catch(error){toast('Cannot pause or resume audio: '+error.message)}
+}
+let songTouchStart=null,lastSongTapAt=0,resumeSongTimer=null,recentSongTouchAt=0;
+function onSongScorePointerDown(event){
+ if(event.pointerType!=='touch'||!songPracticePlayback||state.page!=='songbook'||!event.target.closest('.song-score-track .score-holder'))return;
+ songTouchStart={id:event.pointerId,x:event.clientX,y:event.clientY};
+}
+function onSongScorePointerUp(event){
+ const started=songTouchStart;songTouchStart=null;
+ if(!started||started.id!==event.pointerId||!songPracticePlayback||event.pointerType!=='touch')return;
+ if(Math.hypot(event.clientX-started.x,event.clientY-started.y)>15)return;
+ const now=Date.now(),run=songPracticePlayback;
+ recentSongTouchAt=now;
+ if(now-lastSongTapAt<340){
+  if(resumeSongTimer){clearTimeout(resumeSongTimer);resumeSongTimer=null}
+  lastSongTapAt=0;
+  if(!run.paused)toggleSongPracticePause();
+ }else{
+  lastSongTapAt=now;
+  if(run.paused){resumeSongTimer=setTimeout(()=>{resumeSongTimer=null;if(songPracticePlayback===run&&run.paused)toggleSongPracticePause()},290)}
+ }
+}
+function onSongScoreDoubleClick(event){
+ if(state.page==='songbook'&&songPracticePlayback&&event.target.closest('.song-score-track .score-holder')){
+  event.preventDefault();
+  if(!songPracticePlayback.paused)toggleSongPracticePause();
+ }
 }
 function followSongPracticeScore(absoluteBar,run,{force=false}={}){
  if(!run || songPracticePlayback!==run || !Number.isInteger(absoluteBar) || absoluteBar<1)return;
@@ -936,7 +997,7 @@ function updateEngraving(){
  catch(error){host.textContent=`Engraved preview unavailable: ${error.message}. The editable score below is unaffected.`}
 }
 function filterRepositoryRows(){if(state.page!=='songbook'||state.songbookView!=='repository')return;const query=state.repoQuery.toLowerCase().trim();for(const row of $$('[data-repo-row]'))row.hidden=!!((query&&!row.dataset.search.includes(query))||(state.repoDifficulty!=='all'&&row.dataset.difficulty!==state.repoDifficulty));}
-function render(){const pages={explorer,progression:progressionBuilder,notation,technique,rhythm,songbook,practice,score:scoreStudio};$('#pageContent').dataset.mode=state.page;$('#pageContent').innerHTML=pages[state.page]();$('#currentPage').textContent=pageNames[state.page];$$('[data-page]').forEach(btn=>btn.classList.toggle('active',btn.dataset.page===state.page));if(state.page==='score'&&engravedPreviewEnabled)updateEngraving();filterRepositoryRows()}
+function render(){const pages={explorer,progression:progressionBuilder,notation,technique,rhythm,songbook,practice,score:scoreStudio};$('#pageContent').dataset.mode=state.page;$('#pageContent').innerHTML=pages[state.page]()+songPlaybackDock();$('#currentPage').textContent=pageNames[state.page];$$('[data-page]').forEach(btn=>btn.classList.toggle('active',btn.dataset.page===state.page));if(state.page==='score'&&engravedPreviewEnabled)updateEngraving();filterRepositoryRows()}
 function navigate(page){if(!pageNames[page])return;stopSongPractice();stopRhythm();if(state.page==='notation'&&page!=='notation')stopRhythmLab();if(state.page==='progression'&&page!=='progression')stopProgression();if(state.page==='score' && page!=='score')stopScorePlayback();if(state.page==='technique'&&page!=='technique')stopTechniquePlayback();state.page=page;render();window.scrollTo({top:0,behavior:'smooth'});$('#mainContent').focus({preventScroll:true})}
 function nextMelodyPitch(pc){const matches=scalePositions(state.root,state.scale,state.tuning);const match=matches.find(x=>x.pc===pc && x.midi>=60)||matches.find(x=>x.pc===pc);return match?.midi??60}
 function choosePitch(midi){state.selectedMidi=midi;synth(midi);render()}
@@ -953,6 +1014,7 @@ function handleClick(e){const node=e.target.closest('[data-prog-degree],[data-pr
   if(state.page==='technique'){const exercise=currentTechnique();if(!exercise.pattern)return;const {score}=techniqueScore(exercise.id,state.tuning);const found=findEvent(score,node.dataset.eventId);if(found){state.techEventId=found.event.id;if(found.event.type!=='rest')synthEvent(found.event,audio().currentTime+.012,60/(state.techTempo||currentTechnique().tempo));render()}return;}
   if(state.page==='notation')return;
   if(state.page==='songbook'){
+   if(songPracticePlayback&&(e.pointerType==='touch'||Date.now()-recentSongTouchAt<480))return;
    const selection=activeSongPractice();
    const found=selection?.parts.map(part=>({part,event:findEvent(state.songPracticeScope==='full'?part.score:sectionScore(part.score,selection.sections,selection.sectionIndex),node.dataset.eventId)?.event})).find(x=>x.event);
    if(found?.event?.type&&found.event.type!=='rest'){
@@ -1105,6 +1167,7 @@ function handleClick(e){const node=e.target.closest('[data-prog-degree],[data-pr
  case 'play-rhythm':rhythmTimer?stopRhythm():startRhythm();render();break;
  case 'reset-pattern':state.rhythm=['D','','U','U','D','','U',''];store('rhythm',state.rhythm);render();break;
  case 'song-practice-play':playSongPractice();break;
+ case 'song-practice-stop':stopSongPractice();render();break;
  case 'song-practice-loop':state.songPracticeLoop=!state.songPracticeLoop;store('songPracticeLoop',state.songPracticeLoop);render();break;
  case 'repo-view-mine':stopSongPractice();state.songbookView='mine';render();break;
   case 'repo-view-repertoire':stopSongPractice();state.songbookView='repertoire';state.editing=false;render();break;
@@ -1241,7 +1304,7 @@ function openTuner(){modal('Chromatic tuner',`<div class="eyebrow">TUNE BY EAR O
 async function startTuner(){stopTuner();const status=$('#micStatus');try{if(!navigator.mediaDevices?.getUserMedia)throw new Error('This browser requires HTTPS or localhost for microphone access');tunerStream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});tunerCtx=audio();tunerSource=tunerCtx.createMediaStreamSource(tunerStream);tunerAnalyser=tunerCtx.createAnalyser();tunerAnalyser.fftSize=4096;tunerSource.connect(tunerAnalyser);const data=new Float32Array(tunerAnalyser.fftSize);let last=0;const update=ts=>{if(!tunerAnalyser||!$('#tunerNote'))return;if(ts-last>90){last=ts;tunerAnalyser.getFloatTimeDomainData(data);const estimated=estimateFundamental(data,tunerCtx.sampleRate);const hz=estimated?.hz;if(hz){const fractional=freqMidi(hz,state.a4);const nearest=Math.round(fractional),cents=Math.round((fractional-nearest)*100);$('#tunerNote').textContent=midiName(nearest);$('#tunerCents').textContent=`${Math.round(hz)} Hz · ${Math.abs(cents)<=4?'In tune ✓':`${Math.abs(cents)} cents ${cents<0?'flat':'sharp'}`}`;$('#tunerMarker').style.left=`${Math.max(0,Math.min(100,50+cents))}%`;}else{$('#tunerNote').textContent='—';$('#tunerCents').textContent='Listening… play one clear note';}}tunerFrame=requestAnimationFrame(update)};status.textContent='Microphone active. All processing remains on this device.';tunerFrame=requestAnimationFrame(update);$('#tunerMic').textContent='◉ Listening…';}catch(e){status.textContent=`Microphone unavailable: ${e.message}. You can still tap the reference strings.`;stopTuner(false)}}
 function stopTuner(updateUi=true){if(tunerFrame){cancelAnimationFrame(tunerFrame);tunerFrame=0}if(tunerStream){tunerStream.getTracks().forEach(t=>t.stop());tunerStream=null}if(tunerSource){tunerSource.disconnect();tunerSource=null}if(tunerAnalyser){tunerAnalyser.disconnect();tunerAnalyser=null}if(updateUi&&$('#tunerMic')){$('#tunerMic').textContent='◉ Start microphone';$('#micStatus').textContent='Microphone stopped. No audio was recorded or uploaded.'}}
 function closeDialog(){stopTuner();stopMetronome();$('#toolDialog').close()}
-function init(){newQuestion();state.selectedMidi=melody()[0]?.midi??60;render();$('#openTuner').onclick=openTuner;$('#openMetronome').onclick=openMetronome;document.addEventListener('click',handleClick);document.addEventListener('change',handleChange);document.addEventListener('input',e=>{if(e.target.id==='repoSearch'){state.repoQuery=e.target.value;filterRepositoryRows()}});document.addEventListener('submit',handleSubmit);document.addEventListener('keydown',e=>{
+function init(){newQuestion();state.selectedMidi=melody()[0]?.midi??60;render();$('#openTuner').onclick=openTuner;$('#openMetronome').onclick=openMetronome;document.addEventListener('click',handleClick);document.addEventListener('pointerdown',onSongScorePointerDown);document.addEventListener('pointerup',onSongScorePointerUp);document.addEventListener('pointercancel',()=>{songTouchStart=null});document.addEventListener('dblclick',onSongScoreDoubleClick);document.addEventListener('change',handleChange);document.addEventListener('input',e=>{if(e.target.id==='repoSearch'){state.repoQuery=e.target.value;filterRepositoryRows()}});document.addEventListener('submit',handleSubmit);document.addEventListener('keydown',e=>{
  if(state.page==='score' && (e.ctrlKey||e.metaKey) && !e.altKey && !e.target.closest('input,textarea,select,[contenteditable="true"]')){
    if(e.key.toLowerCase()==='z'){e.preventDefault();restoreScoreHistory(e.shiftKey?'redo':'undo');return}
    if(e.key.toLowerCase()==='y'){e.preventDefault();restoreScoreHistory('redo');return}
