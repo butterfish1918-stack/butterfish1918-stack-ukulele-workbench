@@ -10,8 +10,8 @@ test('song-specific ensemble includes only the credited recording instruments',(
  const solo=arrangementModeTracks(item,'solo'),guitar=arrangementModeTracks(item,'guitar-uke'),ensemble=arrangementModeTracks(item,'ensemble');
  assert.equal(SONG_ARRANGEMENT_MODES.length,3);
  assert.deepEqual(solo.map(x=>x.id),['ukulele']);
- assert.deepEqual(guitar.map(x=>x.id),['ukulele','bass','piano','drums']);
- assert.deepEqual(ensemble.map(x=>x.id),['ukulele','bass','piano','drums']);
+ assert.deepEqual(guitar.map(x=>x.id),['ukulele','bass','piano','drums','guitar']);
+ assert.deepEqual(ensemble.map(x=>x.id),['ukulele','bass','piano','drums','guitar']);
  assert.equal(solo[0].score,score);
  assert.match(guitar[1].source,/generated/);
  assert.equal(ensemble[3].score.clef,'percussion');
@@ -20,7 +20,7 @@ test('song-specific ensemble includes only the credited recording instruments',(
 test('Blackbird never generates a phantom bass piano or drum kit, and traditional air has no band',()=>{
  const blackbird={...item,id:'blackbird',repertoireOrigin:undefined};
  const folk={...item,id:'scarborough-fair-traditional-1882'};
- assert.deepEqual(arrangementModeTracks(blackbird,'ensemble').map(x=>x.id),['ukulele']);
+ assert.deepEqual(arrangementModeTracks(blackbird,'ensemble').map(x=>x.id),['ukulele','guitar']); // acoustic guitar credited, bass/piano/drums absent
  assert.deepEqual(arrangementModeTracks(folk,'ensemble').map(x=>x.id),['ukulele']);
  assert.deepEqual(arrangementModeTracks({...item,id:'my-own-song'},'ensemble').map(x=>x.id),['ukulele']);
  assert.equal(originalInstrumentProfile(blackbird).percussion,'none');
@@ -45,6 +45,6 @@ test('unknown harmony is silent for pitched backing, but supported drum kit keep
 });
 test('electronic drum recordings receive an electronic sample style, not acoustic piano backing',()=>{
  const isolation=buildPracticeParts({...item,id:'isolation'});
- assert.deepEqual(isolation.map(x=>x.id),['ukulele','bass','drums']);
+ assert.deepEqual(isolation.map(x=>x.id),['ukulele','bass','drums','synthesizer']);
  assert.equal(isolation[2].score.measures[0].events[0].drumStyle,'electronic');
 });
