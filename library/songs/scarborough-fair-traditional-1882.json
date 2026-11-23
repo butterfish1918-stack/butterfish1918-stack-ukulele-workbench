@@ -2,7 +2,7 @@
   "format": "ukulele-workbench-arrangement",
   "schemaVersion": 1,
   "id": "scarborough-fair-traditional-1882",
-  "revision": 1,
+  "revision": 2,
   "title": "Scarborough Fair / Whittingham Fair — Complete Traditional Tune (1882)",
   "artist": "Traditional English / Northumbrian ballad",
   "difficulty": "advanced",
@@ -19,7 +19,7 @@
   "tuning": "highG",
   "description": "Complete eight-bar 1882 Whittingham Fair melody, played through three times with an original four-bar introduction and coda. Historically related to Scarborough Fair, but NOT the Simon & Garfunkel / Martin Carthy recording arrangement.",
   "body": "6/8 instrumental programme: Intro: [Em] [C] [D] [Em] | Traditional 8-bar tune × 3 | Coda: [Em] [C] [D] [Em]. Traditional air transcribed in E minor, no lyrics.",
-  "notes": "Source: Bruce & Stokoe, Northumbrian Minstrelsy (1882), pp. 81–82; historical ABC preserved by The Fiddler's Companion, https://www.ibiblio.org/fiddlers/WHI_WHZ.htm (Whittingham Fair). Melody kept in E minor, 6/8, with the source's eight-bar pitches and rhythms repeated without alteration. New ukulele-specific introduction, coda, harmony and fingerings. Four-string high-G GCEA, no capo. Verse 1 bars 5–12; verse 2 bars 13–20; verse 3 bars 21–28; intro bars 1–4; coda bars 29–32. This is NOT a transcription of the 1966 Simon & Garfunkel recording, its counterpoint or its guitar arrangement.",
+  "notes": "Source: Bruce & Stokoe, Northumbrian Minstrelsy (1882), pp. 81–82; historical ABC preserved by The Fiddler's Companion, https://www.ibiblio.org/fiddlers/WHI_WHZ.htm (Whittingham Fair). Melody kept in E minor, 6/8, with the source's eight-bar pitches and rhythms repeated without alteration. New ukulele-specific introduction, coda, harmony and fingerings. Four-string high-G GCEA, no capo. Verse 1 bars 5–12; verse 2 bars 13–20; verse 3 bars 21–28; intro bars 1–4; coda bars 29–32. This is NOT a transcription of the 1966 Simon & Garfunkel recording, its counterpoint or its guitar arrangement. Public-domain lyrics from Bruce & Stokoe's 1882 Whittingham Fair text have been added as three selected historical verses, with a repeated refrain and editorial two-measure phrase anchors at bars 5–28. These are NOT the protected Simon & Garfunkel / Canticle lyrics and do not certify syllable-level melodic alignment.",
   "sourceUrl": "https://www.ibiblio.org/fiddlers/WHI_WHZ.htm",
   "sourceDate": "1882",
   "score": {
@@ -2129,5 +2129,88 @@
         ]
       }
     ]
+  },
+  "lyricCues": [
+    {
+      "bar": 5,
+      "endBar": 6,
+      "kind": "lyric",
+      "text": "Are you going to Whittingham fair?"
+    },
+    {
+      "bar": 7,
+      "endBar": 8,
+      "kind": "lyric",
+      "text": "Parsley, sage, rosemary, and thyme"
+    },
+    {
+      "bar": 9,
+      "endBar": 10,
+      "kind": "lyric",
+      "text": "Remember me to one who lives there;"
+    },
+    {
+      "bar": 11,
+      "endBar": 12,
+      "kind": "lyric",
+      "text": "For once she was a true-love of mine."
+    },
+    {
+      "bar": 13,
+      "endBar": 14,
+      "kind": "lyric",
+      "text": "Tell her to make me a cambric shirt,"
+    },
+    {
+      "bar": 15,
+      "endBar": 16,
+      "kind": "lyric",
+      "text": "Parsley, sage, rosemary, and thyme"
+    },
+    {
+      "bar": 17,
+      "endBar": 18,
+      "kind": "lyric",
+      "text": "Without any seam or needlework."
+    },
+    {
+      "bar": 19,
+      "endBar": 20,
+      "kind": "lyric",
+      "text": "For once she was a true-love of mine."
+    },
+    {
+      "bar": 21,
+      "endBar": 22,
+      "kind": "lyric",
+      "text": "Now he has asked me questions three,"
+    },
+    {
+      "bar": 23,
+      "endBar": 24,
+      "kind": "lyric",
+      "text": "Parsley, sage, rosemary, and thyme"
+    },
+    {
+      "bar": 25,
+      "endBar": 26,
+      "kind": "lyric",
+      "text": "I hope he will answer as many for me;"
+    },
+    {
+      "bar": 27,
+      "endBar": 28,
+      "kind": "lyric",
+      "text": "For once he was a true-love of mine."
+    }
+  ],
+  "lyricSource": {
+    "sourceTitle": "Northumbrian Minstrelsy — Whittingham Fair",
+    "editors": "J. Collingwood Bruce and John Stokoe",
+    "published": 1882,
+    "version": "Historical Northumbrian text; stanzas 1, 2 and 5 with implied traditional refrain",
+    "rights": "Public domain (1882 printing); not the Simon & Garfunkel / Canticle text",
+    "url": "https://www.springthyme.co.uk/ballads/balladtexts/02_ElfinKnight.html",
+    "alignment": "Editorial two-bar phrase locations for the Workbench's three eight-bar verse repeats; singing syllables not independently aligned"
   }
 }
