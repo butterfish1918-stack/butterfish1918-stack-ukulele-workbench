@@ -1,3 +1,19 @@
+# Ukulele Workbench v1.8.7 — Song-specific percussion and touch transport
+
+**What changed:**
+- Song-specific reference-backed instrumentation chooses which sampled backing staves appear. Every song retains its provided ukulele study; no drum kit, bass or piano is fabricated for the Beatles' `Blackbird` or the 1882 traditional-air `Scarborough Fair`. The selected commercial recording personnel references are retained with the song profile, and the UI shows a reference and lists other original instruments that are not yet individually scored.
+- Source-backed drum-kit presence adds a **newly composed rehearsal drum groove** to relevant songs. Each bar is shown on a percussion staff (K kick, S snare, H closed hi-hat). No percussion track is generated for unsupported/unverified songs. This is not a transcription of the drummer's performance.
+- The app plays 3 acoustic drum and 3 electronic drum one-shot recordings from a CC0 sound bank. The static-site build downloads them from `adewale/keyboardia` pinned to `aa67598560f8eaf2509a3ad4bc73edee2f8bea8a`; this repo's instrument license file attributes acoustic parts to Versilian Studios/Karoryfer Virtuosity Drums and electronic parts to the CC0 TR-808 set.
+- A **fixed mobile playback dock** stays within reach above the bottom navigation, with Pause/Resume and Stop controls.
+- **Double-tap the score to pause; single-tap to resume.** The implementation ignores scroll gestures and does not override note preview when playback is stopped. A paused Web Audio context retains position and stops the score-follow.
+- The scrolling playhead uses AudioContext time rather than wall-clock timeouts, maintaining measure synchronization after suspension and resume.
+
+**Important limits:** The existing 15 song scores are still practice adaptations, not exact original multitrack transcriptions. Some authentic instruments (vocals, acoustic/electric guitars, strings, flutes, synthesizers, sound effects) do not yet have isolated score/playback support. The current drums are **original accompaniment patterns** sampled using real drum recordings, not the recording's extracted drum part. A song without published instrumental credits does not gain automatic imaginary instruments. The user's saved Songbook is left intact.
+
+**Checks:** `npm test`, `npm run qa:library`, `npm run qa:arrangements` and GitHub Pages deployment. Playback sound and mobile double-tap behaviour additionally require an Android device test.
+
+---
+
 # Ukulele Workbench v1.8.6 Preview — Score Follow & Arrangement Modes
 
 ## Playback and notation
