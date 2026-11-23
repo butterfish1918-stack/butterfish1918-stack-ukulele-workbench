@@ -461,3 +461,11 @@ input[type=range]{accent-color:var(--lime)}
 .song-score-track .score-holder{touch-action:manipulation}
 .song-score-track .score-holder .score-event{touch-action:manipulation}
 @media(max-width:500px){.song-playback-dock{padding:7px 8px;gap:6px}.song-playback-dock button{padding:8px 10px}.song-playback-dock .song-dock-position{font-size:11px}}
+
+/* Independent Songbook learning labels; text remains readable over sheet music. */
+.song-reading-options{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:10px 0 7px;border-top:1px solid #566459;margin-top:10px}
+.song-reading-options strong{font-size:12px;letter-spacing:.04em;margin-right:6px}
+.song-reading-options .btn{min-height:36px;white-space:normal;text-align:center}
+.composed-score .score-note-label,.composed-score .score-tab-note-label{pointer-events:none;paint-order:stroke fill;stroke:#eee8db;stroke-width:3px;stroke-linejoin:round}
+.composed-score .score-chord-symbol{pointer-events:none;paint-order:stroke fill;stroke:#eee8db;stroke-width:2px}
+@media(max-width:650px){.song-reading-options{gap:6px}.song-reading-options .btn{flex:1 1 42%;font-size:12px;padding:8px 7px}}
