@@ -517,3 +517,48 @@ input[type=range]{accent-color:var(--lime)}
  .ensemble-score-group .song-track-title{font-size:11px}
  .song-staff-toggle-list .btn{flex:1 1 36%;padding:7px}
 }
+
+/* Measure-linked lyric and section cues — always beneath the staff, never drawn
+ * over fret numbers, stems, chord headings or note labels. */
+.score-reading-cues{
+ display:flex;flex-wrap:wrap;align-items:start;gap:4px 12px;
+ padding:5px 9px 7px;background:#eee8db;color:#2c4034;
+ border-top:1px solid #c6c9b6;font:500 12px/1.45 system-ui,sans-serif;
+}
+.score-reading-cue{
+ display:flex;align-items:baseline;flex-wrap:wrap;gap:5px;
+ max-width:100%;padding:2px 5px;border-radius:3px;
+ border-left:2px solid #9eaf9d;min-width:0;overflow-wrap:anywhere;
+}
+.score-reading-cue .cue-bar{white-space:nowrap;color:#626f63;font:600 10px/1.5 ui-monospace,SFMono-Regular,monospace}
+.score-reading-cue .cue-text{font-size:12px;overflow-wrap:anywhere;max-width:100%}
+.score-reading-cue .cue-kind{font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:#697668}
+.score-reading-cue.cue-section{border-left-color:#808e73;font-weight:700}
+.score-reading-cue.cue-lyric{border-left-color:#476e4b}
+.score-reading-cue.active-reading-cue{outline:2px solid #4f8242;background:#dae9d1}
+.song-lyrics-tools{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:8px 0}
+.song-lyrics-tools>span{flex:1 1 180px}
+.song-lyrics-editor{
+ width:100%;background:#17231e;border:1px solid #607161;
+ padding:12px;border-radius:5px;
+}
+.song-lyrics-editor label{display:block;font-weight:700;font-size:13px;margin-bottom:6px}
+.song-lyrics-editor textarea{
+ box-sizing:border-box;width:100%;resize:vertical;min-height:144px;
+ background:#101715;color:#edf2ec;border:1px solid #758675;
+ padding:10px;font:13px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;
+}
+.song-lyrics-editor .score-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.song-source-verification{margin:10px 0;border-top:1px solid #526052;padding:8px 0;font-size:12px}
+.song-source-verification summary{cursor:pointer;font-weight:700}
+.song-source-rows{display:grid;gap:6px;margin-top:10px}
+.song-source-row{display:flex;align-items:baseline;flex-wrap:wrap;gap:8px;padding:4px 0}
+.song-source-row strong{min-width:95px}
+.song-source-row span{color:var(--muted,#a3aca1)}
+.song-source-row a{font-size:12px}
+@media(max-width:650px){
+ .score-reading-cues{padding:5px 5px;gap:3px 8px}
+ .score-reading-cue .cue-text{font-size:12px}
+ .song-lyrics-editor{padding:8px}
+ .song-reading-options .btn{flex:1 1 46%}
+}
