@@ -1,6 +1,7 @@
 import {ROOTS,SCALES,TUNINGS,PITCH_CLASSES,mod,spelledScale,midiName,midiFreq,freqMidi,fretboard,optionsForMidi,scalePositions,harmonizedChords,chordVoicings,scaleMelody,staffYForSpelling} from './music.js';
 import {createScore,validateScore,appendEvent,insertEvent,appendMeasure,findEvent,removeEvent,replaceEvent,assignPosition,changeTuning,timeline,measureBeats,remainingBeats,preferredPosition,DURATIONS,METERS,KEY_SIGNATURES,QUARTER_LABELS,spellingsForMidi,setTieToNext,canTieNext,setKeySignature,CHORD_SHAPES,ARTICULATIONS,STROKES,setArticulation,setSlurToNext,setStroke} from './score.js';
 import {renderScoreView,scoreSystems} from './score-view.js';
+import {validateLoopRange,practiceExcerpt,nextPracticeSpeed,saveSongBookmark,practiceLog,songPracticeStats,reviewDue,validatedPracticePreferences} from './practice-engine.js';
 import {parseBarLyricCues,lyricCuesToText,mergeReadingCues} from './song-lyrics.js';
 import {partVerificationStatus} from './score-verification.js';
 import {prepareUkuleleSamples,playUkuleleSample} from './ukulele-samples.js';
@@ -42,6 +43,13 @@ state.rhythmLabId=RHYTHM_STUDIES.some(x=>x.id===read('rhythmLabId','RT-01'))?rea
 state.songPracticeSpeed=[60,75,90,100,110,125].includes(Number(read('songPracticeSpeed',100)))?Number(read('songPracticeSpeed',100)):100;
 state.songPracticeLoop=!!read('songPracticeLoop',false);
 state.songPracticeScope='full';
+state.songPracticeRanges=read('songPracticeRanges',{});
+state.songPracticeHistory=read('songPracticeHistory',[]);
+state.songBookmarks=read('songBookmarks',{});
+state.songRampEnabled=!!read('songRampEnabled',false);
+state.songRampStep=[2,5,10].includes(read('songRampStep',5))?read('songRampStep',5):5;
+state.songRampMax=Number(read('songRampMax',120))||120;
+state.practicePreferences=validatedPracticePreferences(read('practicePreferences',{}));
 state.songVisibleParts={ukulele:true};
 state.songShowChordNames=read('songShowChordNames',true)!==false;
 state.songShowNoteNames=!!read('songShowNoteNames',false);
@@ -581,6 +589,51 @@ function songPracticeGuide(preview,body){
  }
  return guide;
 }
+function currentPracticeSongId(){return guitarOverrideKey(currentSongSource())||null}
+function currentPracticeBarRange(selection){
+ const source=selection||activeSongPractice();
+ if(!source?.score)return null;
+ const total=source.score.measures.length;
+ if(state.songPracticeScope==='section'&&source.section)return validateLoopRange(total,source.section.startBar,source.section.endBar);
+ if(state.songPracticeScope==='ab'){
+  const current=state.songPracticeRanges[currentPracticeSongId()]||{start:1,end:total};
+  const a=Math.max(1,Math.min(total,Number(current.start)||1));
+  const b=Math.max(a,Math.min(total,Number(current.end)||total));
+  return validateLoopRange(total,a,b);
+ }
+ return validateLoopRange(total,1,total);
+}
+function saveCurrentSongBookmark(bar){
+ const id=currentPracticeSongId(),total=activeSongPractice()?.score?.measures.length;
+ if(!id||!total)return;
+ try{state.songBookmarks=saveSongBookmark(state.songBookmarks,id,bar,total);store('songBookmarks',state.songBookmarks)}
+ catch(error){toast(error.message)}
+}
+function practiceRangeControls(){
+ const selection=activeSongPractice(),total=selection?.score.measures.length||0;
+ if(!selection)return '';
+ const id=currentPracticeSongId(),saved=state.songBookmarks[id];
+ const current=state.songPracticeRanges[id]||{start:1,end:total};
+ const a=Math.max(1,Math.min(total,Number(current.start)||1)),b=Math.max(a,Math.min(total,Number(current.end)||total));
+ const stats=songPracticeStats(state.songPracticeHistory,id);
+ return `<div class="song-ab-panel" aria-label="Advanced measure practice">
+ <strong>A–B measure practice</strong>
+ <p class="small-text">Choose starting and ending bars; select A–B to loop the passage. The printed score retains its original bar numbers.</p>
+ <div class="song-ab-fields">
+  <label class="control">Start bar A<input id="songPracticeA" type="number" min="1" max="${total}" value="${a}"></label>
+  <label class="control">End bar B<input id="songPracticeB" type="number" min="1" max="${total}" value="${b}"></label>
+  <button type="button" class="btn compact" data-action="song-practice-set-ab">Use A–B</button>
+  ${saved&&saved.bar<=total?`<button type="button" class="btn compact ghost" data-action="song-practice-resume">Resume bar ${saved.bar}</button>`:''}
+  <button type="button" class="btn compact ghost" data-action="song-practice-bookmark">Bookmark bar</button>
+ </div>
+ <div class="song-ramp-fields">
+  <label><input id="songRampEnabled" type="checkbox" ${state.songRampEnabled?'checked':''}> Increase tempo each repeat</label>
+  <label>Step<select id="songRampStep">${[2,5,10].map(n=>`<option value="${n}" ${state.songRampStep===n?'selected':''}>+${n}%</option>`).join('')}</select></label>
+  <label>Up to<select id="songRampMax">${[80,90,100,110,120,125,140,150].map(n=>`<option value="${n}" ${state.songRampMax===n?'selected':''}>${n}%</option>`).join('')}</select></label>
+ </div>
+ <p class="small-text">History: ${stats.sessions} sessions · ${stats.minutes} min · ${stats.loops} repetitions. ${stats.weakBars.length?'Review bars '+stats.weakBars.map(x=>x.bar).join(', '):''}</p>
+ </div>`;
+}
 function songPracticeControls(preview,body=''){
  if(!preview)return '';
  const guide=songPracticeGuide(preview,body);
@@ -593,9 +646,10 @@ function songPracticeControls(preview,body=''){
   <button type="button" class="btn gold" data-action="song-practice-play" aria-pressed="${playing}">${state.songSampleLoading?'Loading samples…':paused?'▶ Resume':playing?'Ⅱ Pause':'▶ Listen to score'}</button>
   ${playing?'<button type="button" class="btn ghost" data-action="song-practice-stop">■ Stop</button>':''}
   <button type="button" class="btn ${state.songPracticeLoop?'gold':'ghost'}" data-action="song-practice-loop" aria-pressed="${state.songPracticeLoop}">${state.songPracticeLoop?'↻ Loop on':'↻ Loop off'}</button>
-  <label class="control">Playback range<select id="songPracticeScope"><option value="section" ${state.songPracticeScope==='section'?'selected':''}>Selected section</option><option value="full" ${state.songPracticeScope==='full'?'selected':''}>Whole arrangement</option></select></label>
+  <label class="control">Playback range<select id="songPracticeScope"><option value="section" ${state.songPracticeScope==='section'?'selected':''}>Selected section</option><option value="full" ${state.songPracticeScope==='full'?'selected':''}>Whole arrangement</option><option value="ab" ${state.songPracticeScope==='ab'?'selected':''}>A–B bars</option></select></label>
   <label class="control">Practice speed<select id="songPracticeSpeed">${[60,75,90,100,110,125].map(n=>`<option value="${n}" ${state.songPracticeSpeed===n?'selected':''}>${n}%</option>`).join('')}</select></label>
  </div>
+ ${practiceRangeControls()}
  ${parts.length>1?`<div class="song-track-mixer" role="group" aria-label="Choose audible instruments"><strong>Audible tracks</strong><div class="repo-tags">${parts.map(part=>`<button type="button" class="btn compact ${state.songPartEnabled[part.id]!==false?'gold':'ghost'}" data-song-part-toggle="${part.id}" aria-pressed="${state.songPartEnabled[part.id]!==false}">${h(part.label.split(' · ')[0])}: ${state.songPartEnabled[part.id]!==false?'on':'muted'}</button>`).join('')}</div></div>`:''}
  <div class="song-reading-options" role="group" aria-label="Score learning annotations">
   <strong>Score labels</strong>
@@ -1390,7 +1444,10 @@ function handleClick(e){const node=e.target.closest('[data-prog-degree],[data-pr
  }}}
 function handleChange(e){const el=e.target;
  if(el.id==='songPracticeSpeed'){stopSongPractice();const speed=Number(el.value);if([60,75,90,100,110,125].includes(speed)){state.songPracticeSpeed=speed;store('songPracticeSpeed',speed)}render();return;}
- if(el.id==='songPracticeScope'){stopSongPractice();state.songPracticeScope=el.value==='full'?'full':'section';render();return;}
+ if(el.id==='songPracticeScope'){stopSongPractice();state.songPracticeScope=['full','section','ab'].includes(el.value)?el.value:'full';render();return;}
+ if(el.id==='songRampEnabled'){state.songRampEnabled=el.checked;store('songRampEnabled',state.songRampEnabled);return;}
+ if(el.id==='songRampStep'){state.songRampStep=Number(el.value);store('songRampStep',state.songRampStep);return;}
+ if(el.id==='songRampMax'){state.songRampMax=Number(el.value);store('songRampMax',state.songRampMax);return;}
  if(el.id==='repoDifficulty'){state.repoDifficulty=el.value;filterRepositoryRows();return;}
  if(el.id==='keyLessonMode'){if(['major','relativeMinor'].includes(el.value)){state.keyLessonMode=el.value;state.keyLessonAnswer=null;store('keyLessonMode',el.value);render()}return}
  if(el.id==='sightLessonSelect'){try{sightStudy(el.value);state.sightLessonId=el.value;state.sightLessonIndex=0;state.sightLessonAnswer=null;state.sightShowFingering=false;store('sightLessonId',el.value);render()}catch(e){toast(e.message)}return}
