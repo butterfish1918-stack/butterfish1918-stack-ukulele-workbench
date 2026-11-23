@@ -1,7 +1,7 @@
 /* Ukulele Workbench offline shell. Keep cache deletion scoped to THIS app:
    other tools on the same GitHub Pages origin must never be touched. */
 const CACHE_PREFIX = 'uke-workbench-';
-const CACHE = `${CACHE_PREFIX}v1.9.0-lyrics-verified-source-gate`;
+const CACHE = `${CACHE_PREFIX}v1.9.1-historical-lyrics`;
 const SCOPE = new URL(self.registration.scope);
 const SHELL = new URL('./index.html', SCOPE).href;
 const LIBRARY_PATH = new URL('./library/', SCOPE).pathname;
