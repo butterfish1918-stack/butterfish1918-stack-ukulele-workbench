@@ -7,7 +7,8 @@ import {playbackInstrumentFamily} from './instrument-voices.js';
 
 const dynamicGain=Object.freeze({pp:.28,p:.40,mp:.55,mf:.68,f:.80,ff:.93});
 export function ensembleInstrument(part){
- const name=String(part?.instrument||part?.name||'').toLowerCase();
+ const raw=String(part?.instrument||'').toLowerCase();
+ const name=raw==='unknown'||!raw?String(part?.name||'').toLowerCase():raw;
  if(name.includes('ukulele'))return 'ukulele';
  if(name.includes('bass'))return 'bass';
  if(name.includes('piano')||name.includes('keyboard'))return 'piano';
