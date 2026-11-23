@@ -383,3 +383,43 @@ input[type=range]{accent-color:var(--lime)}
 
 .song-chord-guide .repo-tags button{white-space:nowrap;text-transform:none;display:inline-flex;gap:5px;align-items:center}
 .song-chord-guide .repo-tags button:hover{border-color:var(--lime,#b9f700)}
+
+
+/* Printed-score systems: normal-sized notes, real line breaks and no sideways scroll. */
+.score-holder:has(.score-systems),.song-score-preview:has(.score-systems),.repo-score-preview:has(.score-systems){
+ overflow-x:hidden;
+ max-height:none;
+ padding:10px 8px;
+}
+.score-systems{
+ display:flex;
+ flex-direction:column;
+ align-items:stretch;
+ gap:11px;
+ width:100%;
+ max-width:780px;
+ margin:0 auto;
+}
+.score-system{
+ width:100%;
+ max-width:100%;
+ box-sizing:border-box;
+ overflow:visible;
+ border-bottom:1px solid #c6c0ae;
+ padding:4px 0 9px;
+}
+.score-system:last-child{border-bottom:0}
+.score-systems .score-system svg.composed-score{
+ display:block;
+ width:100%!important;
+ min-width:0!important;
+ max-width:100%!important;
+ height:auto;
+ margin:0;
+}
+.song-score-preview .score-system svg,.repo-score-preview .score-system svg{min-width:0!important}
+@media(max-width:650px){
+ .score-holder:has(.score-systems),.song-score-preview:has(.score-systems),.repo-score-preview:has(.score-systems){padding:7px 4px}
+ .score-systems{gap:6px}
+ .score-system{padding:1px 0 6px}
+}
