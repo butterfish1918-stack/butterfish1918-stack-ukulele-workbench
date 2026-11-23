@@ -353,3 +353,30 @@ input[type=range]{accent-color:var(--lime)}
 .repo-filter-row input,.repo-filter-row select{width:100%;min-width:0;background:#151b1e;color:#e7ede5;border:1px solid #505c5b;padding:10px;font-size:12px;border-radius:2px}
 .repo-song-list .song-row[hidden]{display:none!important}
 @media(max-width:460px){.repo-filter-row{grid-template-columns:minmax(0,1fr)}.repo-filter-row input,.repo-filter-row select{width:100%}}
+
+
+/* Songbook rehearsal player: readable on mobile and isolated from Score Studio. */
+.song-rehearsal{
+  margin:16px 0;
+  padding:16px;
+  background:var(--panel, #1e2929);
+  border:1px solid var(--line, #4b5c54);
+  border-left:3px solid var(--lime, #b9f700);
+  border-radius:5px;
+}
+.song-rehearsal .panel-title{margin-bottom:9px}
+.song-rehearsal-controls{display:flex;align-items:end;flex-wrap:wrap;gap:10px;margin:12px 0}
+.song-rehearsal-controls .control{min-width:145px;flex:1 1 145px}
+.song-rehearsal-controls select{width:100%}
+.song-rehearsal-controls button{min-height:40px}
+.song-practice-display{display:flex;flex-wrap:wrap;gap:8px;padding:6px 0}
+.song-chord-guide{border-top:1px solid var(--line,#4b5c54);padding-top:10px;margin-top:12px;font-size:12px}
+.song-chord-guide .repo-tags span{white-space:nowrap;text-transform:none}
+#songPracticeStatus{min-height:2.2em}
+@media(max-width:650px){
+ .song-rehearsal{padding:12px 10px}
+ .song-rehearsal-controls{gap:8px}
+ .song-rehearsal-controls button{flex:1 1 40%}
+ .song-rehearsal-controls .control{min-width:125px;flex:1 1 45%}
+ .song-practice-display .tabbar{max-width:100%;overflow-x:auto}
+}
