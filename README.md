@@ -1,3 +1,16 @@
+# Ukulele Workbench v1.9.1 — Actual historical lyrics added
+
+The **Scarborough Fair / Whittingham Fair — Complete Traditional Tune (1882)** arrangement now includes 12 public-domain, bar-anchored lyric lines from selected verses of the historical text in Bruce and Stokoe's *Northumbrian Minstrelsy* (1882), not the Simon & Garfunkel/Canticle recording. Three eight-bar traditional-verse repeats begin at bars 5, 13 and 21; four phrase cues are assigned to each repeat. Repeated refrains are editorial to support this three-verse arrangement; the phrase-to-bar alignment is pedagogical and not a verified syllable transcription.
+
+Historical text source: https://www.springthyme.co.uk/ballads/balladtexts/02_ElfinKnight.html and *Northumbrian Minstrelsy*, pp. 79–80. Source and alignment notes are available in `library/songs/scarborough-fair-traditional-1882.json`.
+
+The bundled lyric edition is revision 2; `library/catalog.json` publishes the matching revision. In Approved Songs, opening the historical arrangement automatically fetches the updated version if the browser has the earlier cached score. Existing personal song copies are left unchanged, with the updated edition available from Approved Songs. Lyrics are enabled by default unless the user previously switched the option off.
+
+**Copyright boundary:** The 14 modern commercial-song entries do not contain full copyrighted lyrics; the app cannot republish their complete words from web lyric sites without a license. Use **Add lyric cues** to enter text you are authorized to use; these personal cues remain in the browser and are included in backups. Do not confuse an online link to lyrics with permission to bundle them.
+
+All previously adopted source-verification and notation rules remain mandatory.
+
+---
 # Ukulele Workbench v1.9.0 — Measure-aligned lyrics and strict instrument-source verification
 
 ## Optional lyrics and reading markers
