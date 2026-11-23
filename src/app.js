@@ -510,7 +510,7 @@ function playSongPractice(){
    }
    run.timers.push(setTimeout(()=>{
     if(songPracticePlayback!==run)return;
-    $('.song-score-preview .score-event,.repo-score-preview .score-event').forEach(el=>el.classList.toggle('playing',el.dataset.eventId===ev.id));
+    $$('.song-score-preview .score-event,.repo-score-preview .score-event').forEach(el=>el.classList.toggle('playing',el.dataset.eventId===ev.id));
     const atBar=(state.songPracticeScope==='section'&&selection.section?selection.section.startBar-1:0)+ev.measureIndex+1;
     const status=$('#songPracticeStatus');
     if(status)status.textContent=`Playing bar ${atBar} / ${selection.score.measures.length} · ${Math.round(practiceTempo(score.tempo,state.songPracticeSpeed))} BPM${run.cycle?' · repeat '+(run.cycle+1):''}`;
