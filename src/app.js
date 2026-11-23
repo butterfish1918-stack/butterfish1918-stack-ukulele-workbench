@@ -88,6 +88,7 @@ state.songGuitarAdaptations=read('songGuitarAdaptations',{});
 let songPracticePlayback=null;
 let importedEnsembleRun=null;
 state.importedEnsembleMuted={};
+state.importedEnsembleVolumes=read('importedEnsembleVolumes',{});
 let songMicSession=null;
 state.songMicTargetMidi=null;
 let songSampleLoadToken=0;
@@ -1311,7 +1312,9 @@ function importedScoreDocumentPanel(){
    <div class="lesson-list">${doc.parts.map(part=>`<div class="lesson"><div class="lesson-icon">𝄞</div><div><h3>${h(part.name)}</h3>
     <p>${part.voices.length} independent rhythmic voice(s) · ${part.voices.reduce((n,voice)=>n+voice.measures.reduce((m,bar)=>m+bar.events.length,0),0)} events</p></div></div>`).join('')}</div>
    <p class="small-text">Imported individual parts and overlapping voices play at their original onsets with dynamics and note lengths. Ukulele, bass and piano use recorded sample banks where available; other supported sounds use clearly identified generated reference tones, not original recordings.</p>
-   <div class="repo-tags" role="group" aria-label="Mute imported instrumental parts">${doc.parts.map(part=>`<button type="button" class="btn compact ${state.importedEnsembleMuted[part.id]?'ghost':'gold'}" data-imported-track="${h(part.id)}" aria-pressed="${!state.importedEnsembleMuted[part.id]}">${h(part.name)}: ${state.importedEnsembleMuted[part.id]?'muted':'on'}</button>`).join('')}</div>
+   <div class="imported-mixer" role="group" aria-label="Imported instrumental mix controls">${doc.parts.map(part=>`<div class="imported-mixer-track">
+    <button type="button" class="btn compact ${state.importedEnsembleMuted[part.id]?'ghost':'gold'}" data-imported-track="${h(part.id)}" aria-pressed="${!state.importedEnsembleMuted[part.id]}">${h(part.name)}: ${state.importedEnsembleMuted[part.id]?'muted':'on'}</button>
+    <label>Level <input type="range" min="0" max="150" step="5" value="${Number(state.importedEnsembleVolumes[part.id]??100)}" data-imported-volume="${h(part.id)}" aria-label="${h(part.name)} volume"></label></div>`).join('')}</div>
    <p class="small-text" id="importedEnsembleStatus" role="status">${importedEnsembleRun?'Playing imported ensemble':'Ready to hear the imported score'}</p>
    ${renderPolyphonicDocument(doc)}`:''}
  </section>`;
@@ -1360,6 +1363,12 @@ function scoreStudio(){
  <div class="studio-transport" aria-label="Score playback and session telemetry"><div class="studio-transport-label">TRANSPORT <b>// REHEARSAL</b></div><div class="studio-transport-controls"><button class="transport-play" id="scorePlaybackToggle" data-action="score-play">${scorePlayback?'■ STOP':'▶ PLAY'}</button><button class="transport-utility" data-action="score-undo" ${canUndo(scoreHistory)?'':'disabled'}>↶ UNDO</button><button class="transport-utility" data-action="score-redo" ${canRedo(scoreHistory)?'':'disabled'}>↷ REDO</button><button class="transport-utility transport-save" data-action="score-save-song">▤ SAVE</button><div class="studio-bpm"><small>BPM</small><strong>${score.tempo}</strong></div></div><div class="studio-telemetry" aria-label="Selected note and score progress"><div class="studio-telemetry-pitch"><small>REFERENCE PITCH</small><strong>${h(refPitch)}</strong><span>${h(refHz)}</span></div><div class="studio-telemetry-progress"><small>BAR ${String(barNumber).padStart(2,'0')} / ${String(score.measures.length).padStart(2,'0')}</small><div class="studio-progress-track"><i style="width:${barRatio}%"></i></div></div></div></div>
  <div class="workspace-grid studio-secondary" style="margin-top:16px"><section class="panel panel-pad"><div class="panel-title"><h2>Keep this arrangement</h2></div><p class="panel-desc">Your working score autosaves locally. Save a snapshot into the Songbook to practise or edit it later, then export a JSON backup to protect against browser-data deletion.</p><div class="score-actions"><button class="btn gold" data-action="score-save-song">▤ Save in Songbook</button><button class="btn" data-nav="songbook">Open Songbook →</button></div><p class="small-text" style="margin-top:10px">Source-based guitar adaptation imports a six-string JSON part with explicitly timed single notes and rewrites it for high-G ukulele; octave shifts are reported. It does not guess guitar riffs from chords, or silently discard simultaneous notes. MusicXML export creates standard single-part score notation, chords and fret indications for supported events. Import accepts only one treble-clef rhythmic voice in 4/4, 3/4 or 6/8, with supported notes, rests and chord voicings. Complex scores, tuplets, transposing instruments, multiple voices and compressed MXL are intentionally rejected. Use JSON Backup to preserve the entire app library.</p></section><section class="panel panel-pad"><h2>What this editor does not claim yet</h2><p class="small-text">This stage supports a single rhythmic voice (including four-note chord stacks), simple meters and bar-aware accidentals. Short notes are beamed by beat; dotted durations, simple ties and major key signatures are supported. Independent polyphonic voices, transposition, broad MusicXML interoperability and professional engraving remain planned. Undo/Redo tracks edits during the current session only. The display shows <strong>sounding pitch</strong>; high-G octave conventions will be a separate setting.</p></section></div>${importedScoreDocumentPanel()}`;
 }
+function importedDrumHit(midi){return midi===36||midi===35?'kick':midi===38||midi===40?'snare':'hat'}
+function importedSampleRequests(events){
+ return {ukulele:[...new Set(events.filter(ev=>ev.instrument==='ukulele').map(ev=>ev.midi))],
+  backing:[...['bass','piano'].map(instrument=>({instrument,midis:[...new Set(events.filter(ev=>ev.instrument===instrument).map(ev=>ev.midi))]})),
+   {instrument:'drums',hits:[...new Set(events.filter(ev=>ev.instrument==='drums').map(ev=>'acoustic-'+importedDrumHit(ev.midi)))]}]};
+}
 function stopImportedEnsemble(){
  const run=importedEnsembleRun;
  if(!run)return;
@@ -1386,10 +1395,8 @@ async function toggleImportedEnsemble(){
  const firstBeats=plan.beatsPerBar*4;
  const first=audible.filter(ev=>ev.onset<firstBeats);
  try{
-  await Promise.all([
-   prepareUkuleleSamples(ctx,[...new Set(first.filter(ev=>ev.instrument==='ukulele').map(ev=>ev.midi))]),
-   prepareBackingSamples(ctx,['bass','piano'].map(instrument=>({instrument,midis:[...new Set(first.filter(ev=>ev.instrument===instrument).map(ev=>ev.midi))]})))
-  ]);
+  const samples=importedSampleRequests(first);
+  await Promise.all([prepareUkuleleSamples(ctx,samples.ukulele),prepareBackingSamples(ctx,samples.backing)]);
  }catch(error){toast('Some ensemble samples unavailable; fallback sound enabled')}
  const start=ctx.currentTime+.18,seconds=60/doc.tempo;
  const run={ctx,start,seconds,events:audible,next:0,voices:[],interval:null,lastBar:0};
@@ -1404,11 +1411,11 @@ async function toggleImportedEnsemble(){
    if(at>now+.24)break;
    run.next++;
    if(at<now-.25)continue;
-   const time=Math.max(at,now+.008),length=ev.duration*seconds,level=.09*ev.velocity;
+   const time=Math.max(at,now+.008),length=ev.duration*seconds,level=Math.min(.13,.09*ev.velocity*Math.max(0,Math.min(1.5,Number(state.importedEnsembleVolumes[ev.partId]??100)/100)));
    let voice=null;
    try{
     if(ev.instrument==='drums'){
-     const hit=ev.midi===36||ev.midi===35?'kick':ev.midi===38||ev.midi===40?'snare':'hat';
+     const hit=importedDrumHit(ev.midi);
      voice=playDrumSample(ctx,hit,time,level);
     }else if(ev.instrument==='ukulele')voice=playUkuleleSample(ctx,ev.midi,time,length,level);
     else if(['bass','piano'].includes(ev.instrument))voice=playBackingSample(ctx,ev.instrument,ev.midi,time,length,level);
@@ -1433,10 +1440,9 @@ async function toggleImportedEnsemble(){
  void (async()=>{for(let startBar=5;startBar<=doc.measures;startBar+=8){
   if(importedEnsembleRun!==run)return;
   const notes=audible.filter(ev=>ev.measure>=startBar&&ev.measure<startBar+8);
-  try{await Promise.all([
-   prepareUkuleleSamples(ctx,[...new Set(notes.filter(ev=>ev.instrument==='ukulele').map(ev=>ev.midi))]),
-   prepareBackingSamples(ctx,['bass','piano'].map(instrument=>({instrument,midis:[...new Set(notes.filter(ev=>ev.instrument===instrument).map(ev=>ev.midi))]})))
-  ])}catch{}
+  try{const samples=importedSampleRequests(notes);
+   await Promise.all([prepareUkuleleSamples(ctx,samples.ukulele),prepareBackingSamples(ctx,samples.backing)]);
+  }catch{}
  }})().catch(()=>{});
 }
 function stopScorePlayback(){
@@ -1871,6 +1877,7 @@ function handleClick(e){const node=e.target.closest('[data-prog-degree],[data-pr
  case 'log-practice':{const note=prompt('What did you practise? (optional)','Reading, scales and technique');if(note===null)return;const duration=prompt('Minutes practised?','20');if(duration===null)return;const mins=Number(duration);if(!Number.isFinite(mins)||mins<1||mins>720){toast('Enter a valid number of minutes');return}store('progress',[...progress(),{date:new Date().toISOString(),minutes:Math.round(mins),note}]);toast('Practice logged');render();}break;
  }}}
 function handleChange(e){const el=e.target;
+ if(el.dataset.importedVolume){const id=el.dataset.importedVolume;if(!state.scoreDocument?.parts.some(p=>p.id===id))return;const level=Math.max(0,Math.min(150,Math.round(Number(el.value)/5)*5));state.importedEnsembleVolumes={...state.importedEnsembleVolumes,[id]:level};store('importedEnsembleVolumes',state.importedEnsembleVolumes);return;}
  if(el.id==='capoSetting'){state.capo=Number(el.value);store('capo',state.capo);render();return;}
  if(el.id==='leftHandedSetting'){state.leftHanded=el.checked;store('leftHanded',state.leftHanded);render();return;}
  if(el.id==='songPracticeSpeed'){stopSongPractice();const speed=Number(el.value);if([60,75,90,100,110,125].includes(speed)){state.songPracticeSpeed=speed;store('songPracticeSpeed',speed)}render();return;}
