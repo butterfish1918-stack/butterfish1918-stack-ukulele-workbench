@@ -436,3 +436,12 @@ input[type=range]{accent-color:var(--lime)}
 .score-systems .score-system-current{border-bottom-color:#b9f700;outline:1px solid rgba(185,247,0,.27);outline-offset:2px}
 .score-system{scroll-margin-block:92px 112px}
 @media(max-width:650px){.song-arrangement-modes{padding:10px 8px}.song-track-title{align-items:start;flex-direction:column}}
+
+/* Full ensemble: successive score systems contain all concurrent instruments. */
+.ensemble-score{display:flex;flex-direction:column;gap:16px}
+.ensemble-score-group{border:1px solid #536055;border-radius:7px;padding:12px 9px;scroll-margin-block-start:85px;background:rgba(255,255,255,.015)}
+.ensemble-score-group .song-score-track{margin:0 0 13px}
+.ensemble-score-group .song-score-track:last-child{margin-bottom:0}
+.ensemble-score-group .score-holder{margin-top:5px;margin-bottom:9px}
+.ensemble-group-current{border-color:#b9f700;box-shadow:0 0 0 1px rgba(185,247,0,.24)}
+@media(max-width:650px){.ensemble-score-group{padding:7px 4px}.ensemble-score{gap:10px}}
