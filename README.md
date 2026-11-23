@@ -1,3 +1,22 @@
+# Ukulele Workbench 1.11.0 BETA — Imported Ensemble Playback and Polyphonic Beams
+
+The user-requested P0/P1/P2 feature set is being integrated into the existing v1.10 feature modules, not replaced by demonstration-only screens.
+
+## New in 1.11.0
+- **Multi-part MusicXML playback inside Score Studio:** Imported instruments and independent rhythmic voices are performed against a single absolute-beat clock. Notes sharing an onset play together; original instrument, pitch, note length, basic dynamics, and articulation length survive. Original parts remain source-provided—not guessed from a chord chart.
+- **Independent ensemble controls:** Each imported part can be muted without deleting or changing its notation. The Score Studio preview has **Play ensemble / Stop ensemble** controls and a measure-level playhead. Navigating away stops all voices.
+- **Instrument sound:** Recorded ukulele, bass and piano samples are used when available. Imported flute/strings/synthesizer/guitar/wordless vocal pitches use explicitly labelled modelled reference tones. Unsupported parts are not silently mislabelled as piano. Electronic instrument quality is not asserted equal to a studio performance.
+- **Multi-voice engraving:** Consecutive eighth and sixteenth notes are now beamed separately within each original voice. A rest or non-contiguous beat separates groups; independent voices and bar lines never share beams. This is a readable preview, not yet fully professional publishing-grade engraving.
+- **Tests:** The new ensemble scheduler and its integration have dedicated regression tests. Existing per-instrument source-verification requirements remain mandatory.
+
+## Implementation and test limits
+- Imported MusicXML is currently played using its schema-2 voices in **Score Studio**, while Songbook's canonical editor remains a schema-1 score. Full polyphonic import into editable Songbook songs is still a further integration.
+- The commercial repertoire contains only the source material legally available to this project; generated harmonies, drum studies and modelled instruments cannot be represented as original transcriptions.
+- Physical Android validation of sound output, latency, scrolling, microphone accuracy, offline persistence and orientation cannot be completed by automated GitHub tests. The 10-case on-device checklist remains open until tests are performed on actual hardware.
+- Cloud backups are encrypted, user-managed files; a private account-based sync service is not yet connected.
+
+---
+
 # Ukulele Workbench 1.10.0 BETA — Extended rehearsal, import and learning foundations
 
 ## Implemented and available in the existing interface
