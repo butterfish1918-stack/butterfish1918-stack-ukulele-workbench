@@ -562,3 +562,45 @@ input[type=range]{accent-color:var(--lime)}
  .song-lyrics-editor{padding:8px}
  .song-reading-options .btn{flex:1 1 46%}
 }
+
+/* Advanced song practice and ensemble score features */
+.song-ab-panel,.song-microphone-check,.song-organizer{
+ margin:10px 0;padding:11px 12px;border:1px solid #526357;border-radius:6px;
+}
+.song-ab-panel>strong,.song-microphone-check>strong{font-size:13px}
+.song-ab-panel p,.song-microphone-check p{margin:7px 0}
+.song-ab-fields,.song-ramp-fields{display:flex;align-items:end;flex-wrap:wrap;gap:10px;margin:9px 0}
+.song-ab-fields .control{flex:1 1 108px;min-width:108px;max-width:220px}
+.song-ab-fields input{box-sizing:border-box;width:100%;min-width:0}
+.song-ramp-fields label{display:flex;align-items:center;gap:6px;font-size:12px;flex-wrap:wrap}
+.song-organizer summary{cursor:pointer;font-weight:700;font-size:13px;padding:4px 0}
+.song-organizer textarea{display:block;box-sizing:border-box;width:100%;margin:8px 0;min-height:72px;padding:8px;background:#121d17;color:#eff2eb;border:1px solid #647867;border-radius:4px}
+.song-organizer>label{display:block;font-size:12px}
+.song-organizer .score-actions,.song-organizer .mobile-qa-actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.song-organizer input[type=password]{box-sizing:border-box;width:100%;margin:8px 0;padding:8px;min-height:40px}
+.mobile-qa-case{align-items:center;gap:10px}
+.mobile-qa-actions{margin:0!important;flex-shrink:0}
+.polyphonic-doc{display:flex;flex-direction:column;gap:12px;margin:14px 0}
+.polyphonic-svg{display:block;width:100%;max-width:100%;height:auto;overflow:visible;background:#eee8db;border-radius:4px}
+@media(max-width:650px){
+ .song-ab-panel,.song-organizer{padding:9px}
+ .song-ab-fields .control{flex:1 1 43%}
+ .mobile-qa-case{flex-wrap:wrap}
+ .mobile-qa-actions{width:100%;justify-content:flex-end}
+}
+/* Print clean sheet music rather than the browser's entire practice interface.
+ * Keep this DOM section non-invasive outside actual print media.
+ */
+#printSheet{display:none}
+@page{size:A4 portrait;margin:14mm 12mm}
+@media print{
+ html,body{background:#fff!important;color:#161616!important;height:auto!important;overflow:visible!important}
+ body > *:not(#printSheet){display:none!important}
+ #printSheet{display:block!important;width:100%!important;max-width:none!important;background:white!important;color:#111!important;font:11pt/1.3 Georgia,serif}
+ #printSheet h1{font-size:20pt;margin:0 0 5mm}
+ #printSheet>p{font-size:10pt;margin:0 0 4mm}
+ #printSheet .score-systems{display:block!important}
+ #printSheet .score-system{page-break-inside:avoid;break-inside:avoid;margin-bottom:5mm}
+ #printSheet svg.composed-score{width:100%!important;max-width:100%!important;height:auto!important;break-inside:avoid}
+ #printSheet .score-reading-cues{page-break-inside:avoid;break-inside:avoid}
+}
