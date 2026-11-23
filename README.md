@@ -1,3 +1,16 @@
+# Ukulele Workbench v1.8.5 Preview — Printed Staffs and Recorded Ukulele
+
+**Sheet music:** Songbook and Score Studio now use multiple staff systems rather than a single endless horizontal score. Dense measures occupy their own line; shorter bars share a system. Scores preserve measure numbers and support notation, ukulele tab or both.
+
+**Recorded ukulele:** Songbook playback and tap-to-hear note/chord previews use recorded plucks from Mateusz Dąbrowski's FreePats tenor ukulele sample library. The 13 FLAC recordings are dedicated to the public domain under CC0 1.0. Source and license: https://github.com/freepats/ukulele1 and https://freepats.zenvoid.org/GuitarFamily/ukulele.html. Source commit pinned to `86d345f6f7b79a106ace98eca0da19b087786dba`. GitHub Pages downloads the samples as static first-party assets during deployment. The service worker caches successfully fetched FLACs for repeat/offline practice. The old oscillator is used only as a fallback if a recorded pitch cannot load; metronome clicks still use generated tones.
+
+**Technical limits:** The fallback SVG score renderer currently uses simplified single-voice notation; there is not yet professional polyphonic engraving or an exact transcription of protected recordings. Recorded ukulele samples are a real instrument, but the audio is a synthesized *performance* of notated arrangements using those samples, not a commercially recorded performance.
+
+## Testing
+Run `npm test` and `npm run qa:library`. GitHub Pages downloads the CC0 bank in `scripts/fetch-ukulele-samples.mjs`; the source code is fully editable without binary media in Git. Test browser audio permission, first-load sample fetches and offline playback before treating a release as fully validated.
+
+---
+
 # Ukulele Workbench v1.8.4 Preview — Listen & Practise Songs
 
 The Songbook now offers a **playable rehearsal view** for the fifteen approved practice titles. Each available score can be opened directly in **Approved Songs**, the **Repository Library**, or **My Songbook**. In all three places the written arrangement supports:
