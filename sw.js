@@ -1,13 +1,13 @@
 /* Ukulele Workbench offline shell. Keep cache deletion scoped to THIS app:
    other tools on the same GitHub Pages origin must never be touched. */
 const CACHE_PREFIX = 'uke-workbench-';
-const CACHE = `${CACHE_PREFIX}v1.8.6-multitrack-follow`;
+const CACHE = `${CACHE_PREFIX}v1.8.7-drums-touch`;
 const SCOPE = new URL(self.registration.scope);
 const SHELL = new URL('./index.html', SCOPE).href;
 const LIBRARY_PATH = new URL('./library/', SCOPE).pathname;
 const ASSETS = [
  './', './index.html', './styles.css', './src/app.js', './src/song-library.js', './src/library-seed.js', './src/music.js',
- './src/score.js', './src/score-view.js', './src/guitar-adaptation.js', './src/arrangement-modes.js', './src/instrument-samples.js', './src/repertoire-migration.js', './src/song-practice.js', './src/technique-lessons.js',
+ './src/score.js', './src/score-view.js', './src/guitar-adaptation.js', './src/arrangement-modes.js', './src/instrument-samples.js', './src/song-instrumentation.js', './src/repertoire-migration.js', './src/song-practice.js', './src/technique-lessons.js',
  './src/history.js', './src/progression.js', './src/rhythm-lessons.js',
  './src/reading-lessons.js', './src/musicxml.js', './src/engraving.js',
  './src/tuner-dsp.js', './src/storage-safety.js', './src/device-qa.js',
@@ -81,7 +81,7 @@ self.addEventListener('fetch', event => {
   try {
    const response = await fetch(request);
    // Cache app-owned static assets, not arbitrary dynamic URLs or queries.
-   const isStatic = /\.(?:html|css|js|svg|png|flac|webmanifest)$/i.test(url.pathname);
+   const isStatic = /\.(?:html|css|js|svg|png|flac|m4a|mp3|webmanifest)$/i.test(url.pathname);
    if (response.ok && response.type !== 'opaque' && isStatic) {
     const copy = response.clone();
     event.waitUntil(caches.open(CACHE).then(cache => cache.put(request, copy)));
