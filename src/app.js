@@ -7,6 +7,7 @@ import {LEARNING_UNITS,learningReview,recordLearningReview} from './learning-pat
 import {addSongToPlaylist,annotateSong,printableSongFilename} from './song-organizer.js';
 import {validateScoreDocument,flattenDocumentEvents,planScoreSystems} from './polyphonic-score.js';
 import {importMultiPartMusicXML,exportMultiPartMusicXML} from './musicxml-multipart.js';
+import {renderPolyphonicDocument} from './polyphonic-engraving.js';
 import {parseBarLyricCues,lyricCuesToText,mergeReadingCues} from './song-lyrics.js';
 import {partVerificationStatus} from './score-verification.js';
 import {prepareUkuleleSamples,playUkuleleSample} from './ukulele-samples.js';
@@ -1230,7 +1231,8 @@ function importedScoreDocumentPanel(){
   ${doc?`<h3>${h(doc.title)}</h3><p>${doc.parts.length} instrumental parts · ${doc.measures} measures · ${doc.tempo} BPM · ${h(doc.meter)}. These parts have not been independently source-verified.</p>
    <div class="lesson-list">${doc.parts.map(part=>`<div class="lesson"><div class="lesson-icon">𝄞</div><div><h3>${h(part.name)}</h3>
     <p>${part.voices.length} independent rhythmic voice(s) · ${part.voices.reduce((n,voice)=>n+voice.measures.reduce((m,bar)=>m+bar.events.length,0),0)} events</p></div></div>`).join('')}</div>
-   <p class="small-text">Professional multi-voice engraving and full-song ensemble playback are under development; importing the complete structure does not certify that it is playable in the legacy score player.</p>`:''}
+   <p class="small-text">Independent voices, dynamic symbols and fingerings are shown in a compact preview. Full publishing-grade engraving and ensemble performance controls still require further work.</p>
+   ${renderPolyphonicDocument(doc)}`:''}
  </section>`;
 }
 function scoreStudio(){
