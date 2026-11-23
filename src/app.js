@@ -1,6 +1,7 @@
 import {ROOTS,SCALES,TUNINGS,PITCH_CLASSES,mod,spelledScale,midiName,midiFreq,freqMidi,fretboard,optionsForMidi,scalePositions,harmonizedChords,chordVoicings,scaleMelody,staffYForSpelling} from './music.js';
 import {createScore,validateScore,appendEvent,insertEvent,appendMeasure,findEvent,removeEvent,replaceEvent,assignPosition,changeTuning,timeline,measureBeats,remainingBeats,preferredPosition,DURATIONS,METERS,KEY_SIGNATURES,QUARTER_LABELS,spellingsForMidi,setTieToNext,canTieNext,setKeySignature,CHORD_SHAPES,ARTICULATIONS,STROKES,setArticulation,setSlurToNext,setStroke} from './score.js';
 import {renderScoreView} from './score-view.js';
+import {prepareUkuleleSamples,playUkuleleSample} from './ukulele-samples.js';
 import {engravingPlan,loadVexFlow,renderEngravedScore} from './engraving.js';
 import {estimateFundamental} from './tuner-dsp.js';
 import {prepareBackupRestore,commitBackupRestore} from './storage-safety.js';
@@ -36,6 +37,9 @@ state.songPracticeSpeed=[60,75,90,100,110,125].includes(Number(read('songPractic
 state.songPracticeLoop=!!read('songPracticeLoop',false);
 state.songPracticeScope='section';
 let songPracticePlayback=null;
+let songSampleLoadToken=0;
+state.songSampleLoading=false;
+state.songSampleFallback=false;
 let engravedPreviewEnabled=false;
 let deviceReport=null;
 let progressionPlayback=null,techniquePlayback=null,rhythmLabPlayback=null,ac=null,scorePlayback=null,playToken=0,metronomeTimer=null,metroNext=0,metroBeat=0,rhythmTimer=null,tunerStream=null,tunerFrame=0,tunerCtx=null,tunerSource=null,tunerAnalyser=null;
@@ -66,16 +70,16 @@ function synth(midi,at=0,dur=.32,volume=.12){const ctx=audio();const time=at||ct
 /** Plays a notated event, including simultaneous chord tones with a small strum offset.
  * Staccato/tenuto/accents are simplified reference playback, not human interpretation.
  */
-function synthEvent(ev,at,seconds,durationBeats=ev.duration){
+function synthEvent(ev,at,seconds,durationBeats=ev.duration,voice=synth){
  if(ev.type==='rest')return [];
  const length=Math.max(.075,durationBeats*seconds);
  const duration=ev.articulation==='staccato'?length*.48:ev.articulation==='tenuto'?length*.99:length*.92;
  const volume=ev.articulation==='accent'?.145:.095;
  if(ev.type==='chord'){
   const notes=ev.stroke==='up'?[...ev.notes].reverse():ev.notes;
-  return notes.map((n,i)=>synth(n.midi,at+(ev.stroke==='none'?0:i*.024),duration,volume*.66));
+  return notes.map((n,i)=>voice(n.midi,at+(ev.stroke==='none'?0:i*.024),duration,volume*.66)).filter(Boolean);
  }
- return [synth(ev.midi,at,duration,volume)];
+ return [voice(ev.midi,at,duration,volume)].filter(Boolean);
 }
 function tick(at=0,accent=false){const ctx=audio();const time=at||ctx.currentTime+.01;const osc=ctx.createOscillator();const gain=ctx.createGain();osc.type='square';osc.frequency.setValueAtTime(accent?1180:800,time);gain.gain.setValueAtTime(.085,time);gain.gain.exponentialRampToValueAtTime(.0001,time+.047);osc.connect(gain).connect(ctx.destination);osc.start(time);osc.stop(time+.06)}
 function playSeries(events,spacing=.35){const token=++playToken;const ctx=audio(),start=ctx.currentTime+.08;events.forEach((e,i)=>{const at=start+i*spacing;const m=typeof e==='number'?e:e?.midi;if(m!=null)synth(m,at,spacing*.82);});setTimeout(()=>{if(token===playToken)toast('Playback complete')},events.length*spacing*1000+100)}
@@ -447,19 +451,21 @@ function songPracticeControls(preview,body=''){
  const playing=!!songPracticePlayback;
  return `<div class="song-rehearsal" aria-label="Song practice and audio playback">
  <div class="panel-title"><h2>Listen and practise</h2><span class="sub-label">UKULELE REFERENCE SYNTH</span></div>
- <p class="small-text">Listen to the written notes and chords, practise along at a slower tempo, or repeat the current section. Audio is synthesized from this arrangement, not the commercial recording.</p>
+ <p class="small-text">Listen to recorded ukulele notes and chords, practise slowly, or repeat a section. Sounds are real instrument samples (CC0 FreePats), not the commercial recording.</p>
  <div class="song-rehearsal-controls">
-  <button type="button" class="btn gold" data-action="song-practice-play" aria-pressed="${playing}">${playing?'■ Stop listening':'▶ Listen to score'}</button>
+  <button type="button" class="btn gold" data-action="song-practice-play" aria-pressed="${playing}">${state.songSampleLoading?'Loading ukulele samples…':playing?'■ Stop listening':'▶ Listen to score'}</button>
   <button type="button" class="btn ${state.songPracticeLoop?'gold':'ghost'}" data-action="song-practice-loop" aria-pressed="${state.songPracticeLoop}">${state.songPracticeLoop?'↻ Loop on':'↻ Loop off'}</button>
   <label class="control">Playback range<select id="songPracticeScope"><option value="section" ${state.songPracticeScope==='section'?'selected':''}>Selected section</option><option value="full" ${state.songPracticeScope==='full'?'selected':''}>Whole arrangement</option></select></label>
   <label class="control">Practice speed<select id="songPracticeSpeed">${[60,75,90,100,110,125].map(n=>`<option value="${n}" ${state.songPracticeSpeed===n?'selected':''}>${n}%</option>`).join('')}</select></label>
  </div>
  <div class="song-practice-display">${tabbar([['notation','Notation'],['dual','Notation + tab'],['tab','Tab only']],state.display,'data-display')}</div>
- <p class="small-text" id="songPracticeStatus" role="status" aria-live="polite">${playing?'Playing reference audio…':'Ready. Tap any written note or chord to hear it individually.'}</p>
+ <p class="small-text" id="songPracticeStatus" role="status" aria-live="polite">${playing?'Playing reference audio…':'${state.songSampleFallback?'Some recorded notes were unavailable; using a synthesized fallback.':'Ready. Tap written notes and chords to hear the sampled ukulele.'}'}</p>
  ${guide.length?`<div class="song-chord-guide"><strong>Chord fingerings — ${h(TUNINGS[preview.tuning].names.join(' · '))} string order</strong><p class="small-text">Tap a chord to hear its written ukulele fingering.</p><div class="repo-tags">${guide.map(chord=>`<button type="button" class="btn compact ghost" data-practice-chord="${h(chord.symbol)}" title="Listen to ${h(chord.symbol)} chord"><b>${h(chord.symbol)}</b> &nbsp;${h(chord.frets)}</button>`).join('')}</div></div>`:''}
  </div>`;
 }
 function stopSongPractice(){
+ songSampleLoadToken++;
+ state.songSampleLoading=false;
  const run=songPracticePlayback;
  if(!run)return;
  songPracticePlayback=null;
@@ -467,20 +473,48 @@ function stopSongPractice(){
  for(const timer of run.timers)clearTimeout(timer);
  const now=run.audioContext.currentTime;
  for(const voice of run.voices)try{voice.stop(now+.006)}catch{}
- $('.song-score-preview .score-event.playing,.repo-score-preview .score-event.playing').forEach(el=>el.classList.remove('playing'));
+ $$('.song-score-preview .score-event.playing,.repo-score-preview .score-event.playing').forEach(el=>el.classList.remove('playing'));
  const button=document.querySelector('[data-action="song-practice-play"]');
  if(button){button.textContent='▶ Listen to score';button.setAttribute('aria-pressed','false')}
  const status=$('#songPracticeStatus');if(status)status.textContent='Stopped. Select a section or restart playback.';
 }
-function playSongPractice(){
- if(songPracticePlayback){stopSongPractice();return}
+function recordedUkuleleVoice(ctx){
+ return (midi,at,duration,volume)=>playUkuleleSample(ctx,midi,at,duration,volume)??synth(midi,at,duration,volume);
+}
+function scoreEventPitches(events){
+ return events.flatMap(event=>event.type==='note'?[event.midi]:event.type==='chord'?event.notes.map(note=>note.midi):[]);
+}
+async function previewRecordedUkulele(midis,callback){
+ try{
+  const ctx=audio();
+  const result=await prepareUkuleleSamples(ctx,midis);
+  state.songSampleFallback=result.errors.length>0;
+  callback(recordedUkuleleVoice(ctx),ctx.currentTime+.03);
+ }catch(error){state.songSampleFallback=true;toast('Recorded ukulele unavailable: '+error.message);callback(synth,audio().currentTime+.03)}
+}
+async function playSongPractice(){
+ if(songPracticePlayback||state.songSampleLoading){stopSongPractice();if(state.page==='songbook')render();return}
  const selection=activeSongPractice();
  if(!selection){toast('Open a song with a written score first');return}
  const score=state.songPracticeScope==='full'?selection.score:selection.preview;
  const events=timeline(score);
  if(!events.length){toast('This section has no playable events');return}
- const seconds=60/practiceTempo(score.tempo,state.songPracticeSpeed);
+ const loadId=++songSampleLoadToken;
+ state.songSampleLoading=true;render();
  const ctx=audio();
+ try{
+  const prepared=await prepareUkuleleSamples(ctx,scoreEventPitches(events));
+  if(loadId!==songSampleLoadToken)return;
+  state.songSampleFallback=prepared.errors.length>0;
+  if(prepared.errors.length)toast('Some recorded notes unavailable; using backup sound');
+ }catch(error){
+  if(loadId!==songSampleLoadToken)return;
+  state.songSampleFallback=true;
+  toast('Recorded audio unavailable; using backup sound');
+ }
+ if(loadId!==songSampleLoadToken)return;
+ state.songSampleLoading=false;
+ const seconds=60/practiceTempo(score.tempo,state.songPracticeSpeed);
  const countIn=score.meter==='3/4'?3:score.meter==='6/8'?3:4;
  const start=ctx.currentTime+.15+countIn*seconds;
  const totalBeats=Math.max(...events.map(event=>event.onset+event.duration));
@@ -489,6 +523,7 @@ function playSongPractice(){
  for(let n=0;n<countIn;n++)tick(ctx.currentTime+.15+n*seconds,n===0);
  render();
  const status=$('#songPracticeStatus');if(status)status.textContent=`Count in: ${countIn} beats · ${Math.round(practiceTempo(score.tempo,state.songPracticeSpeed))} BPM`;
+ const voice=recordedUkuleleVoice(ctx);
  const schedule=()=>{
   if(songPracticePlayback!==run)return;
   const currentTime=ctx.currentTime;
@@ -502,18 +537,18 @@ function playSongPractice(){
    const index=run.nextIndex,ev=events[index];
    const at=start+(run.cycle*totalBeats+ev.onset)*seconds;
    if(at>horizon)break;
-   if(ev.type==='chord')run.voices.push(...synthEvent(ev,at,seconds));
+   if(ev.type==='chord')run.voices.push(...synthEvent(ev,at,seconds,ev.duration,voice));
    else if(ev.type==='note'&&!(index>0&&events[index-1].tieToNext)){
     let duration=ev.duration,j=index;
     while(events[j]?.tieToNext&&events[j+1]){j++;duration+=events[j].duration}
-    run.voices.push(...synthEvent(ev,at,seconds,duration));
+    run.voices.push(...synthEvent(ev,at,seconds,duration,voice));
    }
    run.timers.push(setTimeout(()=>{
     if(songPracticePlayback!==run)return;
     $$('.song-score-preview .score-event,.repo-score-preview .score-event').forEach(el=>el.classList.toggle('playing',el.dataset.eventId===ev.id));
     const atBar=(state.songPracticeScope==='section'&&selection.section?selection.section.startBar-1:0)+ev.measureIndex+1;
-    const status=$('#songPracticeStatus');
-    if(status)status.textContent=`Playing bar ${atBar} / ${selection.score.measures.length} · ${Math.round(practiceTempo(score.tempo,state.songPracticeSpeed))} BPM${run.cycle?' · repeat '+(run.cycle+1):''}`;
+    const current=$('#songPracticeStatus');
+    if(current)current.textContent=`Playing bar ${atBar} / ${selection.score.measures.length} · ${Math.round(practiceTempo(score.tempo,state.songPracticeSpeed))} BPM${run.cycle?' · repeat '+(run.cycle+1):''}`;
    },Math.max(0,(at-ctx.currentTime)*1000)));
    run.nextIndex++;
   }
@@ -782,7 +817,9 @@ function choosePitch(midi){state.selectedMidi=midi;synth(midi);render()}
 function chooseChordSound(){const chord=harmonizedChords(state.root,state.scale,state.chordExtension)[state.chordDegree];if(!chord)return;const voices=chordVoicings(chord.pcs,state.tuning);const voice=voices[Math.min(state.chordIndex,voices.length-1)];if(voice){const midis=voice.midis.filter(x=>x!==null);const ctx=audio(),at=ctx.currentTime+.03;midis.forEach((m,i)=>synth(m,at+i*.025,.7,.075))}else toast('No matching chord voicing in this position range')}
 function handleClick(e){const node=e.target.closest('[data-prog-degree],[data-prog-move],[data-prog-stroke],[data-prog-duration],[data-prog-remove],[data-event-id],[data-score-position],[data-midi],[data-pc],[data-nav],[data-page],[data-action],[data-degree],[data-extension],[data-labels],[data-display],[data-answer],[data-rhythm-answer],[data-expression-answer],[data-key-answer],[data-sight-answer],[data-step],[data-techfocus],[data-techindex],[data-tech-display],[data-tech-note],[data-tech-rating],[data-repo],[data-repo-section],[data-repertoire-preview],[data-repertoire-section],[data-repertoire],[data-song],[data-song-section],[data-practice-chord]');if(!node)return;
  if(node.dataset.page){navigate(node.dataset.page);return}if(node.dataset.nav){navigate(node.dataset.nav);return}
- if(node.dataset.practiceChord){const selection=activeSongPractice();if(!selection)return;const chord=songPracticeGuide(selection.preview,selection.body).find(item=>item.symbol===node.dataset.practiceChord);if(!chord)return;const frets=chord.frets.split(' · '),tuning=TUNINGS[selection.score.tuning];const at=audio().currentTime+.02;let played=0;frets.forEach((fret,string)=>{if(/^\d+$/.test(fret)){synth(tuning.midi[string]+Number(fret),at+played*.032,.85,.12);played++}});const status=$('#songPracticeStatus');if(status)status.textContent=`Chord preview: ${chord.symbol} · ${chord.frets}`;return;}
+ if(node.dataset.practiceChord){const selection=activeSongPractice();if(!selection)return;const chord=songPracticeGuide(selection.preview,selection.body).find(item=>item.symbol===node.dataset.practiceChord);if(!chord)return;const frets=chord.frets.split(' · '),tuning=TUNINGS[selection.score.tuning],midis=frets.map((fret,string)=>/^\\d+$/.test(fret)?tuning.midi[string]+Number(fret):null).filter(Number.isFinite);
+ previewRecordedUkulele(midis,(voice,at)=>midis.forEach((midi,i)=>voice(midi,at+i*.034,.85,.12)));
+ const status=$('#songPracticeStatus');if(status)status.textContent=`Chord preview: ${chord.symbol} · ${chord.frets}`;return;}
  if(node.dataset.eventId){
   if(state.page==='progression')return;
   if(state.page==='technique'){const exercise=currentTechnique();if(!exercise.pattern)return;const {score}=techniqueScore(exercise.id,state.tuning);const found=findEvent(score,node.dataset.eventId);if(found){state.techEventId=found.event.id;if(found.event.type!=='rest')synthEvent(found.event,audio().currentTime+.012,60/(state.techTempo||currentTechnique().tempo));render()}return;}
@@ -790,7 +827,7 @@ function handleClick(e){const node=e.target.closest('[data-prog-degree],[data-pr
   if(state.page==='songbook'){
    const selection=activeSongPractice();
    const event=selection?.preview?findEvent(selection.preview,node.dataset.eventId)?.event:null;
-   if(event?.type&&event.type!=='rest'){const secs=60/practiceTempo(selection.score.tempo,state.songPracticeSpeed);synthEvent(event,audio().currentTime+.02,secs);const status=$('#songPracticeStatus');if(status)status.textContent=event.type==='chord'?`Preview: ${event.symbol} chord`:`Preview: ${event.spelling} (${midiName(event.midi)})`}
+   if(event?.type&&event.type!=='rest'){const secs=60/practiceTempo(selection.score.tempo,state.songPracticeSpeed);previewRecordedUkulele(scoreEventPitches([event]),(voice,at)=>synthEvent(event,at,secs,event.duration,voice));const status=$('#songPracticeStatus');if(status)status.textContent=event.type==='chord'?`Preview: ${event.symbol} chord`:`Preview: ${event.spelling} (${midiName(event.midi)})`}
    return;
   }
   const found=findEvent(state.score,node.dataset.eventId);
