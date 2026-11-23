@@ -84,7 +84,7 @@ function articulationGlyph(x,y,mark){
  if(mark==='accent')return `<path class="score-articulation" d="M${x-10} ${at-4}L${x+8} ${at}L${x-10} ${at+4}" fill="none" stroke="${color}" stroke-width="2.5" aria-label="Accent"/>`;
  return '';
 }
-function chordGlyph(x,ev,marks,selected){
+function chordGlyph(x,ev,marks,selected,showChordLabels=true){
  const color=selected?'#ad7635':'#263e31';
  const notes=ev.notes.map((n,i)=>({...n,y:staffYForSpelling(n.midi,n.spelling,102),mark:marks[i]})).sort((a,b)=>b.y-a.y);
  const filled=baseDuration(ev.duration)<2;let out='';
@@ -102,7 +102,7 @@ function chordGlyph(x,ev,marks,selected){
   if(baseDuration(ev.duration)<=.5){const dir=up?1:-1;out+=`<path d="M${stemX} ${tip}q${dir*22} ${dir*8} ${dir*7} ${dir*28}" fill="none" stroke="${color}" stroke-width="2.7"/>`}
  }
  // Chord name and strum direction always appear: these are essential reading instructions.
- out+=`<text class="score-chord-name" x="${x}" y="29" font-size="14" font-weight="bold" fill="#355642" text-anchor="middle">${esc(ev.symbol)}</text>`;
+ if(showChordLabels)out+=`<text class="score-chord-name" x="${x}" y="29" font-size="14" font-weight="bold" fill="#355642" text-anchor="middle">${esc(ev.symbol)}</text>`;
  if(ev.stroke!=='none')out+=`<text class="score-strum" x="${x+22}" y="${Math.max(46,hi-8)}" font-size="18" fill="#406450" aria-label="${ev.stroke}stroke">${ev.stroke==='down'?'Π':'V'}</text>`;
  out+=articulationGlyph(x,hi,ev.articulation);
  return out;
@@ -156,14 +156,14 @@ export function scoreSystems(score,{maxSystemWidth=490,maxBarsPerSystem=3,showNa
  systems.push({start:from,end:score.measures.length});
  return systems;
 }
-export function renderScoreView(score,{mode='notation',selectedEventId=null,playingEventId=null,showNames=false,annotations=null,layout='strip',measureOffset=0,chordSymbols=null}={}){
+export function renderScoreView(score,{mode='notation',selectedEventId=null,playingEventId=null,showNames=false,annotations=null,layout='strip',measureOffset=0,chordSymbols=null,showChordLabels=true}={}){
  if(layout==='systems'&&score?.measures?.length){
   const desktop=typeof window!=='undefined'&&window.innerWidth>=820;
   const systems=scoreSystems(score,{maxSystemWidth:desktop?840:490,maxBarsPerSystem:desktop?4:2,showNames});
   return `<div class="score-systems" role="group" aria-label="Multi-line sheet music: ${systems.length} stave systems, ${score.measures.length} measures">${systems.map(({start,end})=>{
    const single={...score,measures:score.measures.slice(start,end)};
    const chords=Array.isArray(chordSymbols)?chordSymbols.slice(start,end):null;
-   return `<div class="score-system" data-first-measure="${measureOffset+start+1}" data-last-measure="${measureOffset+end}" role="group" aria-label="Measures ${measureOffset+start+1} to ${measureOffset+end}">${renderScoreView(single,{mode,selectedEventId,playingEventId,showNames,annotations,layout:'compact',measureOffset:measureOffset+start,chordSymbols:chords})}</div>`;
+   return `<div class="score-system" data-first-measure="${measureOffset+start+1}" data-last-measure="${measureOffset+end}" role="group" aria-label="Measures ${measureOffset+start+1} to ${measureOffset+end}">${renderScoreView(single,{mode,selectedEventId,playingEventId,showNames,annotations,layout:'compact',measureOffset:measureOffset+start,chordSymbols:chords,showChordLabels})}</div>`;
   }).join('')}</div>`;
  }
 
@@ -175,11 +175,12 @@ export function renderScoreView(score,{mode='notation',selectedEventId=null,play
  const extra=keyCount*14;
  const segments=score.measures.map((bar,i)=>({bar,i,width:layout==='compact'?Math.max(165,Math.round(46+bar.events.length*(showNames?43:29))):Math.max(205,Math.round(90+bar.events.length*(showNames?68:61)))}));
  const width=125+extra+segments.reduce((a,s)=>a+s.width,0)+25;
- const height=showNotation&&showTab?347:showNotation?202:189;
- const tabTop=showNotation?226:62;
+ const height=layout==='compact'?(showNotation&&showTab?241:showNotation?159:155):(showNotation&&showTab?347:showNotation?202:189);
+ const tabTop=showNotation?(layout==='compact'?146:226):62;
+ const tabStep=layout==='compact'?21:27;
  const bottom=102,top=54;
  let out=`<svg class="composed-score" role="group" aria-label="${esc(score.title)} in ${esc(score.meter)}, ${score.measures.length} measures" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" style="${layout==='compact'?'width:100%;min-width:0;max-width:100%;':'min-width:'+Math.min(1450,Math.max(400,width*.83))+'px;'}" ><rect width="${width}" height="${height}" fill="#eee8db"/>`;
- out+=`<text x="16" y="22" fill="#4b6150" font-size="12" font-weight="700">${esc(score.title)}</text><text x="${width-20}" y="22" text-anchor="end" fill="#60705e" font-size="11">${esc(score.tuning==='highG'?'HIGH G':score.tuning==='lowG'?'LOW G':'BARITONE')} · ${esc(score.tempo)} BPM</text>`;
+ if(layout!=='compact')out+=`<text x="16" y="22" fill="#4b6150" font-size="12" font-weight="700">${esc(score.title)}</text><text x="${width-20}" y="22" text-anchor="end" fill="#60705e" font-size="11">${esc(score.tuning==='highG'?'HIGH G':score.tuning==='lowG'?'LOW G':'BARITONE')} · ${esc(score.tempo)} BPM</text>`;
  if(showNotation){
   for(let y=top;y<=bottom;y+=12)out+=`<line x1="16" x2="${width-20}" y1="${y}" y2="${y}" stroke="#637469" stroke-width=".85"/>`;
   out+=`<text x="21" y="102" fill="#2f4034" font-family="'Noto Music','Segoe UI Symbol','Apple Symbols',serif" font-size="61">${percussionClef?'𝄥':bassClef?'𝄢':'𝄞'}</text>${bassClef?'<text x="35" y="127" font-size="14" fill="#2f4034">8</text>':''}`;
@@ -191,7 +192,7 @@ export function renderScoreView(score,{mode='notation',selectedEventId=null,play
  if(showTab){
   out+=`<text x="16" y="${tabTop-18}" fill="#506756" font-size="11" font-weight="700">OPTIONAL TAB</text>`;
   for(let s=0;s<4;s++){
-   const y=tabTop+s*27;
+   const y=tabTop+s*tabStep;
    out+=`<line x1="54" x2="${width-20}" y1="${y}" y2="${y}" stroke="#718374" stroke-width="1"/><text x="29" y="${y+5}" fill="#354e3b" text-anchor="middle" font-size="14">${esc(TUNINGS[score.tuning].names[3-s])}</text>`;
   }
  }
@@ -200,8 +201,8 @@ export function renderScoreView(score,{mode='notation',selectedEventId=null,play
  for(const seg of segments){
   const {bar,i,width:barWidth}=seg;
   const start=x,end=x+barWidth;
-  out+=`<text x="${start+9}" y="40" fill="#849386" font-size="10">${measureOffset+i+1}</text>`;
-  if(chordSymbols?.[i])out+=`<text class="score-chord-symbol" x="${start+25}" y="26" fill="#2d4837" font-size="15" font-weight="700">${esc(chordSymbols[i])}</text>`;
+  out+=`<text x="${start+5}" y="42" fill="#849386" font-size="10">${measureOffset+i+1}</text>`;
+  if(chordSymbols?.[i])out+=`<text class="score-chord-symbol" x="${start+32}" y="19" fill="#2d4837" font-size="15" font-weight="700">${esc(chordSymbols[i])}</text>`;
   const count=Math.max(bar.events.length,1);
   let elapsed=0;
   const cap=measureBeats(score.meter),span=barWidth-64;
@@ -216,7 +217,7 @@ export function renderScoreView(score,{mode='notation',selectedEventId=null,play
    const selected=ev.id===selectedEventId,playing=ev.id===playingEventId;
    if(showNotation){
     const y=ev.type==='rest'?82:ev.type==='note'?staffNoteY(ev.midi,ev.spelling):82;
-    const mark=ev.type==='rest'?restGlyph(px,82,ev.duration):ev.type==='chord'?chordGlyph(px,ev,accidentals[j],selected||playing):noteGlyph(px,y,ev,selected||playing,{beamed:beamed.has(j),accidental:accidentals[j]})+(ev.articulation?articulationGlyph(px,y,ev.articulation):'');
+    const mark=ev.type==='rest'?restGlyph(px,82,ev.duration):ev.type==='chord'?chordGlyph(px,ev,accidentals[j],selected||playing,showChordLabels):noteGlyph(px,y,ev,selected||playing,{beamed:beamed.has(j),accidental:accidentals[j]})+(ev.articulation?articulationGlyph(px,y,ev.articulation):'');
     if(selected||playing)out+=`<rect x="${px-23}" y="32" width="46" height="117" rx="7" fill="${playing?'#84b295':'#e1b879'}" opacity=".24"/>`;
     out+=`<g class="score-event ${selected?'selected':''} ${playing?'playing':''}" role="button" tabindex="0" data-event-id="${esc(ev.id)}" aria-label="${percussionClef&&ev.drumHits?'Drums '+esc(ev.drumHits.join(' and ')):ev.type==='rest'?'Rest':ev.type==='chord'?`Chord ${esc(ev.symbol)}, ${esc(ev.stroke)}stroke`:`Note ${esc(ev.spelling)}${esc(midiName(ev.midi).slice(-1))}`} ${esc(ev.duration)} quarter beats, measure ${measureOffset+i+1}"><rect x="${px-28}" y="25" width="56" height="123" fill="transparent"/>${mark}</g>`;
     if(percussionClef&&ev.drumHits)out+=`<text x="${px}" y="152" text-anchor="middle" fill="#3e5848" font-size="10">${esc(ev.drumHits.map(x=>({kick:'K',snare:'S',hat:'H'}[x]||'?')).join('+'))}</text>`;
@@ -228,11 +229,11 @@ export function renderScoreView(score,{mode='notation',selectedEventId=null,play
     const pos=preferredPosition(ev,score.tuning);
     if(ev.type==='chord'){
      out+=`<g class="score-event ${selected?'selected':''} ${playing?'playing':''}" role="button" tabindex="0" data-event-id="${esc(ev.id)}" aria-label="${esc(ev.symbol)} chord on four ukulele strings">`;
-     for(const n of ev.notes){const yy=tabTop+(3-n.position.string)*27;
+     for(const n of ev.notes){const yy=tabTop+(3-n.position.string)*tabStep;
       out+=`<rect x="${px-14}" y="${yy-11}" width="28" height="22" rx="4" fill="${selected||playing?'#d5ac6b':'#eee8db'}"/><text x="${px}" y="${yy+5}" text-anchor="middle" fill="#253e2d" font-size="14" font-weight="700">${n.position.fret}</text>${showNames?`<text class="score-tab-note-label" x="${px+18}" y="${yy+5}" font-size="11" font-weight="700" fill="#27573a">${esc(writtenNoteName(n.midi,n.spelling))}</text>`:''}`;
      }
      out+='</g>';
-    }else if(pos){const yy=tabTop+(3-pos.string)*27;
+    }else if(pos){const yy=tabTop+(3-pos.string)*tabStep;
      out+=`<g class="score-event ${selected?'selected':''} ${playing?'playing':''}" role="button" tabindex="0" data-event-id="${esc(ev.id)}" aria-label="Fret ${pos.fret} on ${esc(TUNINGS[score.tuning].names[pos.string])} string"><rect x="${px-16}" y="${yy-13}" width="32" height="26" rx="5" fill="${selected||playing?'#d5ac6b':'#eee8db'}"/><text x="${px}" y="${yy+6}" fill="#253e2d" text-anchor="middle" font-size="16" font-weight="700">${pos.fret}</text>${showNames?`<text class="score-tab-note-label" x="${px+19}" y="${yy+5}" font-size="11" fill="#27573a" font-weight="700">${esc(writtenNoteName(ev.midi,ev.spelling))}</text>`:''}</g>`;
     }else if(ev.type==='rest')out+=`<text x="${px}" y="${tabTop+42}" text-anchor="middle" fill="#7b8b77" font-size="11">rest</text>`;
     else out+=`<text x="${px}" y="${tabTop+42}" text-anchor="middle" fill="#a35243" font-size="13">×</text>`;
@@ -240,7 +241,7 @@ export function renderScoreView(score,{mode='notation',selectedEventId=null,play
   });
   if(showNotation)out+=renderBeams(groups,bar.events,xs,selectedEventId,playingEventId);
   if(showNotation)out+=`<line x1="${end}" x2="${end}" y1="${top}" y2="${bottom}" stroke="#415347" stroke-width="1.8"/>`;
-  if(showTab)out+=`<line x1="${end}" x2="${end}" y1="${tabTop}" y2="${tabTop+81}" stroke="#415347" stroke-width="1.6"/>`;
+  if(showTab)out+=`<line x1="${end}" x2="${end}" y1="${tabTop}" y2="${tabTop+tabStep*3}" stroke="#415347" stroke-width="1.6"/>`;
   const remainder=measureBeats(score.meter)-usedBeats(bar);
   if(remainder>.001)out+=`<text x="${end-14}" y="${showNotation?150:174}" text-anchor="end" fill="#a36046" font-size="10">${fmt(remainder)} beat${remainder===1?'':'s'} free</text>`;
   x=end;
