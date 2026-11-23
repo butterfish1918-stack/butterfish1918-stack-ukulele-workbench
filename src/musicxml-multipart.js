@@ -25,6 +25,7 @@ export function importMultiPartMusicXML(xml,{DOMParserClass=globalThis.DOMParser
   const measures=children(part,'measure');
   if(measures.length!==firstMeasures.length)throw Error('Every part must have the same measure count');
   let divisions=1,partMeter=null,dynamics='mf';
+  const voiceDynamics=new Map();
   const byVoice=new Map();
   for(const [mi,measure]of measures.entries()){
    const attr=child(measure,'attributes');
@@ -37,33 +38,40 @@ export function importMultiPartMusicXML(xml,{DOMParserClass=globalThis.DOMParser
     const sound=[...measure.getElementsByTagName('sound')].find(x=>x.hasAttribute('tempo'));
     if(sound)tempo=Math.round(Number(sound.getAttribute('tempo')));
    }
-   let position=0,lastOnset=0;
+   let position=0,lastOnset=0,lastVoice=null;
    for(const el of measure.children){
-    if(el.tagName==='backup'){position-=Number(val(el,'duration','0'))/divisions;continue}
-    if(el.tagName==='forward'){position+=Number(val(el,'duration','0'))/divisions;continue}
+    if(el.tagName==='backup'){position-=Number(val(el,'duration','0'))/divisions;lastVoice=null;if(position<0)throw Error('Invalid MusicXML voice backup');continue}
+    if(el.tagName==='forward'){position+=Number(val(el,'duration','0'))/divisions;lastVoice=null;continue}
     if(el.tagName==='direction'){
      const tag=child(child(el,'direction-type'),'dynamics');
-     if(tag){const candidate=tag.firstElementChild?.tagName;if(dynamicNames.includes(candidate))dynamics=candidate}
+     if(tag){const candidate=tag.firstElementChild?.tagName;if(dynamicNames.includes(candidate)){
+      const directionVoice=val(el,'voice','');
+      if(directionVoice)voiceDynamics.set(directionVoice,candidate);else dynamics=candidate;
+     }}
      continue;
     }
     if(el.tagName!=='note')continue;
     if(child(el,'grace'))throw Error('Grace notes require a separate licensed conversion');
     const duration=Number(val(el,'duration','0'))/divisions;
     if(!Number.isFinite(duration)||duration<=0||duration>12)throw Error('Invalid rhythmic duration');
-    const chord=!!child(el,'chord'),onset=chord?lastOnset:position;
-    if(!chord)position+=duration;lastOnset=onset;
-    const voiceId=val(el,'voice','1');
+    const chord=!!child(el,'chord'),voiceId=val(el,'voice','1');
+    if(chord&&lastVoice!==voiceId)throw Error('MusicXML chord must follow a note in the same voice');
+    const onset=chord?lastOnset:position;
+    if(!chord)position+=duration;lastOnset=onset;lastVoice=voiceId;
     if(!byVoice.has(voiceId))byVoice.set(voiceId,Array.from({length:measures.length},()=>({events:[]})));
     const rest=!!child(el,'rest'),pitch=child(el,'pitch');
     const step=val(pitch,'step','C'),alter=Number(val(pitch,'alter','0')),octave=Number(val(pitch,'octave','4'));
-    const midi=rest?null:(octave+1)*12+(semitones[step]??0)+alter;
-    const articulation=child(child(child(el,'notations'),'articulations'),'staccato')?'staccato':
-      child(child(child(el,'notations'),'articulations'),'accent')?'accent':'none';
+    if(!rest&&(!Object.hasOwn(semitones,step)||!Number.isInteger(alter)||Math.abs(alter)>2||!Number.isInteger(octave)||octave<0||octave>8))throw Error('Invalid MusicXML pitch');
+    const midi=rest?null:(octave+1)*12+semitones[step]+alter;
+    const notations=child(el,'notations'),art=child(notations,'articulations');
+    const articulation=child(art,'staccato')?'staccato':child(art,'tenuto')?'tenuto':
+      child(art,'accent')?'accent':child(art,'strong-accent')?'marcato':
+      child(notations,'fermata')?'fermata':child(child(notations,'ornaments'),'trill-mark')?'trill':'none';
     const technical=child(child(el,'notations'),'technical'),finger=Number(val(technical,'fingering',''));
     const timeMod=child(el,'time-modification'),actual=Number(val(timeMod,'actual-notes','')),normal=Number(val(timeMod,'normal-notes',''));
     const tuplet=timeMod&&actual>=2&&normal>=1?{actual,normal}:undefined;
     byVoice.get(voiceId)[mi].events.push({type:rest?'rest':'note',onset,duration,
-     ...(rest?{}:{midi}),dynamics,articulation,...(finger>=0&&finger<=4&&val(technical,'fingering')!==''?{finger}:{}),
+     ...(rest?{}:{midi}),dynamics:voiceDynamics.get(voiceId)??dynamics,articulation,...(finger>=0&&finger<=4&&val(technical,'fingering')!==''?{finger}:{}),
      ...(tuplet?{tuplet}:{})});
    }
   }
@@ -78,32 +86,67 @@ export function importMultiPartMusicXML(xml,{DOMParserClass=globalThis.DOMParser
   meter,measures:firstMeasures.length,parts:result};
  validateScoreDocument(score);return score;
 }
+/** Export polyphonic MusicXML with cursor-correct voice backups and real chord
+ * groups. Written annotations are carried through the interchange rather than
+ * silently dropped; the canonical score document remains the source of truth.
+ */
 export function exportMultiPartMusicXML(doc){
  validateScoreDocument(doc);
- const [beats,unit]=doc.meter.split('/').map(Number),divisions=480,length=beats*4/unit*divisions;
- const header=`<?xml version="1.0" encoding="utf-8"?><score-partwise version="4.0"><work><work-title>${esc(doc.title)}</work-title></work><movement-title>${esc(doc.title)}</movement-title><part-list>${doc.parts.map(x=>`<score-part id="${esc(x.id)}"><part-name>${esc(x.name)}</part-name></score-part>`).join('')}</part-list>`;
- const xml=doc.parts.map(part=>`<part id="${esc(part.id)}">${Array.from({length:doc.measures},(_,mi)=>{
-  const voices=part.voices;
-  const attrs=mi===0?`<attributes><divisions>${divisions}</divisions><time><beats>${beats}</beats><beat-type>${unit}</beat-type></time></attributes><direction><sound tempo="${doc.tempo}"/></direction>`:'';
-  const content=voices.map((voice,index)=>{
-   let cursor=0;
-   const events=[...voice.measures[mi].events].sort((a,b)=>a.onset-b.onset);
-   const notes=events.map(ev=>{
-    let out='';
-    const start=Math.round(ev.onset*divisions),dur=Math.round(ev.duration*divisions);
-    if(start<cursor)throw Error('Overlapping notes in one voice need explicit chord encoding before MusicXML export');
-    if(start>cursor)out+=`<forward><duration>${start-cursor}</duration></forward>`;
-    cursor=start+dur;
-    const pitch=ev.type==='rest'?'<rest/>':(()=>{
-     const pc=(ev.midi%12+12)%12,stepNames=['C','C','D','D','E','F','F','G','G','A','A','B'],steps=stepNames[pc],alt=[0,1,0,1,0,0,1,0,1,0,1,0][pc];
-     return `<pitch><step>${steps}</step>${alt?'<alter>1</alter>':''}<octave>${Math.floor(ev.midi/12)-1}</octave></pitch>`;
-    })();
-    const dynamics=ev.dynamics&&ev.dynamics!=='mf'?`<notations><dynamics><${ev.dynamics}/></dynamics></notations>`:'';
-    return out+`<note>${pitch}<duration>${dur}</duration><voice>${esc(voice.id)}</voice>${dynamics}</note>`;
+ const [beats,unit]=doc.meter.split('/').map(Number),divisions=480;
+ const header='<?xml version="1.0" encoding="utf-8"?>'+
+  '<score-partwise version="4.0"><work><work-title>'+esc(doc.title)+'</work-title></work>'+
+  '<movement-title>'+esc(doc.title)+'</movement-title><part-list>'+
+  doc.parts.map(part=>'<score-part id="'+esc(part.id)+'"><part-name>'+esc(part.name)+'</part-name></score-part>').join('')+'</part-list>';
+ const encodePitch=midi=>{
+  const pc=(midi%12+12)%12;
+  const step=['C','C','D','D','E','F','F','G','G','A','A','B'][pc];
+  const alt=[0,1,0,1,0,0,1,0,1,0,1,0][pc];
+  return '<pitch><step>'+step+'</step>'+(alt?'<alter>1</alter>':'')+
+   '<octave>'+Math.floor(midi/12-1)+'</octave></pitch>';
+ };
+ const xml=doc.parts.map(part=>{
+  const measures=Array.from({length:doc.measures},(_,mi)=>{
+   const attrs=mi===0?'<attributes><divisions>'+divisions+'</divisions>'+
+    '<time><beats>'+beats+'</beats><beat-type>'+unit+'</beat-type></time></attributes>'+
+    '<direction><sound tempo="'+doc.tempo+'"/></direction>':'';
+   let previousCursor=0;
+   const voices=part.voices.map((voice,index)=>{
+    let cursor=0,lastStart=-1,lastDuration=-1,lastType='';
+    let currentDynamics='mf';
+    const events=[...voice.measures[mi].events].sort((a,b)=>a.onset-b.onset||b.duration-a.duration||((a.midi??0)-(b.midi??0)));
+    const notes=events.map(ev=>{
+     const start=Math.round(ev.onset*divisions),dur=Math.round(ev.duration*divisions);
+     if(dur<1)throw Error('MusicXML resolution is too low for this duration');
+     const isChord=ev.type==='note'&&lastType==='note'&&start===lastStart&&dur===lastDuration;
+     if(start<cursor&&!isChord)throw Error('Overlapping notes in one voice require separate voices');
+     let out='';
+     if(start>cursor)out+='<forward><duration>'+(start-cursor)+'</duration></forward>';
+     if(!isChord)cursor=start+dur;
+     lastStart=start;lastDuration=dur;lastType=ev.type;
+     if(ev.dynamics&&ev.dynamics!==currentDynamics){
+      out+='<direction placement="below"><direction-type><dynamics><'+ev.dynamics+
+       '/></dynamics></direction-type><voice>'+esc(voice.id)+'</voice></direction>';
+      currentDynamics=ev.dynamics;
+     }
+     const pitch=ev.type==='rest'?'<rest/>':encodePitch(ev.midi);
+     const articulation=ev.articulation==='marcato'?'strong-accent':ev.articulation;
+     let notation='';
+     if(articulation==='fermata')notation+='<fermata/>';
+     else if(articulation==='trill')notation+='<ornaments><trill-mark/></ornaments>';
+     else if(articulation&&articulation!=='none')notation+='<articulations><'+articulation+'/></articulations>';
+     if(ev.finger!==undefined)notation+='<technical><fingering>'+ev.finger+'</fingering></technical>';
+     const tuplet=ev.tuplet?'<time-modification><actual-notes>'+ev.tuplet.actual+
+      '</actual-notes><normal-notes>'+ev.tuplet.normal+'</normal-notes></time-modification>':'';
+     return out+'<note>'+(isChord?'<chord/>':'')+pitch+'<duration>'+dur+'</duration>'+
+      '<voice>'+esc(voice.id)+'</voice>'+tuplet+(notation?'<notations>'+notation+'</notations>':'')+'</note>';
+    }).join('');
+    const backup=index&&previousCursor>0?'<backup><duration>'+previousCursor+'</duration></backup>':'';
+    previousCursor=cursor;
+    return backup+notes;
    }).join('');
-   return (index?`<backup><duration>${length}</duration></backup>`:'')+notes;
+   return '<measure number="'+(mi+1)+'">'+attrs+voices+'</measure>';
   }).join('');
-  return `<measure number="${mi+1}">${attrs}${content}</measure>`;
- }).join('')}</part>`).join('');
+  return '<part id="'+esc(part.id)+'">'+measures+'</part>';
+ }).join('');
  return header+xml+'</score-partwise>';
 }
