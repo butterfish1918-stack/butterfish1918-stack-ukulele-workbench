@@ -34,3 +34,30 @@ export function practiceTempo(bpm,percent=100){
  if(!Number.isFinite(base)||base<=0||!Number.isFinite(ratio)||ratio<50||ratio>150)throw Error('Invalid practice tempo');
  return base*ratio/100;
 }
+
+/** Recognize explicit chord symbols from section-based practice charts, not lyrics. */
+export function extractChordSymbols(body,limit=32){
+ if(typeof body!=='string')return [];
+ const seen=new Set(),result=[];
+ const matcher=/(?:^|[\s|\[])\[?([A-G](?:#|b)?(?:maj7|m7|sus2|sus4|m|7)?)\]?(?=$|[\s|\],;])/g;
+ for(const line of body.split(/\r?\n/)){
+  const fromChart=line.includes(':')?line.slice(line.indexOf(':')+1):line;
+  for(const match of fromChart.matchAll(matcher)){
+   const symbol=match[1];
+   if(seen.has(symbol))continue;
+   result.push(symbol);seen.add(symbol);
+   if(result.length>=limit)return result;
+  }
+ }
+ return result;
+}
+/** Chord pitch classes for common major/minor/seventh/suspended harmonies. */
+export function chordPitchClasses(symbol){
+ const match=/^([A-G])([#b]?)(maj7|m7|sus2|sus4|m|7)?$/.exec(symbol||'');
+ if(!match)return null;
+ const natural={C:0,D:2,E:4,F:5,G:7,A:9,B:11};
+ const root=(natural[match[1]]+(match[2]==='#'?1:match[2]==='b'?-1:0)+12)%12;
+ const suffix=match[3]||'';
+ const chord={'':[0,4,7],m:[0,3,7],'7':[0,4,7,10],m7:[0,3,7,10],maj7:[0,4,7,11],sus2:[0,2,7],sus4:[0,5,7]}[suffix];
+ return chord?chord.map(n=>(root+n)%12):null;
+}
