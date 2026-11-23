@@ -38,7 +38,7 @@ test('high e-string notes keep concert pitch whenever playable',()=>{
 test('adaptations reject unsupported polyphonic guitar chords rather than dropping parts',()=>{
  const a=exampleGuitarSource();
  a.measures=[{events:[{type:'note',notes:[{string:4,fret:1},{string:5,fret:1}],duration:1}]}];
- assert.throws(()=>adaptGuitarPart(a),/Only one guitar note at a time/);
+ assert.throws(()=>adaptGuitarPart(a),/Expected a single guitar note or explicit simultaneous chord/);
 });
 test('malformed guitar data cannot corrupt an existing score',()=>{
  const a=exampleGuitarSource(),original=structuredClone(a);
