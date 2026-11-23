@@ -106,6 +106,28 @@ export async function downloadRepository({source=DEFAULT_CATALOG_URL,base,fetche
  return snapshot;
 }
 
+/** Fetch just one approved song instead of downloading the entire catalog.
+ * The result is a validated one-arrangement snapshot suitable for copyToSongbook.
+ */
+export async function downloadSingleApprovedArrangement({source=DEFAULT_CATALOG_URL,base,repertoireId,fetcher=fetch,validateScore}){
+ const url=catalogUrl(source,base);
+ const catalog=await fetchJson(url,fetcher);
+ validateCatalog(catalog);
+ const repertoireItem=(catalog.repertoire??[]).find(item=>item.id===repertoireId);
+ if(!repertoireItem)throw Error('Song is not in the approved repertoire');
+ const id=repertoireItem.preferredArrangementId||repertoireItem.id;
+ const metadata=catalog.entries.find(item=>item.id===id);
+ if(!metadata)throw Error('This approved song does not have a published practice arrangement');
+ const root=new URL('.',url);
+ const target=new URL(metadata.file,root);
+ if(target.origin!==root.origin || !target.pathname.startsWith(root.pathname))throw Error('Invalid arrangement path');
+ const arrangement=await fetchJson(target.href,fetcher);
+ validateArrangement(arrangement,metadata,validateScore);
+ const snapshot={catalogUrl:url,syncedAt:new Date().toISOString(),catalog:{...catalog,entries:[metadata]},songs:{[id]:arrangement}};
+ validateSnapshot(snapshot,validateScore);
+ return snapshot;
+}
+
 /** Creates a NEW independent local song. An upstream update cannot mutate it. */
 export function copyToSongbook(snapshot,arrangementId,existingSongs,{id,now=new Date().toISOString(),validateScore}={}) {
  validateSnapshot(snapshot,validateScore);
