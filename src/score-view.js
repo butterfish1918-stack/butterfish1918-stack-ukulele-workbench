@@ -165,6 +165,8 @@ export function renderScoreView(score,{mode='notation',selectedEventId=null,play
  }
 
  const showNotation=mode!=='tab',showTab=mode!=='notation';
+ const bassClef=score.clef==='bass8vb';
+ const staffNoteY=(midi,spelling)=>staffYForSpelling(midi+(bassClef?12:0),spelling,102)-(bassClef?72:0);
  const meter=score.meter.split('/');
  const key=score.key??'C',keyCount=Math.abs(KEY_SIGNATURES[key]);
  const extra=keyCount*14;
@@ -177,7 +179,7 @@ export function renderScoreView(score,{mode='notation',selectedEventId=null,play
  out+=`<text x="16" y="22" fill="#4b6150" font-size="12" font-weight="700">${esc(score.title)}</text><text x="${width-20}" y="22" text-anchor="end" fill="#60705e" font-size="11">${esc(score.tuning==='highG'?'HIGH G':score.tuning==='lowG'?'LOW G':'BARITONE')} · ${esc(score.tempo)} BPM</text>`;
  if(showNotation){
   for(let y=top;y<=bottom;y+=12)out+=`<line x1="16" x2="${width-20}" y1="${y}" y2="${y}" stroke="#637469" stroke-width=".85"/>`;
-  out+=`<text x="21" y="102" fill="#2f4034" font-family="'Noto Music','Segoe UI Symbol','Apple Symbols',serif" font-size="61">𝄞</text>`;
+  out+=`<text x="21" y="102" fill="#2f4034" font-family="'Noto Music','Segoe UI Symbol','Apple Symbols',serif" font-size="61">${bassClef?'𝄢':'𝄞'}</text>${bassClef?'<text x="35" y="127" font-size="14" fill="#2f4034">8</text>':''}`;
   const symbols=keyCount?(KEY_SIGNATURES[key]>0?KEY_SHARP_ORDER:KEY_FLAT_ORDER).slice(0,keyCount):[];
   const sharpYs=[54,72,42,66,84,60,78],flatYs=[78,60,84,66,90,72,96];
   symbols.forEach((letter,i)=>{const yy=KEY_SIGNATURES[key]>0?sharpYs[i]:flatYs[i];out+=`<text class="key-signature" x="${66+i*14}" y="${yy+7}" fill="#263f34" font-size="24" font-family="serif" aria-label="${esc(letter)} ${KEY_SIGNATURES[key]>0?'sharp':'flat'}">${KEY_SIGNATURES[key]>0?'♯':'♭'}</text>`;});
@@ -206,10 +208,10 @@ export function renderScoreView(score,{mode='notation',selectedEventId=null,play
   const accidentals=accidentalMarks(bar.events,key,!!previousBarLast?.tieToNext);
   bar.events.forEach((ev,j)=>{
    const px=xs[j];
-   if(ev.type==='note')noteCoords.set(ev.id,{x:px,y:staffYForSpelling(ev.midi,ev.spelling,bottom)});
+   if(ev.type==='note')noteCoords.set(ev.id,{x:px,y:staffNoteY(ev.midi,ev.spelling)});
    const selected=ev.id===selectedEventId,playing=ev.id===playingEventId;
    if(showNotation){
-    const y=ev.type==='rest'?82:ev.type==='note'?staffYForSpelling(ev.midi,ev.spelling,bottom):82;
+    const y=ev.type==='rest'?82:ev.type==='note'?staffNoteY(ev.midi,ev.spelling):82;
     const mark=ev.type==='rest'?restGlyph(px,82,ev.duration):ev.type==='chord'?chordGlyph(px,ev,accidentals[j],selected||playing):noteGlyph(px,y,ev,selected||playing,{beamed:beamed.has(j),accidental:accidentals[j]})+(ev.articulation?articulationGlyph(px,y,ev.articulation):'');
     if(selected||playing)out+=`<rect x="${px-23}" y="32" width="46" height="117" rx="7" fill="${playing?'#84b295':'#e1b879'}" opacity=".24"/>`;
     out+=`<g class="score-event ${selected?'selected':''} ${playing?'playing':''}" role="button" tabindex="0" data-event-id="${esc(ev.id)}" aria-label="${ev.type==='rest'?'Rest':ev.type==='chord'?`Chord ${esc(ev.symbol)}, ${esc(ev.stroke)}stroke`:`Note ${esc(ev.spelling)}${esc(midiName(ev.midi).slice(-1))}`} ${esc(ev.duration)} quarter beats, measure ${measureOffset+i+1}"><rect x="${px-28}" y="25" width="56" height="123" fill="transparent"/>${mark}</g>`;
