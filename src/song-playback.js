@@ -38,7 +38,7 @@ export function sampleRequestsForWindow(working,fromBeat,toBeat){
   if(part.instrument==='drums'){
    const hits=[...new Set(events.flatMap(ev=>(ev.drumHits||[]).map(hit=>(ev.drumStyle==='electronic'?'electronic':'acoustic')+'-'+hit)))];
    if(hits.length)backing.push({instrument:'drums',hits});
-  }else{
+  }else if(['ukulele','bass','piano'].includes(part.instrument)){
    const midis=[...new Set(events.flatMap(ev=>ev.type==='note'?[ev.midi]:ev.type==='chord'?ev.notes.map(n=>n.midi):[]))];
    if(!midis.length)continue;
    if(part.instrument==='ukulele')ukulele.push(...midis);
