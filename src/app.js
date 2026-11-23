@@ -3,6 +3,7 @@ import {createScore,validateScore,appendEvent,insertEvent,appendMeasure,findEven
 import {renderScoreView,scoreSystems} from './score-view.js';
 import {prepareUkuleleSamples,playUkuleleSample} from './ukulele-samples.js';
 import {prepareBackingSamples,playBackingSample,playDrumSample} from './instrument-samples.js';
+import {compilePracticeTimeline,activeTrackEvents,sampleRequestsForWindow,shouldSkipLateEvent} from './song-playback.js';
 import {SONG_ARRANGEMENT_MODES,arrangementModeTracks,chartChordsPerBar} from './arrangement-modes.js';
 import {originalInstrumentProfile} from './song-instrumentation.js';
 import {engravingPlan,loadVexFlow,renderEngravedScore} from './engraving.js';
@@ -39,6 +40,8 @@ state.rhythmLabId=RHYTHM_STUDIES.some(x=>x.id===read('rhythmLabId','RT-01'))?rea
 state.songPracticeSpeed=[60,75,90,100,110,125].includes(Number(read('songPracticeSpeed',100)))?Number(read('songPracticeSpeed',100)):100;
 state.songPracticeLoop=!!read('songPracticeLoop',false);
 state.songPracticeScope='section';
+state.songShowChordNames=read('songShowChordNames',true)!==false;
+state.songShowNoteNames=!!read('songShowNoteNames',false);
 state.songArrangementMode=['guitar-uke','ensemble','solo'].includes(read('songArrangementMode','solo'))?read('songArrangementMode','solo'):'solo';
 state.songPartEnabled=read('songPartEnabled',{ukulele:true,bass:true,piano:true});
 state.songGuitarAdaptations=read('songGuitarAdaptations',{});
@@ -472,7 +475,7 @@ function renderSongArrangementSheets(arrangement,sections,index,containerClass){
       const score={...part.shown,measures:part.shown.measures.slice(start,end)};
       return `<div class="song-score-track" data-score-part="${part.id}">
        <div class="song-track-title"><strong>${h(part.label)}</strong><span>${h(part.source)}</span></div>
-       <div class="score-holder score-editor-view ${containerClass}">${renderScoreView(score,{mode:part.id==='ukulele'?state.display:'notation',layout:'systems',measureOffset:offset+start,chordSymbols:part.id==='ukulele'?barChords.slice(offset+start,offset+end):null})}</div>
+       <div class="score-holder score-editor-view ${containerClass}">${renderScoreView(score,{mode:part.id==='ukulele'?state.display:'notation',layout:'systems',measureOffset:offset+start,chordSymbols:state.songShowChordNames&&part.id==='ukulele'?barChords.slice(offset+start,offset+end):null,showNames:state.songShowNoteNames})}</div>
       </div>`;
     }).join('')}
    </section>`
@@ -480,7 +483,7 @@ function renderSongArrangementSheets(arrangement,sections,index,containerClass){
  }
  return `${selected.filter(track=>track.id==='ukulele').map(track=>
  `<div class="song-score-track" data-score-part="${track.id}"><div class="song-track-title"><strong>${h(track.label)}</strong><span>${h(track.source)}</span></div>
-  <div class="score-holder score-editor-view ${containerClass}">${renderScoreView(track.shown,{mode:state.display,layout:'systems',measureOffset:offset,chordSymbols:barChords.slice(offset,offset+track.shown.measures.length)})}</div></div>`
+  <div class="score-holder score-editor-view ${containerClass}">${renderScoreView(track.shown,{mode:state.display,layout:'systems',measureOffset:offset,chordSymbols:state.songShowChordNames?barChords.slice(offset,offset+track.shown.measures.length):null,showNames:state.songShowNoteNames})}</div></div>`
  ).join('')}`;
 }
 function activeSongPractice(){
@@ -534,6 +537,11 @@ function songPracticeControls(preview,body=''){
   <label class="control">Practice speed<select id="songPracticeSpeed">${[60,75,90,100,110,125].map(n=>`<option value="${n}" ${state.songPracticeSpeed===n?'selected':''}>${n}%</option>`).join('')}</select></label>
  </div>
  ${parts.length>1?`<div class="song-track-mixer" role="group" aria-label="Choose audible instruments"><strong>Audible tracks</strong><div class="repo-tags">${parts.map(part=>`<button type="button" class="btn compact ${state.songPartEnabled[part.id]!==false?'gold':'ghost'}" data-song-part-toggle="${part.id}" aria-pressed="${state.songPartEnabled[part.id]!==false}">${h(part.label.split(' · ')[0])}: ${state.songPartEnabled[part.id]!==false?'on':'muted'}</button>`).join('')}</div></div>`:''}
+ <div class="song-reading-options" role="group" aria-label="Score learning annotations">
+  <strong>Score labels</strong>
+  <button type="button" class="btn compact ${state.songShowChordNames?'gold':'ghost'}" data-song-toggle-chords aria-pressed="${state.songShowChordNames}">${state.songShowChordNames?'✓ ':''}Show chord names</button>
+  <button type="button" class="btn compact ${state.songShowNoteNames?'gold':'ghost'}" data-song-toggle-notes aria-pressed="${state.songShowNoteNames}">${state.songShowNoteNames?'✓ ':''}Show note names (staff + tab)</button>
+ </div>
  <div class="song-practice-display">${tabbar([['notation','Notation'],['dual','Notation + tab'],['tab','Tab only']],state.display,'data-display')}</div>
  <p class="small-text" id="songPracticeStatus" role="status" aria-live="polite">${paused?'Paused — single tap the score to resume.':playing?'Playing sampled ensemble…':state.songSampleLoading?'Loading recordings…':state.songSampleFallback?'Some notes unavailable; a backup sound is being used.':'Ready. Tap written notes and chords to hear the recorded ukulele.'}</p>
  ${guide.length?`<div class="song-chord-guide"><strong>Chord fingerings — ${h(TUNINGS[preview.tuning].names.join(' · '))} string order</strong><p class="small-text">Tap a chord to hear its written ukulele fingering.</p><div class="repo-tags">${guide.map(chord=>`<button type="button" class="btn compact ghost" data-practice-chord="${h(chord.symbol)}" title="Listen to ${h(chord.symbol)} chord"><b>${h(chord.symbol)}</b> &nbsp;${h(chord.frets)}</button>`).join('')}</div></div>`:''}
@@ -1029,8 +1037,10 @@ function navigate(page){if(!pageNames[page])return;stopSongPractice();stopRhythm
 function nextMelodyPitch(pc){const matches=scalePositions(state.root,state.scale,state.tuning);const match=matches.find(x=>x.pc===pc && x.midi>=60)||matches.find(x=>x.pc===pc);return match?.midi??60}
 function choosePitch(midi){state.selectedMidi=midi;synth(midi);render()}
 function chooseChordSound(){const chord=harmonizedChords(state.root,state.scale,state.chordExtension)[state.chordDegree];if(!chord)return;const voices=chordVoicings(chord.pcs,state.tuning);const voice=voices[Math.min(state.chordIndex,voices.length-1)];if(voice){const midis=voice.midis.filter(x=>x!==null);const ctx=audio(),at=ctx.currentTime+.03;midis.forEach((m,i)=>synth(m,at+i*.025,.7,.075))}else toast('No matching chord voicing in this position range')}
-function handleClick(e){const node=e.target.closest('[data-prog-degree],[data-prog-move],[data-prog-stroke],[data-prog-duration],[data-prog-remove],[data-event-id],[data-score-position],[data-midi],[data-pc],[data-nav],[data-page],[data-action],[data-degree],[data-extension],[data-labels],[data-display],[data-answer],[data-rhythm-answer],[data-expression-answer],[data-key-answer],[data-sight-answer],[data-step],[data-techfocus],[data-techindex],[data-tech-display],[data-tech-note],[data-tech-rating],[data-repo],[data-repo-section],[data-repertoire-preview],[data-repertoire-section],[data-repertoire],[data-song],[data-song-section],[data-practice-chord],[data-song-arrangement],[data-song-part-toggle]');if(!node)return;
+function handleClick(e){const node=e.target.closest('[data-prog-degree],[data-prog-move],[data-prog-stroke],[data-prog-duration],[data-prog-remove],[data-event-id],[data-score-position],[data-midi],[data-pc],[data-nav],[data-page],[data-action],[data-degree],[data-extension],[data-labels],[data-display],[data-answer],[data-rhythm-answer],[data-expression-answer],[data-key-answer],[data-sight-answer],[data-step],[data-techfocus],[data-techindex],[data-tech-display],[data-tech-note],[data-tech-rating],[data-repo],[data-repo-section],[data-repertoire-preview],[data-repertoire-section],[data-repertoire],[data-song],[data-song-section],[data-practice-chord],[data-song-arrangement],[data-song-part-toggle],[data-song-toggle-chords],[data-song-toggle-notes]');if(!node)return;
  if(node.dataset.page){navigate(node.dataset.page);return}if(node.dataset.nav){navigate(node.dataset.nav);return}
+ if(node.hasAttribute('data-song-toggle-chords')){state.songShowChordNames=!state.songShowChordNames;store('songShowChordNames',state.songShowChordNames);if(songPracticePlayback){songPracticePlayback.followedBar=null;songPracticePlayback.followedGroup=null;}render();if(songPracticePlayback)updateSongPlayhead(songPracticePlayback,songPracticePlayback.selection,songPracticePlayback.score);return}
+ if(node.hasAttribute('data-song-toggle-notes')){state.songShowNoteNames=!state.songShowNoteNames;store('songShowNoteNames',state.songShowNoteNames);if(songPracticePlayback){songPracticePlayback.followedBar=null;songPracticePlayback.followedGroup=null;}render();if(songPracticePlayback)updateSongPlayhead(songPracticePlayback,songPracticePlayback.selection,songPracticePlayback.score);return}
  if(node.dataset.songArrangement){stopSongPractice();state.songArrangementMode=node.dataset.songArrangement;store('songArrangementMode',state.songArrangementMode);render();return}
  if(node.dataset.songPartToggle){stopSongPractice();const part=node.dataset.songPartToggle;state.songPartEnabled={...state.songPartEnabled,[part]:state.songPartEnabled[part]===false};store('songPartEnabled',state.songPartEnabled);render();return}
  if(node.dataset.practiceChord){const selection=activeSongPractice();if(!selection)return;const chord=songPracticeGuide(selection.preview,selection.body).find(item=>item.symbol===node.dataset.practiceChord);if(!chord)return;const frets=chord.frets.split(' · '),tuning=TUNINGS[selection.score.tuning],midis=frets.map((fret,string)=>/^\d+$/.test(fret)?tuning.midi[string]+Number(fret):null).filter(Number.isFinite);
