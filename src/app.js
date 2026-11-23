@@ -40,7 +40,7 @@ state.rhythmLabId=RHYTHM_STUDIES.some(x=>x.id===read('rhythmLabId','RT-01'))?rea
 state.songPracticeSpeed=[60,75,90,100,110,125].includes(Number(read('songPracticeSpeed',100)))?Number(read('songPracticeSpeed',100)):100;
 state.songPracticeLoop=!!read('songPracticeLoop',false);
 state.songPracticeScope='full';
-state.songVisibleParts={ukulele:true,...read('songVisibleParts',{})};
+state.songVisibleParts={ukulele:true};
 state.songShowChordNames=read('songShowChordNames',true)!==false;
 state.songShowNoteNames=!!read('songShowNoteNames',false);
 state.songArrangementMode=['guitar-uke','ensemble','solo'].includes(read('songArrangementMode','solo'))?read('songArrangementMode','solo'):'solo';
@@ -1100,8 +1100,8 @@ function handleClick(e){const node=e.target.closest('[data-prog-degree],[data-pr
  if(node.dataset.page){navigate(node.dataset.page);return}if(node.dataset.nav){navigate(node.dataset.nav);return}
  if(node.hasAttribute('data-song-toggle-chords')){state.songShowChordNames=!state.songShowChordNames;store('songShowChordNames',state.songShowChordNames);if(songPracticePlayback){songPracticePlayback.followedBar=null;songPracticePlayback.followedGroup=null;}render();if(songPracticePlayback)updateSongPlayhead(songPracticePlayback,songPracticePlayback.selection,songPracticePlayback.score);return}
  if(node.hasAttribute('data-song-toggle-notes')){state.songShowNoteNames=!state.songShowNoteNames;store('songShowNoteNames',state.songShowNoteNames);if(songPracticePlayback){songPracticePlayback.followedBar=null;songPracticePlayback.followedGroup=null;}render();if(songPracticePlayback)updateSongPlayhead(songPracticePlayback,songPracticePlayback.selection,songPracticePlayback.score);return}
- if(node.dataset.songVisiblePart){const id=node.dataset.songVisiblePart;if(!['bass','piano','drums'].includes(id))return;state.songVisibleParts={...state.songVisibleParts,[id]:state.songVisibleParts[id]!==true};store('songVisibleParts',state.songVisibleParts);if(songPracticePlayback){songPracticePlayback.followedBar=null;songPracticePlayback.followedGroup=null;}render();if(songPracticePlayback)updateSongPlayhead(songPracticePlayback,songPracticePlayback.selection,songPracticePlayback.score);return}
- if(node.dataset.songArrangement){stopSongPractice();state.songArrangementMode=node.dataset.songArrangement;store('songArrangementMode',state.songArrangementMode);render();return}
+ if(node.dataset.songVisiblePart){const id=node.dataset.songVisiblePart;if(!['bass','piano','drums'].includes(id))return;state.songVisibleParts={...state.songVisibleParts,[id]:state.songVisibleParts[id]!==true};if(songPracticePlayback){songPracticePlayback.followedBar=null;songPracticePlayback.followedGroup=null;}render();if(songPracticePlayback)updateSongPlayhead(songPracticePlayback,songPracticePlayback.selection,songPracticePlayback.score);return}
+ if(node.dataset.songArrangement){stopSongPractice();state.songVisibleParts={ukulele:true};state.songArrangementMode=node.dataset.songArrangement;store('songArrangementMode',state.songArrangementMode);render();return}
  if(node.dataset.songPartToggle){stopSongPractice();const part=node.dataset.songPartToggle;state.songPartEnabled={...state.songPartEnabled,[part]:state.songPartEnabled[part]===false};store('songPartEnabled',state.songPartEnabled);render();return}
  if(node.dataset.practiceChord){const selection=activeSongPractice();if(!selection)return;const chord=songPracticeGuide(selection.preview,selection.body).find(item=>item.symbol===node.dataset.practiceChord);if(!chord)return;const frets=chord.frets.split(' · '),tuning=TUNINGS[selection.score.tuning],midis=frets.map((fret,string)=>/^\d+$/.test(fret)?tuning.midi[string]+Number(fret):null).filter(Number.isFinite);
  previewRecordedUkulele(midis,(voice,at)=>midis.forEach((midi,i)=>voice(midi,at+i*.034,.85,.12)));
@@ -1172,12 +1172,12 @@ function handleClick(e){const node=e.target.closest('[data-prog-degree],[data-pr
  if(node.dataset.techDisplay){state.techDisplay=node.dataset.techDisplay;store('techDisplay',state.techDisplay);render();return}
  if(node.dataset.techNote){const {score}=techniqueScore(currentTechnique().id,state.tuning);const found=findEvent(score,node.dataset.techNote);if(found){state.techEventId=found.event.id;if(found.event.type!=='rest')synthEvent(found.event,audio().currentTime+.012,60/(state.techTempo||currentTechnique().tempo));render()}return}
  if(node.dataset.techRating){const rated=recordTechniquePractice(techniqueProgress(),currentTechnique().id,node.dataset.techRating);if(store('techniqueProgress',rated)){toast('Practice attempt recorded');render()}return}
- if(node.dataset.repo){stopSongPractice();state.repoSelectedId=node.dataset.repo;state.repoSectionIndex=0;render();return}
+ if(node.dataset.repo){stopSongPractice();state.songVisibleParts={ukulele:true};state.songPracticeScope='full';state.repoSelectedId=node.dataset.repo;state.repoSectionIndex=0;render();return}
   if(node.dataset.repoSection!==undefined){stopSongPractice();state.songPracticeScope='section';state.repoSectionIndex=Number(node.dataset.repoSection)||0;render();return}
-  if(node.dataset.repertoirePreview){stopSongPractice();const item=repertoireItems().find(x=>x.id===node.dataset.repertoirePreview);if(item)selectRepertoireSong(item);return}
+  if(node.dataset.repertoirePreview){stopSongPractice();state.songVisibleParts={ukulele:true};state.songPracticeScope='full';const item=repertoireItems().find(x=>x.id===node.dataset.repertoirePreview);if(item)selectRepertoireSong(item);return}
  if(node.dataset.repertoireSection!==undefined){stopSongPractice();state.songPracticeScope='section';state.repertoireSectionIndex=Number(node.dataset.repertoireSection)||0;render();return}
  if(node.dataset.repertoire){addApprovedSongs([node.dataset.repertoire]);return}
- if(node.dataset.song){stopSongPractice();state.songOpen=node.dataset.song;state.songSectionIndex=0;state.songLoadError=null;state.editing=false;render();const selected=songs().find(song=>song.id===state.songOpen);if(selected && !selected.score && selected.repertoireOrigin?.id)loadApprovedScoreForPersonalSong(selected.id);return}
+ if(node.dataset.song){stopSongPractice();state.songVisibleParts={ukulele:true};state.songPracticeScope='full';state.songOpen=node.dataset.song;state.songSectionIndex=0;state.songLoadError=null;state.editing=false;render();const selected=songs().find(song=>song.id===state.songOpen);if(selected && !selected.score && selected.repertoireOrigin?.id)loadApprovedScoreForPersonalSong(selected.id);return}
   if(node.dataset.songSection!==undefined){stopSongPractice();state.songPracticeScope='section';state.songSectionIndex=Number(node.dataset.songSection)||0;render();return}
  if(node.dataset.action){const action=node.dataset.action;switch(action){
  case 'prog-add-explorer':{
