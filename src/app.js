@@ -7,7 +7,7 @@ import {prepareBackupRestore,commitBackupRestore} from './storage-safety.js';
 import {inspectDevice} from './device-qa.js';
 import {BUNDLED_LIBRARY} from './library-seed.js';
 import {attachApprovedRepertoireScores} from './repertoire-migration.js';
-import {sectionScore,chordGuide,practiceTempo,extractChordSymbols,chordPitchClasses} from './song-practice.js';
+import {sectionScore,chordGuide,practiceTempo,extractChordSymbols,chordPitchClasses,COMMON_HIGH_G_CHORDS} from './song-practice.js';
 import {DEFAULT_CATALOG_URL,catalogUrl,validateSnapshot,downloadRepository,downloadSingleApprovedArrangement,copyToSongbook} from './song-library.js';
 import {exportMusicXML,importMusicXML} from './musicxml.js';
 import {adaptGuitarPart,exampleGuitarSource} from './guitar-adaptation.js';
@@ -434,7 +434,7 @@ function songPracticeGuide(preview,body){
   if(known.has(symbol))continue;
   const pcs=chordPitchClasses(symbol);
   if(!pcs)continue;
-  const positions=CHORD_SHAPES[symbol]?.[preview.tuning]??chordVoicings(pcs,preview.tuning,12,1)[0]?.frets;
+  const positions=(preview.tuning==='highG'?COMMON_HIGH_G_CHORDS[symbol]:null)??CHORD_SHAPES[symbol]?.[preview.tuning]??chordVoicings(pcs,preview.tuning,12,40).find(voice=>voice.frets.every(fret=>fret>=0))?.frets??chordVoicings(pcs,preview.tuning,12,1)[0]?.frets;
   if(!Array.isArray(positions)||positions.length!==4)continue;
   guide.push({symbol,frets:positions.map(fret=>fret<0?'–':String(fret)).join(' · ')});
   known.add(symbol);
