@@ -1,7 +1,7 @@
 {
   "name": "ukulele-workbench",
   "private": true,
-  "version": "1.6.0-preview",
+  "version": "1.8.4-preview",
   "type": "module",
   "description": "Offline-first, notation-first ukulele learning and practice prototype",
   "scripts": {
