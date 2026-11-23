@@ -6,6 +6,7 @@ import {notePc,midiName} from './music.js';
 import {measureBeats,validateScore} from './score.js';
 import {chartChordSequence,chordPitchClasses} from './song-practice.js';
 import {availableSongParts,originalInstrumentProfile} from './song-instrumentation.js';
+import {playbackInstrumentFamily} from './instrument-voices.js';
 
 export const SONG_ARRANGEMENT_MODES=Object.freeze([
  {id:'guitar-uke',label:'Guitar → ukulele',description:'Playable ukulele adaptation with optional instrumental backing; source guitar notes are not yet verified'},
@@ -86,6 +87,34 @@ export function buildPracticeParts(arrangement){
  if(known.includes('bass')){validateScore(bass);parts.push({id:'bass',label:'Bass · rehearsal line',instrument:'bass',score:bass,source:'generated accompaniment · not a transcription'})}
  if(known.includes('piano')){validateScore(keys);parts.push({id:'piano',label:'Piano · rehearsal harmony',instrument:'piano',score:keys,source:'generated accompaniment · not a transcription'})}
  if(known.includes('drums')){validateScore(drums);parts.push({id:'drums',label:(profile.percussion==='electronic'?'Electronic drums':'Drum kit')+' · rehearsal groove',instrument:'drums',score:drums,source:'generated drum practice pattern · not the original beat'})}
+ // Sound roles are allowed only when the historical recording's instrument
+ // credit actually includes them. All generated notes are practice reconstructions.
+ const supported=new Set(profile.other.map(playbackInstrumentFamily).filter(Boolean));
+ const available=arrangement.instrumentParts&&typeof arrangement.instrumentParts==='object'?arrangement.instrumentParts:{};
+ for(const family of ['guitar','strings','synthesizer','flute','vocals']){
+  if(!supported.has(family))continue;
+  const supplied=available[family];
+  if(supplied?.score){
+   const candidate=supplied.score;validateScore(candidate);
+   if(candidate.meter!==score.meter||candidate.tempo!==score.tempo||candidate.measures.length!==score.measures.length)
+    throw Error('Imported '+family+' score is not synchronized with the ukulele score');
+   parts.push({id:family,label:family+' · supplied score',instrument:family,score:candidate,
+    source:'user-provided part · unverified original recording'});
+   continue;
+  }
+  // Do not invent unprovided original sung lines or flute solos.
+  if(!['guitar','strings','synthesizer'].includes(family))continue;
+  const part=scorePart(score,score.title+' — '+family+' harmonic practice',family);
+  for(let i=0;i<score.measures.length;i++){
+   const pcs=chordPitchClasses(chords[i]||'');
+   if(!pcs?.length){part.measures.push({events:[{id:family+'-rest-'+i,type:'rest',duration:cap}]});continue;}
+   const midi=60+pcs[0],events=[noteAt(midi,cap,family+'-practice-'+i)];
+   part.measures.push({events,section:score.measures[i].section});
+  }
+  validateScore(part);
+  parts.push({id:family,label:family+' · harmonic study',instrument:family,score:part,
+   source:'generated harmonic exercise · not an original recording transcription'});
+ }
  return parts;
 }
 export function arrangementModeTracks(arrangement,mode){
