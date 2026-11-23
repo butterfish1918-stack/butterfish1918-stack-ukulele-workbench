@@ -33,7 +33,7 @@ export function chartChordsPerBar(arrangement){
  return harmonies;
 }
 function scorePart(source,title,instrument){
- return {...source,id:source.id+'-'+instrument,title:title.slice(0,120),clef:instrument==='bass'?'bass':'treble',measures:[]};
+ return {...source,id:source.id+'-'+instrument,title:title.slice(0,120),clef:instrument==='bass'?'bass8vb':'treble',measures:[]};
 }
 function noteAt(midi,duration,id){
  return {id,type:'note',midi,spelling:midiName(midi).replace(/-?\d+$/,''),duration};
@@ -55,8 +55,8 @@ export function buildPracticeParts(arrangement){
    keys.measures.push({events:[{id:'practice-keys-rest-'+i,type:'rest',duration:cap}],section:score.measures[i].section});
    continue;
   }
-  // Fingering-style electric bass played around C2–B2.
-  const bassMidi=36+root;
+  // Fingering-style electric bass recorded in E1–D#2 (shown one octave higher for bass guitar).
+  const bassMidi=28+((root-4+12)%12);
   bass.measures.push({events:[noteAt(bassMidi,cap,'practice-bass-'+i)],section:score.measures[i].section});
   // Harmonic tones played separately by the FM electric piano; no invented vocal melody.
   const roots=pcs.map(pc=>60+pc);
