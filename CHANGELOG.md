@@ -1,3 +1,15 @@
+## 23 November 2026 — v1.11.2 Beta: contiguous MusicXML ties
+
+- Added validated note-to-note ties within independent instrumental voices, including ties spanning multiple measures and middle notes that both stop and restart a tie.
+- MusicXML import accepts supported `<tie>` and `<notations><tied>` markers, checks mismatches, rejects orphaned/unfinished ties and exports both sounding and engraved markers.
+- Imported ensemble playback merges tied note segments into a single sustained attack. A playback excerpt beginning partway through a tied note restarts the clipped remainder, rather than skipping it.
+- Multi-part score preview displays lightweight tie curves between consecutive notated events, including partial curves when a system boundary intervenes.
+- Six additional regression cases cover multimeasure continuity, malformed chains, sounded/exported tie markers, excerpt clipping, independently voiced unisons and displayed curves.
+- All 249 automated tests passed and GitHub Pages deployment succeeded in run 45208042410 before this version-label commit.
+- Scope remains deliberately limited: complete MusicXML 4.0 compliance, arbitrary score engraving, advanced repeats, sampled articulation fidelity and physical Android audio verification are not yet certified.
+
+---
+
 ## 23 November 2026 — v1.11.1 Beta: score fidelity, guided learning and microphone reliability
 
 - Improved MusicXML multi-part import/export: written pitch spelling and enharmonic distinctions are retained alongside independent voices, simultaneous chord-note groups, basic dynamics, articulations, tuplets and finger numbers.
