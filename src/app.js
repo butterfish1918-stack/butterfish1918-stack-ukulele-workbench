@@ -5,6 +5,8 @@ import {validateLoopRange,practiceExcerpt,nextPracticeSpeed,saveSongBookmark,pra
 import {arpeggioDegrees,chordInversions,harmonicFunctions,basicChordSubstitutions,nextEarTrainingQuestion} from './advanced-theory.js';
 import {LEARNING_UNITS,learningReview,recordLearningReview} from './learning-path.js';
 import {addSongToPlaylist,annotateSong,printableSongFilename} from './song-organizer.js';
+import {validateScoreDocument,flattenDocumentEvents,planScoreSystems} from './polyphonic-score.js';
+import {importMultiPartMusicXML,exportMultiPartMusicXML} from './musicxml-multipart.js';
 import {parseBarLyricCues,lyricCuesToText,mergeReadingCues} from './song-lyrics.js';
 import {partVerificationStatus} from './score-verification.js';
 import {prepareUkuleleSamples,playUkuleleSample} from './ukulele-samples.js';
@@ -57,6 +59,8 @@ state.practicePreferences=validatedPracticePreferences(read('practicePreferences
 state.learningProgress=read('learningProgress',{});
 state.songPlaylists=read('songPlaylists',{});
 state.songAnnotations=read('songAnnotations',{});
+state.scoreDocument=read('scoreDocument',null);
+try{if(state.scoreDocument)validateScoreDocument(state.scoreDocument)}catch{state.scoreDocument=null}
 state.earSeed=Number(read('earSeed',0))||0;
 state.earAnswer=null;
 state.songVisibleParts={ukulele:true};
@@ -460,7 +464,7 @@ function playTechnique(){
 
 function rhythm(){return `${hero('RHYTHM STUDIO','Feel the <em>pulse.</em>','Build a two-bar eighth-note strumming pattern, play it with sound, and connect rhythmic movement to steady musical time.','RHYTHM · 4/4')}
 <div class="workspace-grid"><section class="panel panel-pad"><div class="panel-title"><h2>Strumming pattern studio</h2><span class="sub-label">8 EIGHTH-NOTE SLOTS</span></div><p class="panel-desc">Tap each slot to cycle through a downstroke (↓), upstroke (↑), and rest (–). A full measure is eight eighth notes in 4/4.</p><div class="pattern-grid">${state.rhythm.map((v,i)=>`<button data-step="${i}" class="beat-cell ${i===state.rhythmStep?'active':''}" aria-label="Beat slot ${i+1}, ${v==='D'?'downstroke':v==='U'?'upstroke':'rest'}"><span class="beat-num">${Math.floor(i/2)+1}${i%2?'&':''}</span><span class="beat-dir">${v==='D'?'↓':v==='U'?'↑':'–'}</span></button>`).join('')}</div><div class="step-actions"><button class="btn gold" data-action="play-rhythm">${rhythmTimer?'■ Stop pattern':'▶ Play pattern'}</button><button class="btn" data-action="open-metronome">◷ Metronome</button><button class="btn ghost" data-action="reset-pattern">Reset</button></div><div class="score-info"><span>Tempo: ${state.tempo} BPM</span><span>Pattern stored on your device</span></div></section><section class="panel panel-pad"><div class="panel-title"><h2>Learn rhythm from notation</h2></div><div class="lesson-list"><div class="lesson"><div class="lesson-icon">♩</div><div><h3>Pulse and quarter notes</h3><p>Feel four even beats in a bar.</p></div><span class="status-tag">ACTIVE</span></div><div class="lesson"><div class="lesson-icon">♫</div><div><h3>Eighth-note subdivision</h3><p>Count 1 & 2 & 3 & 4 &.</p></div><span class="status-tag">ACTIVE</span></div><div class="lesson"><div class="lesson-icon">𝄽</div><div><h3>Rests & syncopation</h3><p>Read and tap short written phrases in Notation Academy.</p></div><span class="status-tag">ACTIVE</span></div></div><hr class="divider"><label class="control"><span>Adjust tempo (${state.tempo} BPM)</span><input id="rhythmTempo" type="range" min="40" max="200" step="2" value="${state.tempo}"></label><p class="small-text">The pattern sequencer uses pitched clicks as a placeholder for actual ukulele strum samples. The notation-based tap trainer is available under Notation Academy.</p></section></div>`}
-function exportBackup(){const data={format:'ukulele-workbench-backup',schemaVersion:2,exportedAt:new Date().toISOString(),scoreDraft:state.score,songs:songs(),progress:progress(),rhythm:state.rhythm,tuning:state.tuning,display:state.display,techniqueProgress:techniqueProgress(),rhythmLabProgress:rhythmLabProgress(),notationReadingProgress:readingProgress(),progressionDraft:state.progression,guitarAdaptations:state.songGuitarAdaptations,lyricCues:state.songLyricsById,practiceHistory:state.songPracticeHistory,practiceRanges:state.songPracticeRanges,songBookmarks:state.songBookmarks,practicePreferences:state.practicePreferences,songPlaylists:state.songPlaylists,songAnnotations:state.songAnnotations,learningProgress:state.learningProgress};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='ukulele-workbench-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),4000);toast('Backup exported')}
+function exportBackup(){const data={format:'ukulele-workbench-backup',schemaVersion:2,exportedAt:new Date().toISOString(),scoreDraft:state.score,songs:songs(),progress:progress(),rhythm:state.rhythm,tuning:state.tuning,display:state.display,techniqueProgress:techniqueProgress(),rhythmLabProgress:rhythmLabProgress(),notationReadingProgress:readingProgress(),progressionDraft:state.progression,guitarAdaptations:state.songGuitarAdaptations,lyricCues:state.songLyricsById,practiceHistory:state.songPracticeHistory,practiceRanges:state.songPracticeRanges,songBookmarks:state.songBookmarks,practicePreferences:state.practicePreferences,songPlaylists:state.songPlaylists,songAnnotations:state.songAnnotations,learningProgress:state.learningProgress,scoreDocument:state.scoreDocument};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='ukulele-workbench-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),4000);toast('Backup exported')}
 function songScoreSections(score){
  const result=[];
  score?.measures?.forEach((bar,i)=>{
@@ -1213,6 +1217,22 @@ function scoreFretboard(){
  for(let f=1;f<=12;f++)svg+=`<text x="${x0+(f-.5)*spacing}" y="208" text-anchor="middle" fill="#a3bda7" font-size="11">${f}</text>`;
  return svg+'</svg>';
 }
+function importedScoreDocumentPanel(){
+ const doc=state.scoreDocument;
+ return `<section class="panel panel-pad" style="margin-top:18px">
+  <div class="panel-title"><h2>Multi-part MusicXML library</h2><span class="sub-label">INDEPENDENT INSTRUMENT VOICES</span></div>
+  <p class="small-text">Import an authorized MusicXML partwise file with separate instruments and rhythmic voices. Complex notation is preserved in a separate document rather than flattened into one misleading ukulele line. The original single-voice Score Studio remains editable separately.</p>
+  <div class="score-actions">
+   <button class="btn compact" type="button" data-action="score-import-multipart">Import multi-part MusicXML</button>
+   ${doc?'<button class="btn compact" type="button" data-action="score-export-multipart">Export multi-part MusicXML</button>':''}
+  </div>
+  <input type="file" id="multiPartXmlFile" accept=".xml,.musicxml,text/xml,application/xml" hidden>
+  ${doc?`<h3>${h(doc.title)}</h3><p>${doc.parts.length} instrumental parts · ${doc.measures} measures · ${doc.tempo} BPM · ${h(doc.meter)}. These parts have not been independently source-verified.</p>
+   <div class="lesson-list">${doc.parts.map(part=>`<div class="lesson"><div class="lesson-icon">𝄞</div><div><h3>${h(part.name)}</h3>
+    <p>${part.voices.length} independent rhythmic voice(s) · ${part.voices.reduce((n,voice)=>n+voice.measures.reduce((m,bar)=>m+bar.events.length,0),0)} events</p></div></div>`).join('')}</div>
+   <p class="small-text">Professional multi-voice engraving and full-song ensemble playback are under development; importing the complete structure does not certify that it is playable in the legacy score player.</p>`:''}
+ </section>`;
+}
 function scoreStudio(){
  const score=state.score,found=findEvent(score,state.scoreEventId),selected=found?.event,rem=remainingBeats(score),total=timeline(score).length;
  const available=[...new Set(fretboard(score.tuning,12).flat().map(p=>p.midi))].sort((a,b)=>a-b);
@@ -1255,7 +1275,7 @@ function scoreStudio(){
  ${selected?.type==='note'?`<div class="score-actions fingering-choice">${positions.map(p=>`<button class="btn compact ${selected.position?.string===p.string&&selected.position?.fret===p.fret?'gold':''}" data-score-position="${p.string}-${p.fret}">${h(TUNINGS[score.tuning].names[p.string])} string · fret ${p.fret}</button>`).join('')}</div>`:''}
  </section></div>
  <div class="studio-transport" aria-label="Score playback and session telemetry"><div class="studio-transport-label">TRANSPORT <b>// REHEARSAL</b></div><div class="studio-transport-controls"><button class="transport-play" id="scorePlaybackToggle" data-action="score-play">${scorePlayback?'■ STOP':'▶ PLAY'}</button><button class="transport-utility" data-action="score-undo" ${canUndo(scoreHistory)?'':'disabled'}>↶ UNDO</button><button class="transport-utility" data-action="score-redo" ${canRedo(scoreHistory)?'':'disabled'}>↷ REDO</button><button class="transport-utility transport-save" data-action="score-save-song">▤ SAVE</button><div class="studio-bpm"><small>BPM</small><strong>${score.tempo}</strong></div></div><div class="studio-telemetry" aria-label="Selected note and score progress"><div class="studio-telemetry-pitch"><small>REFERENCE PITCH</small><strong>${h(refPitch)}</strong><span>${h(refHz)}</span></div><div class="studio-telemetry-progress"><small>BAR ${String(barNumber).padStart(2,'0')} / ${String(score.measures.length).padStart(2,'0')}</small><div class="studio-progress-track"><i style="width:${barRatio}%"></i></div></div></div></div>
- <div class="workspace-grid studio-secondary" style="margin-top:16px"><section class="panel panel-pad"><div class="panel-title"><h2>Keep this arrangement</h2></div><p class="panel-desc">Your working score autosaves locally. Save a snapshot into the Songbook to practise or edit it later, then export a JSON backup to protect against browser-data deletion.</p><div class="score-actions"><button class="btn gold" data-action="score-save-song">▤ Save in Songbook</button><button class="btn" data-nav="songbook">Open Songbook →</button></div><p class="small-text" style="margin-top:10px">Source-based guitar adaptation imports a six-string JSON part with explicitly timed single notes and rewrites it for high-G ukulele; octave shifts are reported. It does not guess guitar riffs from chords, or silently discard simultaneous notes. MusicXML export creates standard single-part score notation, chords and fret indications for supported events. Import accepts only one treble-clef rhythmic voice in 4/4, 3/4 or 6/8, with supported notes, rests and chord voicings. Complex scores, tuplets, transposing instruments, multiple voices and compressed MXL are intentionally rejected. Use JSON Backup to preserve the entire app library.</p></section><section class="panel panel-pad"><h2>What this editor does not claim yet</h2><p class="small-text">This stage supports a single rhythmic voice (including four-note chord stacks), simple meters and bar-aware accidentals. Short notes are beamed by beat; dotted durations, simple ties and major key signatures are supported. Independent polyphonic voices, transposition, broad MusicXML interoperability and professional engraving remain planned. Undo/Redo tracks edits during the current session only. The display shows <strong>sounding pitch</strong>; high-G octave conventions will be a separate setting.</p></section></div>`;
+ <div class="workspace-grid studio-secondary" style="margin-top:16px"><section class="panel panel-pad"><div class="panel-title"><h2>Keep this arrangement</h2></div><p class="panel-desc">Your working score autosaves locally. Save a snapshot into the Songbook to practise or edit it later, then export a JSON backup to protect against browser-data deletion.</p><div class="score-actions"><button class="btn gold" data-action="score-save-song">▤ Save in Songbook</button><button class="btn" data-nav="songbook">Open Songbook →</button></div><p class="small-text" style="margin-top:10px">Source-based guitar adaptation imports a six-string JSON part with explicitly timed single notes and rewrites it for high-G ukulele; octave shifts are reported. It does not guess guitar riffs from chords, or silently discard simultaneous notes. MusicXML export creates standard single-part score notation, chords and fret indications for supported events. Import accepts only one treble-clef rhythmic voice in 4/4, 3/4 or 6/8, with supported notes, rests and chord voicings. Complex scores, tuplets, transposing instruments, multiple voices and compressed MXL are intentionally rejected. Use JSON Backup to preserve the entire app library.</p></section><section class="panel panel-pad"><h2>What this editor does not claim yet</h2><p class="small-text">This stage supports a single rhythmic voice (including four-note chord stacks), simple meters and bar-aware accidentals. Short notes are beamed by beat; dotted durations, simple ties and major key signatures are supported. Independent polyphonic voices, transposition, broad MusicXML interoperability and professional engraving remain planned. Undo/Redo tracks edits during the current session only. The display shows <strong>sounding pitch</strong>; high-G octave conventions will be a separate setting.</p></section></div>${importedScoreDocumentPanel()}`;
 }
 function stopScorePlayback(){
  if(!scorePlayback)return;
@@ -1480,6 +1500,12 @@ function handleClick(e){const node=e.target.closest('[data-prog-degree],[data-pr
  }break;
  case 'score-import-xml':$('#musicXmlFile')?.click();break;
  case 'score-import-guitar':$('#guitarPartFile')?.click();break;
+ case 'score-import-multipart':$('#multiPartXmlFile')?.click();break;
+ case 'score-export-multipart':{
+  try{if(!state.scoreDocument)throw Error('Import a multi-part score first');const xml=exportMultiPartMusicXML(state.scoreDocument);
+   const blob=new Blob([xml],{type:'application/vnd.recordare.musicxml+xml'}),url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download=printableSongFilename(state.scoreDocument.title)+'-ensemble.musicxml';link.click();setTimeout(()=>URL.revokeObjectURL(url),5000);toast('Multi-part MusicXML exported')}
+  catch(error){toast('Multi-part export: '+error.message)}
+ }break;
  case 'song-guitar-import':$('#songGuitarSourceFile')?.click();break;
  case 'song-guitar-template':downloadSongGuitarTemplate();break;
  case 'score-guitar-template':{
@@ -1641,7 +1667,16 @@ function handleChange(e){const el=e.target;
  if(el.id==='scoreDuration'){state.draftDuration=Number(el.value);return}
  if(el.id==='scorePitch'){state.draftMidi=Number(el.value);const entries=spellingsForMidi(state.draftMidi);state.draftSpelling=entries[0];const target=$('#scoreSpelling');if(target)target.innerHTML=entries.map(x=>`<option value="${h(x)}">${h(x.replace('#','♯').replace('b','♭'))}</option>`).join('');return}
  if(el.id==='scoreSpelling'){state.draftSpelling=el.value;return}
-if(['root','scale','tuning'].includes(el.id)){state[el.id]=el.value;if(el.id==='tuning')store('tuning',state.tuning);state.chordDegree=0;state.chordIndex=0;state.selectedMidi=melody()[0]?.midi??60;render()}if(el.id==='showHints'){state.showHints=el.checked;store('hints',el.checked);render()}if(el.id==='rhythmTempo'){state.tempo=Number(el.value);store('tempo',state.tempo);render()}if(el.id==='backupFile'&&el.files?.[0])importBackup(el.files[0]);if(el.id==='musicXmlFile'&&el.files?.[0])loadMusicXMLFile(el.files[0]);if(el.id==='guitarPartFile'&&el.files?.[0])loadGuitarPartFile(el.files[0]);if(el.id==='songGuitarSourceFile'&&el.files?.[0])loadSongGuitarPartFile(el.files[0]);}
+if(['root','scale','tuning'].includes(el.id)){state[el.id]=el.value;if(el.id==='tuning')store('tuning',state.tuning);state.chordDegree=0;state.chordIndex=0;state.selectedMidi=melody()[0]?.midi??60;render()}if(el.id==='showHints'){state.showHints=el.checked;store('hints',el.checked);render()}if(el.id==='rhythmTempo'){state.tempo=Number(el.value);store('tempo',state.tempo);render()}if(el.id==='backupFile'&&el.files?.[0])importBackup(el.files[0]);if(el.id==='musicXmlFile'&&el.files?.[0])loadMusicXMLFile(el.files[0]);if(el.id==='guitarPartFile'&&el.files?.[0])loadGuitarPartFile(el.files[0]);if(el.id==='songGuitarSourceFile'&&el.files?.[0])loadSongGuitarPartFile(el.files[0]);if(el.id==='multiPartXmlFile'&&el.files?.[0])loadMultiPartXmlFile(el.files[0]);}
+async function loadMultiPartXmlFile(file){
+ try{
+  if(file.size>2_000_000)throw Error('Multi-part MusicXML exceeds 2 MB');
+  const doc=importMultiPartMusicXML(await file.text());
+  if(!confirm(`Import ${doc.parts.length} instrumental parts and ${doc.measures} bars into your separate multi-part library? The existing editable ukulele score is not replaced.`))return;
+  if(!store('scoreDocument',doc))throw Error('Browser storage is full; export a backup');
+  state.scoreDocument=doc;render();toast('Multi-part MusicXML imported with independent voices');
+ }catch(error){toast('Multi-part import: '+error.message)}
+}
 async function loadGuitarPartFile(file){
  try{
   if(file.size>1_000_000)throw new Error('Guitar source JSON exceeds 1 MB');
@@ -1722,6 +1757,7 @@ async function importBackup(file){
   if(data.songPlaylists&&typeof data.songPlaylists==='object'){state.songPlaylists=data.songPlaylists;store('songPlaylists',state.songPlaylists)}
   if(data.songAnnotations&&typeof data.songAnnotations==='object'){state.songAnnotations=data.songAnnotations;store('songAnnotations',state.songAnnotations)}
   if(data.learningProgress&&typeof data.learningProgress==='object'){state.learningProgress=data.learningProgress;store('learningProgress',state.learningProgress)}
+  if(data.scoreDocument){validateScoreDocument(data.scoreDocument);state.scoreDocument=data.scoreDocument;store('scoreDocument',state.scoreDocument)}
   if(data.progressionDraft)state.progression=structuredClone(data.progressionDraft);
   if(data.scoreDraft){
    stopScorePlayback();state.score=structuredClone(data.scoreDraft);
