@@ -1,3 +1,22 @@
+# Ukulele Workbench v1.8.4 Preview — Listen & Practise Songs
+
+The Songbook now offers a **playable rehearsal view** for the fifteen approved practice titles. Each available score can be opened directly in **Approved Songs**, the **Repository Library**, or **My Songbook**. In all three places the written arrangement supports:
+
+- Standard notation, ukulele tablature, or both in the existing display modes.
+- **Listen to score** with synthesized notes/chords, a count-in, note highlighting and a Stop button.
+- A separate **Practice speed** setting (60, 75, 90, 100, 110 or 125% of the score tempo), **loop playback**, and a choice between the selected musical section and the complete accompaniment.
+- Tapping a written note or chord to hear it individually without overwriting Score Studio.
+- A chord fingering guide showing actual G-C-E-A positions, with fallback chord symbols from the written section chart for note-only scores such as **Blackbird**.
+- Existing title-only song entries receive their published score when opened, without discarding the local song ID or the user's annotations. If a score is missing, the app fetches the single validated arrangement rather than forcing a full library sync.
+
+The 14 modern-song files remain **original, harmony-led ukulele accompaniment adaptations**, not complete licensed commercial guitar or vocal transcriptions. This release makes their existing musical data usable for listening and guided practice; it does not add copyrighted lyrics or promise exact original riffs. A full traditional 1882 Whittingham Fair melody is available under Scarborough Fair. The original audio is not included.
+
+For updated hosting, the service worker cache name is `uke-workbench-v1.8.4-rehearsal-audio`. Reload after deployment and preserve existing browser storage. The user-facing repertoire, external-source instructions and MusicXML interoperability remain intact.
+
+Validation: `npm test`, `npm run qa:library`, `npm run qa:arrangements` and `npm run qa:http`. A live Android browser playback check is still required; repository static checks alone do not certify sound or PWA caching.
+
+---
+
 # Ukulele Workbench v1.8.1 Preview — Source-Based Guitar Part Adaptation
 
 ## Recorded guitar parts versus chord accompaniments
