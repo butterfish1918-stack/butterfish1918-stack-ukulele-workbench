@@ -77,3 +77,14 @@ export const COMMON_HIGH_G_CHORDS=Object.freeze({
  Fm:[1,0,1,3],Esus2:[4,4,2,2],
  C7:[0,0,0,1]
 });
+
+/** Compare local approved-song copies with the published arrangement revision.
+ * New revisions are offered without overwriting personal edits.
+ */
+export function repertoireCopyStatus(personalSongs,item,arrangement){
+ const id=item?.preferredArrangementId||item?.id;
+ const copies=(Array.isArray(personalSongs)?personalSongs:[]).filter(song=>song?.score && song.repertoireOrigin?.id===item?.id);
+ const existing=copies.length>0;
+ const upToDate=!!arrangement && copies.some(song=>song.repositoryOrigin?.id===id && song.repositoryOrigin?.revision===arrangement.revision);
+ return {existing,upToDate,updateAvailable:existing && !!arrangement && !upToDate};
+}
