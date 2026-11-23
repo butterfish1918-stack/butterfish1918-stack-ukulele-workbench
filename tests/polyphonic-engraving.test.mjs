@@ -23,3 +23,14 @@ test('written ledger lines, opposing voices, open half notes and solo flags are 
  assert.match(html,/fill="none" stroke="#36473b" stroke-width="1.5"/);
  assert.match(html,/data-voice="2"/);
 });
+
+test('imported staff includes clef, time signature, spelled accidentals and stemless whole notes',()=>{
+ const variant=structuredClone(doc);
+ variant.parts[0].voices[0].measures[0].events=[{type:'note',midi:61,spelling:'Db',onset:0,duration:4}];
+ const html=renderPolyphonicDocument(variant);
+ assert.match(html,/poly-clef/);
+ assert.match(html,/poly-meter/);
+ assert.match(html,/poly-accidental/);
+ assert.match(html,/♭/);
+ assert.doesNotMatch(html,/class="poly-voice-flag"/);
+});
