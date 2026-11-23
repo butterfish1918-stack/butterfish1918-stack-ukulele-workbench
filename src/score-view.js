@@ -145,7 +145,7 @@ export function scoreSystems(score,{maxSystemWidth=710,maxBarsPerSystem=3}={}){
  const limit=Math.max(1,Math.min(4,Number(maxBarsPerSystem)||3));
  for(let i=0;i<score.measures.length;i++){
   const bar=score.measures[i];
-  const width=Math.max(185,Math.round(70+bar.events.length*38));
+  const width=Math.max(165,Math.round(46+bar.events.length*29));
   if(bars>0&&(total+width>maxWidth || bars>=limit)){
    systems.push({start:from,end:i});
    from=i;total=115;bars=0;
@@ -160,7 +160,7 @@ export function renderScoreView(score,{mode='notation',selectedEventId=null,play
   const systems=scoreSystems(score);
   return `<div class="score-systems" role="group" aria-label="Multi-line sheet music: ${systems.length} stave systems, ${score.measures.length} measures">${systems.map(({start,end})=>{
    const single={...score,measures:score.measures.slice(start,end)};
-   return `<div class="score-system" role="group" aria-label="Measures ${measureOffset+start+1} to ${measureOffset+end}">${renderScoreView(single,{mode,selectedEventId,playingEventId,showNames,annotations,layout:'compact',measureOffset:measureOffset+start})}</div>`;
+   return `<div class="score-system" data-first-measure="${measureOffset+start+1}" data-last-measure="${measureOffset+end}" role="group" aria-label="Measures ${measureOffset+start+1} to ${measureOffset+end}">${renderScoreView(single,{mode,selectedEventId,playingEventId,showNames,annotations,layout:'compact',measureOffset:measureOffset+start})}</div>`;
   }).join('')}</div>`;
  }
 
@@ -168,7 +168,7 @@ export function renderScoreView(score,{mode='notation',selectedEventId=null,play
  const meter=score.meter.split('/');
  const key=score.key??'C',keyCount=Math.abs(KEY_SIGNATURES[key]);
  const extra=keyCount*14;
- const segments=score.measures.map((bar,i)=>({bar,i,width:layout==='compact'?Math.max(185,Math.round(70+bar.events.length*38)):Math.max(205,Math.round(90+bar.events.length*61))}));
+ const segments=score.measures.map((bar,i)=>({bar,i,width:layout==='compact'?Math.max(165,Math.round(46+bar.events.length*29)):Math.max(205,Math.round(90+bar.events.length*61))}));
  const width=125+extra+segments.reduce((a,s)=>a+s.width,0)+25;
  const height=showNotation&&showTab?347:showNotation?202:189;
  const tabTop=showNotation?226:62;
