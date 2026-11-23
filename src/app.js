@@ -7,6 +7,7 @@ import {prepareBackupRestore,commitBackupRestore} from './storage-safety.js';
 import {inspectDevice} from './device-qa.js';
 import {BUNDLED_LIBRARY} from './library-seed.js';
 import {attachApprovedRepertoireScores} from './repertoire-migration.js';
+import {sectionScore,chordGuide,practiceTempo} from './song-practice.js';
 import {DEFAULT_CATALOG_URL,catalogUrl,validateSnapshot,downloadRepository,downloadSingleApprovedArrangement,copyToSongbook} from './song-library.js';
 import {exportMusicXML,importMusicXML} from './musicxml.js';
 import {adaptGuitarPart,exampleGuitarSource} from './guitar-adaptation.js';
@@ -31,6 +32,10 @@ state.sightLessonAnswer=null;
 state.sightShowFingering=false;
 
 state.rhythmLabId=RHYTHM_STUDIES.some(x=>x.id===read('rhythmLabId','RT-01'))?read('rhythmLabId','RT-01'):'RT-01';state.rhythmLabResult=null;
+state.songPracticeSpeed=[60,75,90,100,110,125].includes(Number(read('songPracticeSpeed',100)))?Number(read('songPracticeSpeed',100)):100;
+state.songPracticeLoop=!!read('songPracticeLoop',false);
+state.songPracticeScope='section';
+let songPracticePlayback=null;
 let engravedPreviewEnabled=false;
 let deviceReport=null;
 let progressionPlayback=null,techniquePlayback=null,rhythmLabPlayback=null,ac=null,scorePlayback=null,playToken=0,metronomeTimer=null,metroNext=0,metroBeat=0,rhythmTimer=null,tunerStream=null,tunerFrame=0,tunerCtx=null,tunerSource=null,tunerAnalyser=null;
@@ -401,6 +406,110 @@ function songScoreSections(score){
  });
  return result;
 }
+function activeSongPractice(){
+ if(state.page!=='songbook')return null;
+ if(state.songbookView==='mine'){
+  const song=songs().find(item=>item.id===state.songOpen);
+  if(!song?.score)return null;
+  const sections=songScoreSections(song.score);
+  return {score:song.score,preview:sectionScore(song.score,sections,state.songSectionIndex),label:song.title,section:sections[state.songSectionIndex],sections};
+ }
+ if(state.songbookView==='repository'){
+  const song=state.repositorySnapshot.songs[state.repoSelectedId];
+  if(!song?.score)return null;
+  const sections=Array.isArray(song.sections)&&song.sections.length?song.sections:songScoreSections(song.score);
+  return {score:song.score,preview:sectionScore(song.score,sections,state.repoSectionIndex),label:song.title,section:sections[state.repoSectionIndex],sections};
+ }
+ const item=repertoireItems().find(item=>item.id===state.repertoireSelectedId);
+ const song=item?availableArrangementForItem(item):null;
+ if(!song?.score)return null;
+ const sections=Array.isArray(song.sections)&&song.sections.length?song.sections:songScoreSections(song.score);
+ return {score:song.score,preview:sectionScore(song.score,sections,state.repertoireSectionIndex),label:item.title,section:sections[state.repertoireSectionIndex],sections};
+}
+function songPracticeControls(preview){
+ if(!preview)return '';
+ const guide=chordGuide(preview,18);
+ const playing=!!songPracticePlayback;
+ return `<div class="song-rehearsal" aria-label="Song practice and audio playback">
+ <div class="panel-title"><h2>Listen and practise</h2><span class="sub-label">UKULELE REFERENCE SYNTH</span></div>
+ <p class="small-text">Listen to the written notes and chords, practise along at a slower tempo, or repeat the current section. Audio is synthesized from this arrangement, not the commercial recording.</p>
+ <div class="song-rehearsal-controls">
+  <button type="button" class="btn gold" data-action="song-practice-play" aria-pressed="${playing}">${playing?'■ Stop listening':'▶ Listen to score'}</button>
+  <button type="button" class="btn ${state.songPracticeLoop?'gold':'ghost'}" data-action="song-practice-loop" aria-pressed="${state.songPracticeLoop}">${state.songPracticeLoop?'↻ Loop on':'↻ Loop off'}</button>
+  <label class="control">Playback range<select id="songPracticeScope"><option value="section" ${state.songPracticeScope==='section'?'selected':''}>Selected section</option><option value="full" ${state.songPracticeScope==='full'?'selected':''}>Whole arrangement</option></select></label>
+  <label class="control">Practice speed<select id="songPracticeSpeed">${[60,75,90,100,110,125].map(n=>`<option value="${n}" ${state.songPracticeSpeed===n?'selected':''}>${n}%</option>`).join('')}</select></label>
+ </div>
+ <div class="song-practice-display">${tabbar([['notation','Notation'],['dual','Notation + tab'],['tab','Tab only']],state.display,'data-display')}</div>
+ <p class="small-text" id="songPracticeStatus" role="status" aria-live="polite">${playing?'Playing reference audio…':'Ready. Tap any written note or chord to hear it individually.'}</p>
+ ${guide.length?`<div class="song-chord-guide"><strong>Chord fingerings — G · C · E · A string order</strong><div class="repo-tags">${guide.map(chord=>`<span title="String frets in G C E A order"><b>${h(chord.symbol)}</b> &nbsp;${h(chord.frets)}</span>`).join('')}</div></div>`:''}
+ </div>`;
+}
+function stopSongPractice(){
+ const run=songPracticePlayback;
+ if(!run)return;
+ songPracticePlayback=null;
+ if(run.interval)clearInterval(run.interval);
+ for(const timer of run.timers)clearTimeout(timer);
+ const now=run.audioContext.currentTime;
+ for(const voice of run.voices)try{voice.stop(now+.006)}catch{}
+ $('.song-score-preview .score-event.playing,.repo-score-preview .score-event.playing').forEach(el=>el.classList.remove('playing'));
+ const button=document.querySelector('[data-action="song-practice-play"]');
+ if(button){button.textContent='▶ Listen to score';button.setAttribute('aria-pressed','false')}
+ const status=$('#songPracticeStatus');if(status)status.textContent='Stopped. Select a section or restart playback.';
+}
+function playSongPractice(){
+ if(songPracticePlayback){stopSongPractice();return}
+ const selection=activeSongPractice();
+ if(!selection){toast('Open a song with a written score first');return}
+ const score=state.songPracticeScope==='full'?selection.score:selection.preview;
+ const events=timeline(score);
+ if(!events.length){toast('This section has no playable events');return}
+ const seconds=60/practiceTempo(score.tempo,state.songPracticeSpeed);
+ const ctx=audio();
+ const countIn=score.meter==='3/4'?3:score.meter==='6/8'?3:4;
+ const start=ctx.currentTime+.15+countIn*seconds;
+ const totalBeats=Math.max(...events.map(event=>event.onset+event.duration));
+ const run={audioContext:ctx,events,seconds,start,totalBeats,timers:[],voices:[],nextIndex:0,cycle:0,interval:null};
+ songPracticePlayback=run;
+ for(let n=0;n<countIn;n++)tick(ctx.currentTime+.15+n*seconds,n===0);
+ render();
+ const status=$('#songPracticeStatus');if(status)status.textContent=`Count in: ${countIn} beats · ${Math.round(practiceTempo(score.tempo,state.songPracticeSpeed))} BPM`;
+ const schedule=()=>{
+  if(songPracticePlayback!==run)return;
+  const currentTime=ctx.currentTime;
+  const horizon=currentTime+.30;
+  let budget=100;
+  while(budget-->0){
+   if(run.nextIndex>=events.length){
+    if(!state.songPracticeLoop)break;
+    run.nextIndex=0;run.cycle++;
+   }
+   const index=run.nextIndex,ev=events[index];
+   const at=start+(run.cycle*totalBeats+ev.onset)*seconds;
+   if(at>horizon)break;
+   if(ev.type==='chord')run.voices.push(...synthEvent(ev,at,seconds));
+   else if(ev.type==='note'&&!(index>0&&events[index-1].tieToNext)){
+    let duration=ev.duration,j=index;
+    while(events[j]?.tieToNext&&events[j+1]){j++;duration+=events[j].duration}
+    run.voices.push(...synthEvent(ev,at,seconds,duration));
+   }
+   run.timers.push(setTimeout(()=>{
+    if(songPracticePlayback!==run)return;
+    $('.song-score-preview .score-event,.repo-score-preview .score-event').forEach(el=>el.classList.toggle('playing',el.dataset.eventId===ev.id));
+    const atBar=(state.songPracticeScope==='section'&&selection.section?selection.section.startBar-1:0)+ev.measureIndex+1;
+    const status=$('#songPracticeStatus');
+    if(status)status.textContent=`Playing bar ${atBar} / ${selection.score.measures.length} · ${Math.round(practiceTempo(score.tempo,state.songPracticeSpeed))} BPM${run.cycle?' · repeat '+(run.cycle+1):''}`;
+   },Math.max(0,(at-ctx.currentTime)*1000)));
+   run.nextIndex++;
+  }
+  const end=start+(run.cycle*totalBeats+totalBeats)*seconds;
+  if(!state.songPracticeLoop&&run.nextIndex>=events.length&&currentTime>=end+.12){
+   stopSongPractice();toast('Song practice playback complete');
+  }
+ };
+ run.interval=setInterval(schedule,65);
+ schedule();
+}
 function mySongbook(){
  const all=songs(),current=all.find(x=>x.id===state.songOpen);
  const sections=songScoreSections(current?.score);
@@ -409,7 +518,7 @@ function mySongbook(){
  return `${hero('PERSONAL REPERTOIRE','Keep your <em>music close.</em>','Save your songs, keys, chord progressions, lyrics and practice notes locally. Compose directly on a staff in Score Studio, then save the score with your song.','LOCAL SONG LIBRARY')}
 <div class="workspace-grid"><section class="panel panel-pad"><div class="panel-title"><h2>${state.editing?'Song sketch editor':'Your songbook'}</h2><div class="right"><button class="btn compact" data-nav="score">𝄞 Score Studio</button><button class="btn compact" data-action="new-song">＋ New song</button><button class="btn compact ghost" data-action="export-backup">↓ Backup</button></div></div>${state.editing?`<form id="songForm" class="form-grid"><div><label for="songTitle">Song title *</label><input id="songTitle" required maxlength="120" value="${h(current?.title||'')}"></div><div><label for="songArtist">Artist / composer</label><input id="songArtist" maxlength="120" value="${h(current?.artist||'')}"></div><div><label for="songKey">Key</label>${uiSelect('songKey',[...ROOTS.map(x=>[x,x]),...(!ROOTS.includes(current?.key)&&current?.key?[[current.key,current.key]]:[])],current?.key||state.root)}</div><div><label for="songBpm">Tempo (BPM)</label><input id="songBpm" type="number" min="30" max="240" value="${current?.bpm||state.tempo}"></div><div class="span2"><label for="songBody">ChordPro-style sketch (chords in square brackets)</label><textarea id="songBody" placeholder="[C]A short melody begins...\n[F]Another chord comes in...">${h(current?.body||'')}</textarea></div><div class="span2"><label for="songNotes">Performance and practice notes</label><textarea id="songNotes" placeholder="Fingerings, techniques, bars to work on...">${h(current?.notes||'')}</textarea></div><div class="span2 score-actions"><button class="btn gold" type="submit">Save song sketch</button><button class="btn" type="button" data-action="cancel-edit">Cancel</button></div></form>`:all.length?`<div class="song-list">${all.map(s=>`<div class="song-row"><div class="song-initial">♫</div><div class="song-title"><b>${h(s.title)}</b><small>${h(s.artist||'Personal sketch')} · ${h(s.key||'Key not set')}${s.bpm?' · '+s.bpm+' BPM':''}${s.score?' · Score attached':s.repertoireOrigin?.id?' · Score loads when opened':''}</small></div><button class="btn compact" data-song="${h(s.id)}">Open</button></div>`).join('')}</div>`:`<div class="empty-state"><div class="big-icon">♬</div><h3>A library waiting for music</h3><p>Start with a simple song sketch. Create a staff-based melody in Score Studio, or add chords and lyrics here.</p><button class="btn gold" data-action="new-song">＋ Create your first song</button></div>`}
 <div class="subtle-rule"></div><div class="score-actions"><button class="btn compact ghost" data-action="import-backup">↑ Restore backup</button><input type="file" accept=".json,application/json" id="backupFile" hidden></div><p class="hint-text">Songs are kept in this browser's local storage. Export regular backups; clearing browser data can delete them. Import will replace existing songs only after confirmation.</p></section><section class="panel panel-pad"><div class="panel-title"><h2>Song practice preview</h2></div>${current&&!state.editing?`<div class="eyebrow">NOW OPEN</div><h2 style="font:26px Georgia,serif">${h(current.title)}</h2><p class="small-text">${h(current.artist||'Original arrangement')} · ${h(current.key||'Key not set')}${current.bpm?' · '+current.bpm+' BPM':''}</p><pre style="white-space:pre-wrap;font:13px/1.9 ui-monospace,monospace;color:#e5d2a3;background:#14261e;padding:15px;border-radius:8px;min-height:100px">${h(current.body||'No chord sketch yet.')}</pre><p class="small-text" style="white-space:pre-wrap">${h(current.notes||'No practice notes.')}</p>${!current.score && current.repertoireOrigin?.id?`<div class="score-actions"><button type="button" class="btn gold" data-action="load-practice-score" ${state.songLoadingId===current.id?'disabled':''}>${state.songLoadingId===current.id?'Loading score…':'↻ Load practice score'}</button></div>${state.songLoadError?`<p class="small-text" role="alert">${h(state.songLoadError)}</p>`:''}`:''}${current.score?`${sections.length?`<p class="small-text">Preview one section at a time · ${current.score.measures.length} bars total. Score Studio opens all bars for editing.</p><div class="repo-tags" role="group" aria-label="Select song practice section">${sections.map((sec,i)=>`<button class="btn compact ${sec===active?'gold':'ghost'}" data-song-section="${i}" aria-pressed="${sec===active}">${h(sec.label)} (${sec.startBar}–${sec.endBar})</button>`).join('')}</div>`:''}
- <div class="score-holder score-editor-view song-score-preview">${renderScoreView(songPreviewScore,{mode:state.display})}</div><button class="btn gold compact" data-action="load-song-score">𝄞 Edit notation score</button>`:''}<div class="score-actions"><button class="btn compact" data-action="edit-song">✎ Edit</button><button class="btn compact" data-action="delete-song">Delete</button></div>`:`<div class="callout"><strong>Notation-first roadmap:</strong> Score Studio now stores a single-voice staff score alongside optional lyric/chord sketches. A professionally engraved score editor, full MusicXML support, and independent voices remain future milestones.</div><hr class="divider"><p class="small-text">JSON backup is the lossless app backup. Score Studio now supports a limited single-part MusicXML interchange; unsupported notation is rejected rather than discarded.</p>`}</section></div>`}
+ <div class="score-holder score-editor-view song-score-preview">${renderScoreView(songPreviewScore,{mode:state.display})}</div>${songPracticeControls(songPreviewScore)}<button class="btn gold compact" data-action="load-song-score">𝄞 Edit notation score</button>`:''}<div class="score-actions"><button class="btn compact" data-action="edit-song">✎ Edit</button><button class="btn compact" data-action="delete-song">Delete</button></div>`:`<div class="callout"><strong>Notation-first roadmap:</strong> Score Studio now stores a single-voice staff score alongside optional lyric/chord sketches. A professionally engraved score editor, full MusicXML support, and independent voices remain future milestones.</div><hr class="divider"><p class="small-text">JSON backup is the lossless app backup. Score Studio now supports a limited single-part MusicXML interchange; unsupported notation is rejected rather than discarded.</p>`}</section></div>`}
 function repositorySongbook(){
  const snapshot=state.repositorySnapshot, all=snapshot.catalog.entries, current=snapshot.songs[state.repoSelectedId]??null;
  const sections=Array.isArray(current?.sections)?current.sections:[];
@@ -426,7 +535,7 @@ function repositorySongbook(){
  <p class="hint-text">The repository is separate from My Songbook. Sync replaces only cached reference arrangements, never your imported songs, annotations or progress.</p></section>
  <section class="panel panel-pad"><div class="panel-title"><h2>${current?'Arrangement preview':'Select a score'}</h2></div>
  ${current?`<div class="eyebrow">${h(current.difficulty)} / REVISION ${current.revision}</div><h2 class="repo-song-heading">${h(current.title)}</h2><p class="small-text">${h(current.artist)} · ${h(current.tonalCenter||current.key||'Key not set')}${current.bpm?' · '+current.bpm+' BPM':''} · ${h(current.tuning)}</p><p class="small-text">${h(current.description)}</p>${current.arrangementType==='song-form-accompaniment'?'<p class="small-text"><strong>Recording guitar part not verified.</strong> This is a harmony-led uke accompaniment; source guitar notes are not included. Use the source adapter in Score Studio with a licensed or self-transcribed guitar part.</p>':''}<div class="repo-tags">${current.tags.map(t=>`<span>${h(t)}</span>`).join('')}</div>${sections.length?`<p class="small-text">Sections · select one to preview; copying always imports the entire score (${current.score.measures.length} bars).</p><div class="repo-tags" role="group" aria-label="Choose practice section">${sections.map((sec,i)=>`<button class="btn compact ${activeSection===sec?'gold':'ghost'}" data-repo-section="${i}" aria-pressed="${activeSection===sec}">${h(sec.label)} (${sec.startBar}–${sec.endBar})</button>`).join('')}</div>`:''}
- <div class="score-holder score-editor-view repo-score-preview">${renderScoreView(previewScore,{mode:state.display})}</div><p class="small-text">${h(current.notes)}</p><div class="score-actions"><button class="btn gold" data-action="repo-import">＋ Copy to My Songbook</button><button class="btn ghost" data-action="repo-view-mine">My Songbook →</button></div>`:`<p class="small-text">Select an arrangement to see its musical score.</p>`}
+ <div class="score-holder score-editor-view repo-score-preview">${renderScoreView(previewScore,{mode:state.display})}</div>${songPracticeControls(previewScore)}<p class="small-text">${h(current.notes)}</p><div class="score-actions"><button class="btn gold" data-action="repo-import">＋ Copy to My Songbook</button><button class="btn ghost" data-action="repo-view-mine">My Songbook →</button></div>`:`<p class="small-text">Select an arrangement to see its musical score.</p>`}
  </section></div>`;
 }
 function repertoireItems(){return state.repositorySnapshot.catalog.repertoire??BUNDLED_LIBRARY.catalog.repertoire??[];}
@@ -469,7 +578,7 @@ function approvedRepertoireSongbook(){
  ${arrangement?`<p class="small-text">${h(arrangement.description)} · ${arrangement.bpm} BPM · ${h(arrangement.tuning)} GCEA</p>
  ${arrangement.arrangementType==='song-form-accompaniment'?'<p class="small-text"><strong>Accompaniment adaptation:</strong> chord harmony and practice patterns are provided; original riffs, lead melody and lyrics are not transcribed.</p>':''}
  ${sections.length?`<p class="small-text">${arrangement.score.measures.length} measures total; choose a section to practise.</p><div class="repo-tags" role="group" aria-label="Choose musical section">${sections.map((section,index)=>`<button type="button" class="btn compact ${index===state.repertoireSectionIndex?'gold':'ghost'}" data-repertoire-section="${index}" aria-pressed="${index===state.repertoireSectionIndex}">${h(section.label)} (${section.startBar}–${section.endBar})</button>`).join('')}</div>`:''}
- <div class="score-holder score-editor-view repo-score-preview">${renderScoreView(previewScore,{mode:state.display})}</div>
+ <div class="score-holder score-editor-view repo-score-preview">${renderScoreView(previewScore,{mode:state.display})}</div>${songPracticeControls(previewScore)}
  <p class="small-text" style="white-space:pre-wrap">${h(arrangement.body||'')}</p><p class="small-text" style="white-space:pre-wrap">${h(arrangement.notes||'')}</p>
  <div class="score-actions"><button type="button" class="btn gold" data-repertoire="${h(selected.id)}" ${owned.has(selected.id)?'disabled':''}>${owned.has(repertoireScoreId(selected))?'Already in My Songbook':'＋ Add to My Songbook'}</button></div>`:
  `<p class="small-text">${state.repertoireLoadingId===selected?.id?'Loading this song’s musical score…':state.repoError?h(state.repoError):'Choose View score to fetch notation, chord progressions and fingerings for this song.'}</p>`}
@@ -651,7 +760,7 @@ function updateEngraving(){
 }
 function filterRepositoryRows(){if(state.page!=='songbook'||state.songbookView!=='repository')return;const query=state.repoQuery.toLowerCase().trim();for(const row of $$('[data-repo-row]'))row.hidden=!!((query&&!row.dataset.search.includes(query))||(state.repoDifficulty!=='all'&&row.dataset.difficulty!==state.repoDifficulty));}
 function render(){const pages={explorer,progression:progressionBuilder,notation,technique,rhythm,songbook,practice,score:scoreStudio};$('#pageContent').dataset.mode=state.page;$('#pageContent').innerHTML=pages[state.page]();$('#currentPage').textContent=pageNames[state.page];$$('[data-page]').forEach(btn=>btn.classList.toggle('active',btn.dataset.page===state.page));if(state.page==='score'&&engravedPreviewEnabled)updateEngraving();filterRepositoryRows()}
-function navigate(page){if(!pageNames[page])return;stopRhythm();if(state.page==='notation'&&page!=='notation')stopRhythmLab();if(state.page==='progression'&&page!=='progression')stopProgression();if(state.page==='score' && page!=='score')stopScorePlayback();if(state.page==='technique'&&page!=='technique')stopTechniquePlayback();state.page=page;render();window.scrollTo({top:0,behavior:'smooth'});$('#mainContent').focus({preventScroll:true})}
+function navigate(page){if(!pageNames[page])return;stopSongPractice();stopRhythm();if(state.page==='notation'&&page!=='notation')stopRhythmLab();if(state.page==='progression'&&page!=='progression')stopProgression();if(state.page==='score' && page!=='score')stopScorePlayback();if(state.page==='technique'&&page!=='technique')stopTechniquePlayback();state.page=page;render();window.scrollTo({top:0,behavior:'smooth'});$('#mainContent').focus({preventScroll:true})}
 function nextMelodyPitch(pc){const matches=scalePositions(state.root,state.scale,state.tuning);const match=matches.find(x=>x.pc===pc && x.midi>=60)||matches.find(x=>x.pc===pc);return match?.midi??60}
 function choosePitch(midi){state.selectedMidi=midi;synth(midi);render()}
 function chooseChordSound(){const chord=harmonizedChords(state.root,state.scale,state.chordExtension)[state.chordDegree];if(!chord)return;const voices=chordVoicings(chord.pcs,state.tuning);const voice=voices[Math.min(state.chordIndex,voices.length-1)];if(voice){const midis=voice.midis.filter(x=>x!==null);const ctx=audio(),at=ctx.currentTime+.03;midis.forEach((m,i)=>synth(m,at+i*.025,.7,.075))}else toast('No matching chord voicing in this position range')}
@@ -661,7 +770,12 @@ function handleClick(e){const node=e.target.closest('[data-prog-degree],[data-pr
   if(state.page==='progression')return;
   if(state.page==='technique'){const exercise=currentTechnique();if(!exercise.pattern)return;const {score}=techniqueScore(exercise.id,state.tuning);const found=findEvent(score,node.dataset.eventId);if(found){state.techEventId=found.event.id;if(found.event.type!=='rest')synthEvent(found.event,audio().currentTime+.012,60/(state.techTempo||currentTechnique().tempo));render()}return;}
   if(state.page==='notation')return;
-  if(state.page==='songbook'){if(state.songbookView==='repository')return;const current=songs().find(x=>x.id===state.songOpen);if(current?.score){setScore(current.score,current.id);navigate('score')}}
+  if(state.page==='songbook'){
+   const selection=activeSongPractice();
+   const event=selection?.preview?findEvent(selection.preview,node.dataset.eventId)?.event:null;
+   if(event?.type&&event.type!=='rest'){const secs=60/practiceTempo(selection.score.tempo,state.songPracticeSpeed);synthEvent(event,audio().currentTime+.02,secs);const status=$('#songPracticeStatus');if(status)status.textContent=event.type==='chord'?`Preview: ${event.symbol} chord`:`Preview: ${event.spelling} (${midiName(event.midi)})`}
+   return;
+  }
   const found=findEvent(state.score,node.dataset.eventId);
   if(found){state.scoreEventId=found.event.id;state.draftDuration=found.event.duration;state.draftType=found.event.type;
    if(found.event.type==='note'){state.draftMidi=found.event.midi;state.draftSpelling=found.event.spelling;state.selectedMidi=found.event.midi;synth(found.event.midi)}render();}return;
@@ -711,13 +825,13 @@ function handleClick(e){const node=e.target.closest('[data-prog-degree],[data-pr
  if(node.dataset.techDisplay){state.techDisplay=node.dataset.techDisplay;store('techDisplay',state.techDisplay);render();return}
  if(node.dataset.techNote){const {score}=techniqueScore(currentTechnique().id,state.tuning);const found=findEvent(score,node.dataset.techNote);if(found){state.techEventId=found.event.id;if(found.event.type!=='rest')synthEvent(found.event,audio().currentTime+.012,60/(state.techTempo||currentTechnique().tempo));render()}return}
  if(node.dataset.techRating){const rated=recordTechniquePractice(techniqueProgress(),currentTechnique().id,node.dataset.techRating);if(store('techniqueProgress',rated)){toast('Practice attempt recorded');render()}return}
- if(node.dataset.repo){state.repoSelectedId=node.dataset.repo;state.repoSectionIndex=0;render();return}
-  if(node.dataset.repoSection!==undefined){state.repoSectionIndex=Number(node.dataset.repoSection)||0;render();return}
-  if(node.dataset.repertoirePreview){const item=repertoireItems().find(x=>x.id===node.dataset.repertoirePreview);if(item)selectRepertoireSong(item);return}
- if(node.dataset.repertoireSection!==undefined){state.repertoireSectionIndex=Number(node.dataset.repertoireSection)||0;render();return}
+ if(node.dataset.repo){stopSongPractice();state.repoSelectedId=node.dataset.repo;state.repoSectionIndex=0;render();return}
+  if(node.dataset.repoSection!==undefined){stopSongPractice();state.repoSectionIndex=Number(node.dataset.repoSection)||0;render();return}
+  if(node.dataset.repertoirePreview){stopSongPractice();const item=repertoireItems().find(x=>x.id===node.dataset.repertoirePreview);if(item)selectRepertoireSong(item);return}
+ if(node.dataset.repertoireSection!==undefined){stopSongPractice();state.repertoireSectionIndex=Number(node.dataset.repertoireSection)||0;render();return}
  if(node.dataset.repertoire){addApprovedSongs([node.dataset.repertoire]);return}
- if(node.dataset.song){state.songOpen=node.dataset.song;state.songSectionIndex=0;state.songLoadError=null;state.editing=false;render();const selected=songs().find(song=>song.id===state.songOpen);if(selected && !selected.score && selected.repertoireOrigin?.id)loadApprovedScoreForPersonalSong(selected.id);return}
-  if(node.dataset.songSection!==undefined){state.songSectionIndex=Number(node.dataset.songSection)||0;render();return}
+ if(node.dataset.song){stopSongPractice();state.songOpen=node.dataset.song;state.songSectionIndex=0;state.songLoadError=null;state.editing=false;render();const selected=songs().find(song=>song.id===state.songOpen);if(selected && !selected.score && selected.repertoireOrigin?.id)loadApprovedScoreForPersonalSong(selected.id);return}
+  if(node.dataset.songSection!==undefined){stopSongPractice();state.songSectionIndex=Number(node.dataset.songSection)||0;render();return}
  if(node.dataset.action){const action=node.dataset.action;switch(action){
  case 'prog-add-explorer':{
    if(state.scale!=='major'||!Object.hasOwn(KEY_SIGNATURES,state.root)){toast('Progression Builder currently supports major-key harmony; choose a major scale first');break}
@@ -800,11 +914,13 @@ function handleClick(e){const node=e.target.closest('[data-prog-degree],[data-pr
  case 'open-metronome':openMetronome();break;
  case 'play-rhythm':rhythmTimer?stopRhythm():startRhythm();render();break;
  case 'reset-pattern':state.rhythm=['D','','U','U','D','','U',''];store('rhythm',state.rhythm);render();break;
- case 'repo-view-mine':state.songbookView='mine';render();break;
-  case 'repo-view-repertoire':state.songbookView='repertoire';state.editing=false;render();break;
+ case 'song-practice-play':playSongPractice();break;
+ case 'song-practice-loop':state.songPracticeLoop=!state.songPracticeLoop;store('songPracticeLoop',state.songPracticeLoop);render();break;
+ case 'repo-view-mine':stopSongPractice();state.songbookView='mine';render();break;
+  case 'repo-view-repertoire':stopSongPractice();state.songbookView='repertoire';state.editing=false;render();break;
  case 'repertoire-sync':syncLibrary();break;
   case 'repertoire-import-all':addApprovedSongs();break;
- case 'repo-view-repository':state.songbookView='repository';state.editing=false;render();break;
+ case 'repo-view-repository':stopSongPractice();state.songbookView='repository';state.editing=false;render();break;
  case 'repo-sync':syncLibrary();break;
  case 'load-practice-score':if(state.songOpen)loadApprovedScoreForPersonalSong(state.songOpen);break;
  case 'repo-import':copyRepositorySong();break;
@@ -818,6 +934,8 @@ function handleClick(e){const node=e.target.closest('[data-prog-degree],[data-pr
  case 'log-practice':{const note=prompt('What did you practise? (optional)','Reading, scales and technique');if(note===null)return;const duration=prompt('Minutes practised?','20');if(duration===null)return;const mins=Number(duration);if(!Number.isFinite(mins)||mins<1||mins>720){toast('Enter a valid number of minutes');return}store('progress',[...progress(),{date:new Date().toISOString(),minutes:Math.round(mins),note}]);toast('Practice logged');render();}break;
  }}}
 function handleChange(e){const el=e.target;
+ if(el.id==='songPracticeSpeed'){stopSongPractice();const speed=Number(el.value);if([60,75,90,100,110,125].includes(speed)){state.songPracticeSpeed=speed;store('songPracticeSpeed',speed)}render();return;}
+ if(el.id==='songPracticeScope'){stopSongPractice();state.songPracticeScope=el.value==='full'?'full':'section';render();return;}
  if(el.id==='repoDifficulty'){state.repoDifficulty=el.value;filterRepositoryRows();return;}
  if(el.id==='keyLessonMode'){if(['major','relativeMinor'].includes(el.value)){state.keyLessonMode=el.value;state.keyLessonAnswer=null;store('keyLessonMode',el.value);render()}return}
  if(el.id==='sightLessonSelect'){try{sightStudy(el.value);state.sightLessonId=el.value;state.sightLessonIndex=0;state.sightLessonAnswer=null;state.sightShowFingering=false;store('sightLessonId',el.value);render()}catch(e){toast(e.message)}return}
@@ -901,5 +1019,5 @@ function init(){newQuestion();state.selectedMidi=melody()[0]?.midi??60;render();
    if(e.key.toLowerCase()==='y'){e.preventDefault();restoreScoreHistory('redo');return}
  }
  if(e.code==='Space'&&state.page==='notation'&&rhythmLabPlayback&&!e.repeat&&!e.target.closest('input,textarea,select,[contenteditable="true"]')&&(!e.target.closest('button')||e.target.closest('[data-action="rhythm-lab-tap"]'))){e.preventDefault();tapRhythmLab();return}
- if((e.key==='Enter'||e.key===' ')&&e.target.closest('.score-event,[data-score-position],.score-note,.fret-cell')){e.preventDefault();e.target.closest('.score-event,[data-score-position],.score-note,.fret-cell').dispatchEvent(new MouseEvent('click',{bubbles:true}))}});$('#toolDialog').addEventListener('click',e=>{if(e.target.matches('[data-dialog-close]')||e.target===$('#toolDialog'))closeDialog()});$('#toolDialog').addEventListener('close',()=>{stopTuner();stopMetronome()});window.addEventListener('beforeunload',()=>{stopTuner();stopMetronome();stopRhythm();stopScorePlayback();stopTechniquePlayback();stopProgression();stopRhythmLab()});if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});}
+ if((e.key==='Enter'||e.key===' ')&&e.target.closest('.score-event,[data-score-position],.score-note,.fret-cell')){e.preventDefault();e.target.closest('.score-event,[data-score-position],.score-note,.fret-cell').dispatchEvent(new MouseEvent('click',{bubbles:true}))}});$('#toolDialog').addEventListener('click',e=>{if(e.target.matches('[data-dialog-close]')||e.target===$('#toolDialog'))closeDialog()});$('#toolDialog').addEventListener('close',()=>{stopTuner();stopMetronome()});window.addEventListener('beforeunload',()=>{stopSongPractice();stopTuner();stopMetronome();stopRhythm();stopScorePlayback();stopTechniquePlayback();stopProgression();stopRhythmLab()});if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});}
 init();
