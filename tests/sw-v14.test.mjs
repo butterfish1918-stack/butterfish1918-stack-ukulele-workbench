@@ -76,7 +76,9 @@ test('activation deletes only older Ukulele Workbench caches, NEVER other apps',
  const keys=await env.caches.keys();
  assert.ok(keys.includes('other-guitar-app-v4'));
  assert.ok(!keys.includes('uke-workbench-v1.3.0-preview'));
- assert.ok(keys.includes('uke-workbench-v1.6.0-preview'));
+ const currentVersion=worker.match(/const CACHE = \`\\$\\{CACHE_PREFIX\\}([^\`]+)\`;/)?.[1];
+ assert.ok(currentVersion,'current cache version must be declared');
+ assert.ok(keys.includes('uke-workbench-'+currentVersion));
 });
 test('offline navigation, query-string assets and modules are satisfied from pre-cache',async()=>{
  const env=environment();await env.dispatch('install');await env.dispatch('activate');env.setOffline();
