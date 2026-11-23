@@ -5,6 +5,7 @@ import {staffYForSpelling,midiName,TUNINGS} from './music.js';
 import {preferredPosition,usedBeats,measureBeats,baseDuration,isDotted,KEY_SIGNATURES,KEY_SHARP_ORDER,KEY_FLAT_ORDER,keyAccidental} from './score.js';
 const esc=s=>String(s??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 const fmt=n=>String(Math.round(n*100)/100);
+export function writtenNoteName(midi,spelling){return (spelling||midiName(midi).replace(/-?\d+$/,''))+(Math.floor(midi/12)-1);}
 
 function ledgerLines(x,y,top,bottom){
  let out='';
@@ -137,7 +138,7 @@ function renderBeams(groups,events,xs,selectedId,playingId){
  * One dense measure or two/three light measures per system; browser width
  * determines physical scaling, but the SVG never overflows horizontally.
  */
-export function scoreSystems(score,{maxSystemWidth=490,maxBarsPerSystem=3}={}){
+export function scoreSystems(score,{maxSystemWidth=490,maxBarsPerSystem=3,showNames=false}={}){
  if(!score?.measures?.length)return [];
  const systems=[];
  let from=0,total=115,bars=0;
@@ -145,7 +146,7 @@ export function scoreSystems(score,{maxSystemWidth=490,maxBarsPerSystem=3}={}){
  const limit=Math.max(1,Math.min(4,Number(maxBarsPerSystem)||3));
  for(let i=0;i<score.measures.length;i++){
   const bar=score.measures[i];
-  const width=Math.max(165,Math.round(46+bar.events.length*29));
+  const width=Math.max(165,Math.round(46+bar.events.length*(showNames?43:29)));
   if(bars>0&&(total+width>maxWidth || bars>=limit)){
    systems.push({start:from,end:i});
    from=i;total=115;bars=0;
@@ -158,7 +159,7 @@ export function scoreSystems(score,{maxSystemWidth=490,maxBarsPerSystem=3}={}){
 export function renderScoreView(score,{mode='notation',selectedEventId=null,playingEventId=null,showNames=false,annotations=null,layout='strip',measureOffset=0,chordSymbols=null}={}){
  if(layout==='systems'&&score?.measures?.length){
   const desktop=typeof window!=='undefined'&&window.innerWidth>=820;
-  const systems=scoreSystems(score,{maxSystemWidth:desktop?840:490,maxBarsPerSystem:desktop?4:2});
+  const systems=scoreSystems(score,{maxSystemWidth:desktop?840:490,maxBarsPerSystem:desktop?4:2,showNames});
   return `<div class="score-systems" role="group" aria-label="Multi-line sheet music: ${systems.length} stave systems, ${score.measures.length} measures">${systems.map(({start,end})=>{
    const single={...score,measures:score.measures.slice(start,end)};
    const chords=Array.isArray(chordSymbols)?chordSymbols.slice(start,end):null;
@@ -172,7 +173,7 @@ export function renderScoreView(score,{mode='notation',selectedEventId=null,play
  const meter=score.meter.split('/');
  const key=score.key??'C',keyCount=Math.abs(KEY_SIGNATURES[key]);
  const extra=keyCount*14;
- const segments=score.measures.map((bar,i)=>({bar,i,width:layout==='compact'?Math.max(165,Math.round(46+bar.events.length*29)):Math.max(205,Math.round(90+bar.events.length*61))}));
+ const segments=score.measures.map((bar,i)=>({bar,i,width:layout==='compact'?Math.max(165,Math.round(46+bar.events.length*(showNames?43:29))):Math.max(205,Math.round(90+bar.events.length*(showNames?68:61)))}));
  const width=125+extra+segments.reduce((a,s)=>a+s.width,0)+25;
  const height=showNotation&&showTab?347:showNotation?202:189;
  const tabTop=showNotation?226:62;
@@ -220,18 +221,19 @@ export function renderScoreView(score,{mode='notation',selectedEventId=null,play
     out+=`<g class="score-event ${selected?'selected':''} ${playing?'playing':''}" role="button" tabindex="0" data-event-id="${esc(ev.id)}" aria-label="${percussionClef&&ev.drumHits?'Drums '+esc(ev.drumHits.join(' and ')):ev.type==='rest'?'Rest':ev.type==='chord'?`Chord ${esc(ev.symbol)}, ${esc(ev.stroke)}stroke`:`Note ${esc(ev.spelling)}${esc(midiName(ev.midi).slice(-1))}`} ${esc(ev.duration)} quarter beats, measure ${measureOffset+i+1}"><rect x="${px-28}" y="25" width="56" height="123" fill="transparent"/>${mark}</g>`;
     if(percussionClef&&ev.drumHits)out+=`<text x="${px}" y="152" text-anchor="middle" fill="#3e5848" font-size="10">${esc(ev.drumHits.map(x=>({kick:'K',snare:'S',hat:'H'}[x]||'?')).join('+'))}</text>`;
     if(annotations?.[ev.id]&&ev.type!=='rest')out+=`<text class="score-tech-fingering" x="${px}" y="162" fill="#3c5e48" font-size="12" font-weight="700" text-anchor="middle">${esc(annotations[ev.id])}</text>`;
-    if(showNames&&ev.type==='note')out+=`<text x="${px}" y="174" fill="#456047" font-size="11" font-weight="700" text-anchor="middle">${esc(ev.spelling)}</text>`;
+    if(showNames&&ev.type==='note')out+=`<text class="score-note-label" x="${px+18}" y="${staffNoteY(ev.midi,ev.spelling)-11}" fill="#28553b" font-size="12" font-weight="700">${esc(writtenNoteName(ev.midi,ev.spelling))}</text>`;
+    if(showNames&&ev.type==='chord'&&Array.isArray(ev.notes))for(const note of ev.notes)out+=`<text class="score-note-label" x="${px+19}" y="${staffNoteY(note.midi,note.spelling)-8}" fill="#28553b" font-size="10" font-weight="700">${esc(writtenNoteName(note.midi,note.spelling))}</text>`;
    }
    if(showTab){
     const pos=preferredPosition(ev,score.tuning);
     if(ev.type==='chord'){
      out+=`<g class="score-event ${selected?'selected':''} ${playing?'playing':''}" role="button" tabindex="0" data-event-id="${esc(ev.id)}" aria-label="${esc(ev.symbol)} chord on four ukulele strings">`;
      for(const n of ev.notes){const yy=tabTop+(3-n.position.string)*27;
-      out+=`<rect x="${px-14}" y="${yy-11}" width="28" height="22" rx="4" fill="${selected||playing?'#d5ac6b':'#eee8db'}"/><text x="${px}" y="${yy+5}" text-anchor="middle" fill="#253e2d" font-size="14" font-weight="700">${n.position.fret}</text>`;
+      out+=`<rect x="${px-14}" y="${yy-11}" width="28" height="22" rx="4" fill="${selected||playing?'#d5ac6b':'#eee8db'}"/><text x="${px}" y="${yy+5}" text-anchor="middle" fill="#253e2d" font-size="14" font-weight="700">${n.position.fret}</text>${showNames?`<text class="score-tab-note-label" x="${px+18}" y="${yy+5}" font-size="11" font-weight="700" fill="#27573a">${esc(writtenNoteName(n.midi,n.spelling))}</text>`:''}`;
      }
      out+='</g>';
     }else if(pos){const yy=tabTop+(3-pos.string)*27;
-     out+=`<g class="score-event ${selected?'selected':''} ${playing?'playing':''}" role="button" tabindex="0" data-event-id="${esc(ev.id)}" aria-label="Fret ${pos.fret} on ${esc(TUNINGS[score.tuning].names[pos.string])} string"><rect x="${px-16}" y="${yy-13}" width="32" height="26" rx="5" fill="${selected||playing?'#d5ac6b':'#eee8db'}"/><text x="${px}" y="${yy+6}" fill="#253e2d" text-anchor="middle" font-size="16" font-weight="700">${pos.fret}</text></g>`;
+     out+=`<g class="score-event ${selected?'selected':''} ${playing?'playing':''}" role="button" tabindex="0" data-event-id="${esc(ev.id)}" aria-label="Fret ${pos.fret} on ${esc(TUNINGS[score.tuning].names[pos.string])} string"><rect x="${px-16}" y="${yy-13}" width="32" height="26" rx="5" fill="${selected||playing?'#d5ac6b':'#eee8db'}"/><text x="${px}" y="${yy+6}" fill="#253e2d" text-anchor="middle" font-size="16" font-weight="700">${pos.fret}</text>${showNames?`<text class="score-tab-note-label" x="${px+19}" y="${yy+5}" font-size="11" fill="#27573a" font-weight="700">${esc(writtenNoteName(ev.midi,ev.spelling))}</text>`:''}</g>`;
     }else if(ev.type==='rest')out+=`<text x="${px}" y="${tabTop+42}" text-anchor="middle" fill="#7b8b77" font-size="11">rest</text>`;
     else out+=`<text x="${px}" y="${tabTop+42}" text-anchor="middle" fill="#a35243" font-size="13">×</text>`;
    }
