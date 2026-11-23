@@ -105,13 +105,25 @@ export function validateScore(score) {
       }else if(ev.type==='chord'){
         if(ev.tieToNext||ev.slurToNext)throw new Error('Chord ties and slurs are not supported in this monophonic study model');
         if(!STROKES.includes(ev.stroke))throw new Error('Unknown strum direction');
-        if(!Array.isArray(ev.notes)||ev.notes.length<3||ev.notes.length>4)throw new Error('A chord needs three or four sounding strings');
-        if(ev.voicing==='generated' && (typeof ev.symbol!=='string'||!ev.symbol||ev.symbol.length>30))throw new Error('Invalid generated chord name');
-        if(ev.voicing!==undefined&&ev.voicing!=='generated')throw new Error('Invalid chord voicing mode');
-        if(!ev.voicing&&!Object.hasOwn(CHORD_SHAPES,ev.symbol))throw new Error('Unsupported chord shape');
-        const expected=ev.voicing==='generated'?generatedChordNotes(ev.pcs,ev.spellings,score.tuning):chordNotes(ev.symbol,score.tuning);
-        if(ev.notes.length!==expected.length||ev.notes.some((note,i)=>!note||note.midi!==expected[i].midi||note.spelling!==expected[i].spelling||note.position?.string!==expected[i].position.string||note.position?.fret!==expected[i].position.fret))
-          throw new Error('Chord pitches and fingerings do not match the selected tuning');
+        if(!Array.isArray(ev.notes)||ev.notes.length<(ev.voicing==='custom'?2:3)||ev.notes.length>4)throw new Error('Chord requires two to four sounding ukulele strings');
+        if(!STROKES.includes(ev.stroke))throw new Error('Unknown strum direction');
+        if(ev.voicing==='custom'){
+          if(typeof ev.symbol!=='string'||ev.symbol.length>40)throw new Error('Invalid custom voicing label');
+          const strings=new Set();
+          for(const note of ev.notes){
+            if(!note||!Number.isInteger(note.midi)||note.midi<36||note.midi>96||typeof note.spelling!=='string'||!/^([A-G])([#b]{0,2})$/.test(note.spelling)||notePc(note.spelling)!==mod(note.midi,12))throw Error('Invalid note in custom chord');
+            const p=note.position;
+            if(!p||!Number.isInteger(p.string)||p.string<0||p.string>3||strings.has(p.string)||!Number.isInteger(p.fret)||p.fret<0||p.fret>12||TUNINGS[score.tuning].midi[p.string]+p.fret!==note.midi)throw Error('Custom chord must use unique playable strings');
+            strings.add(p.string);
+          }
+        }else{
+          if(ev.voicing==='generated' && (typeof ev.symbol!=='string'||!ev.symbol||ev.symbol.length>30))throw new Error('Invalid generated chord name');
+          if(ev.voicing!==undefined&&ev.voicing!=='generated')throw new Error('Invalid chord voicing mode');
+          if(!ev.voicing&&!Object.hasOwn(CHORD_SHAPES,ev.symbol))throw new Error('Unsupported chord shape');
+          const expected=ev.voicing==='generated'?generatedChordNotes(ev.pcs,ev.spellings,score.tuning):chordNotes(ev.symbol,score.tuning);
+          if(ev.notes.length!==expected.length||ev.notes.some((note,i)=>!note||note.midi!==expected[i].midi||note.spelling!==expected[i].spelling||note.position?.string!==expected[i].position.string||note.position?.fret!==expected[i].position.fret))
+            throw new Error('Chord pitches and fingerings do not match the selected tuning');
+        }
       }else if(ev.type==='rest'){
         if(ev.tieToNext||ev.slurToNext||ev.articulation)throw new Error('Rest cannot have ties, slurs or articulation');
         if('midi' in ev||'position' in ev)throw new Error('Rests cannot have pitches or fingerings');
