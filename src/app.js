@@ -4,6 +4,7 @@ import {renderScoreView,scoreSystems} from './score-view.js';
 import {validateLoopRange,practiceExcerpt,nextPracticeSpeed,saveSongBookmark,practiceLog,songPracticeStats,reviewDue,validatedPracticePreferences} from './practice-engine.js';
 import {arpeggioDegrees,chordInversions,harmonicFunctions,basicChordSubstitutions,nextEarTrainingQuestion} from './advanced-theory.js';
 import {LEARNING_UNITS,learningReview,recordLearningReview} from './learning-path.js';
+import {addSongToPlaylist,annotateSong,printableSongFilename} from './song-organizer.js';
 import {parseBarLyricCues,lyricCuesToText,mergeReadingCues} from './song-lyrics.js';
 import {partVerificationStatus} from './score-verification.js';
 import {prepareUkuleleSamples,playUkuleleSample} from './ukulele-samples.js';
@@ -54,6 +55,8 @@ state.songRampStep=[2,5,10].includes(read('songRampStep',5))?read('songRampStep'
 state.songRampMax=Number(read('songRampMax',120))||120;
 state.practicePreferences=validatedPracticePreferences(read('practicePreferences',{}));
 state.learningProgress=read('learningProgress',{});
+state.songPlaylists=read('songPlaylists',{});
+state.songAnnotations=read('songAnnotations',{});
 state.earSeed=Number(read('earSeed',0))||0;
 state.earAnswer=null;
 state.songVisibleParts={ukulele:true};
@@ -457,7 +460,7 @@ function playTechnique(){
 
 function rhythm(){return `${hero('RHYTHM STUDIO','Feel the <em>pulse.</em>','Build a two-bar eighth-note strumming pattern, play it with sound, and connect rhythmic movement to steady musical time.','RHYTHM · 4/4')}
 <div class="workspace-grid"><section class="panel panel-pad"><div class="panel-title"><h2>Strumming pattern studio</h2><span class="sub-label">8 EIGHTH-NOTE SLOTS</span></div><p class="panel-desc">Tap each slot to cycle through a downstroke (↓), upstroke (↑), and rest (–). A full measure is eight eighth notes in 4/4.</p><div class="pattern-grid">${state.rhythm.map((v,i)=>`<button data-step="${i}" class="beat-cell ${i===state.rhythmStep?'active':''}" aria-label="Beat slot ${i+1}, ${v==='D'?'downstroke':v==='U'?'upstroke':'rest'}"><span class="beat-num">${Math.floor(i/2)+1}${i%2?'&':''}</span><span class="beat-dir">${v==='D'?'↓':v==='U'?'↑':'–'}</span></button>`).join('')}</div><div class="step-actions"><button class="btn gold" data-action="play-rhythm">${rhythmTimer?'■ Stop pattern':'▶ Play pattern'}</button><button class="btn" data-action="open-metronome">◷ Metronome</button><button class="btn ghost" data-action="reset-pattern">Reset</button></div><div class="score-info"><span>Tempo: ${state.tempo} BPM</span><span>Pattern stored on your device</span></div></section><section class="panel panel-pad"><div class="panel-title"><h2>Learn rhythm from notation</h2></div><div class="lesson-list"><div class="lesson"><div class="lesson-icon">♩</div><div><h3>Pulse and quarter notes</h3><p>Feel four even beats in a bar.</p></div><span class="status-tag">ACTIVE</span></div><div class="lesson"><div class="lesson-icon">♫</div><div><h3>Eighth-note subdivision</h3><p>Count 1 & 2 & 3 & 4 &.</p></div><span class="status-tag">ACTIVE</span></div><div class="lesson"><div class="lesson-icon">𝄽</div><div><h3>Rests & syncopation</h3><p>Read and tap short written phrases in Notation Academy.</p></div><span class="status-tag">ACTIVE</span></div></div><hr class="divider"><label class="control"><span>Adjust tempo (${state.tempo} BPM)</span><input id="rhythmTempo" type="range" min="40" max="200" step="2" value="${state.tempo}"></label><p class="small-text">The pattern sequencer uses pitched clicks as a placeholder for actual ukulele strum samples. The notation-based tap trainer is available under Notation Academy.</p></section></div>`}
-function exportBackup(){const data={format:'ukulele-workbench-backup',schemaVersion:2,exportedAt:new Date().toISOString(),scoreDraft:state.score,songs:songs(),progress:progress(),rhythm:state.rhythm,tuning:state.tuning,display:state.display,techniqueProgress:techniqueProgress(),rhythmLabProgress:rhythmLabProgress(),notationReadingProgress:readingProgress(),progressionDraft:state.progression,guitarAdaptations:state.songGuitarAdaptations,lyricCues:state.songLyricsById,practiceHistory:state.songPracticeHistory,practiceRanges:state.songPracticeRanges,songBookmarks:state.songBookmarks,practicePreferences:state.practicePreferences};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='ukulele-workbench-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),4000);toast('Backup exported')}
+function exportBackup(){const data={format:'ukulele-workbench-backup',schemaVersion:2,exportedAt:new Date().toISOString(),scoreDraft:state.score,songs:songs(),progress:progress(),rhythm:state.rhythm,tuning:state.tuning,display:state.display,techniqueProgress:techniqueProgress(),rhythmLabProgress:rhythmLabProgress(),notationReadingProgress:readingProgress(),progressionDraft:state.progression,guitarAdaptations:state.songGuitarAdaptations,lyricCues:state.songLyricsById,practiceHistory:state.songPracticeHistory,practiceRanges:state.songPracticeRanges,songBookmarks:state.songBookmarks,practicePreferences:state.practicePreferences,songPlaylists:state.songPlaylists,songAnnotations:state.songAnnotations,learningProgress:state.learningProgress};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='ukulele-workbench-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),4000);toast('Backup exported')}
 function songScoreSections(score){
  const result=[];
  score?.measures?.forEach((bar,i)=>{
@@ -668,6 +671,36 @@ function practiceRangeControls(){
  <p class="small-text">History: ${stats.sessions} sessions · ${stats.minutes} min · ${stats.loops} repetitions. ${stats.weakBars.length?'Review bars '+stats.weakBars.map(x=>x.bar).join(', '):''}</p>
  </div>`;
 }
+function printCurrentSongScore(){
+ const selection=activeSongPractice(),song=currentSongSource();
+ if(!selection||!song)return;
+ const score=selection.score;
+ const host=document.createElement('section');host.id='printSheet';
+ const chords=state.songShowChordNames?chartChordsPerBar(song):null;
+ const markers=readingCuesForSong(song,songScoreSections(score));
+ host.innerHTML=`<h1>${h(selection.label)}</h1><p>${h(song.artist||'')} · ${h(score.key)} · ${score.tempo} BPM · ${h(score.tuning)}</p>
+ ${renderScoreView(score,{mode:state.display,layout:'systems',showNames:state.songShowNoteNames,showChordLabels:false,chordSymbols:chords,readingCues:markers})}
+ <p>Ukulele Workbench · practice arrangement, source verification may be pending</p>`;
+ document.body.append(host);
+ const finish=()=>host.remove();
+ window.addEventListener('afterprint',finish,{once:true});
+ window.print();
+}
+function songOrganizationControls(){
+ const song=currentSongSource();if(!song?.score)return '';
+ const id=guitarOverrideKey(song),notes=state.songAnnotations[id]||'';
+ const collections=Object.entries(state.songPlaylists).filter(([,ids])=>Array.isArray(ids)&&ids.includes(id)).map(([name])=>name);
+ return `<details class="song-organizer"><summary>Song notes, playlists and print/export</summary>
+  <p class="small-text">Your notes and playlists remain local to this browser. Print can be saved as PDF using your browser's print dialog.</p>
+  <label for="songPersonalNotes">Private song annotations</label>
+  <textarea id="songPersonalNotes" rows="3" maxlength="10000" placeholder="Difficult bars, fingering changes and practice reminders">${h(notes)}</textarea>
+  <div class="score-actions"><button class="btn compact" type="button" data-action="song-save-annotations">Save notes</button>
+   <button class="btn compact" type="button" data-action="song-add-playlist">Add to playlist</button>
+   <button class="btn compact" type="button" data-action="song-print">Print / Save PDF</button>
+   <button class="btn compact" type="button" data-action="song-export-xml">Export MusicXML</button></div>
+  <p class="small-text">Playlists: ${collections.length?collections.map(h).join(' · '):'none'}</p>
+ </details>`;
+}
 function songPracticeControls(preview,body=''){
  if(!preview)return '';
  const guide=songPracticeGuide(preview,body);
@@ -699,6 +732,7 @@ function songPracticeControls(preview,body=''){
  <div class="song-practice-display">${tabbar([['notation','Notation'],['dual','Notation + tab'],['tab','Tab only']],state.display,'data-display')}</div>
  <p class="small-text" id="songPracticeStatus" role="status" aria-live="polite">${paused?'Paused — single tap the score to resume.':playing?'Playing sampled ensemble…':state.songSampleLoading?'Loading recordings…':state.songSampleFallback?'Some notes unavailable; a backup sound is being used.':'Ready. Tap written notes and chords to hear the recorded ukulele.'}</p>
  ${guide.length?`<div class="song-chord-guide"><strong>Chord fingerings — ${h(TUNINGS[preview.tuning].names.join(' · '))} string order</strong><p class="small-text">Tap a chord to hear its written ukulele fingering.</p><div class="repo-tags">${guide.map(chord=>`<button type="button" class="btn compact ghost" data-practice-chord="${h(chord.symbol)}" title="Listen to ${h(chord.symbol)} chord"><b>${h(chord.symbol)}</b> &nbsp;${h(chord.frets)}</button>`).join('')}</div></div>`:''}
+ ${songOrganizationControls()}
  </div>`;
 }
 
@@ -1490,6 +1524,27 @@ function handleClick(e){const node=e.target.closest('[data-prog-degree],[data-pr
   if(!store('songLyricsById',next))break;
   state.songLyricsById=next;state.songLyricEditorOpen=false;render();toast('Local lyric cues cleared');
  }break;
+ case 'song-print':printCurrentSongScore();break;
+ case 'song-save-annotations':{
+  const song=currentSongSource();if(!song)return;
+  try{state.songAnnotations=annotateSong(state.songAnnotations,guitarOverrideKey(song),$('#songPersonalNotes')?.value||'');
+   store('songAnnotations',state.songAnnotations);toast('Song notes saved locally')}
+  catch(error){toast(error.message)}
+ }break;
+ case 'song-add-playlist':{
+  const song=currentSongSource();if(!song)return;
+  const name=prompt('Playlist name','Practice repertoire');if(name===null)return;
+  try{state.songPlaylists=addSongToPlaylist(state.songPlaylists,name,guitarOverrideKey(song));
+   store('songPlaylists',state.songPlaylists);render();toast('Added to playlist')}
+  catch(error){toast(error.message)}
+ }break;
+ case 'song-export-xml':{
+  const song=activeSongPractice();if(!song)return;
+  try{const blob=new Blob([exportMusicXML(song.score)],{type:'application/vnd.recordare.musicxml+xml'});
+   const url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download=printableSongFilename(song.label)+'.musicxml';link.click();
+   setTimeout(()=>URL.revokeObjectURL(url),5000);toast('MusicXML score exported')}
+  catch(error){toast('MusicXML export: '+error.message)}
+ }break;
  case 'song-practice-set-ab':{
   const selection=activeSongPractice();if(!selection)return;
   try{const range=validateLoopRange(selection.score.measures.length,Number($('#songPracticeA')?.value),Number($('#songPracticeB')?.value));
@@ -1664,6 +1719,9 @@ async function importBackup(file){
   if(data.practiceRanges&&typeof data.practiceRanges==='object'){state.songPracticeRanges=data.practiceRanges;store('songPracticeRanges',state.songPracticeRanges)}
   if(data.songBookmarks&&typeof data.songBookmarks==='object'){state.songBookmarks=data.songBookmarks;store('songBookmarks',state.songBookmarks)}
   if(data.practicePreferences){state.practicePreferences=validatedPracticePreferences(data.practicePreferences);store('practicePreferences',state.practicePreferences)}
+  if(data.songPlaylists&&typeof data.songPlaylists==='object'){state.songPlaylists=data.songPlaylists;store('songPlaylists',state.songPlaylists)}
+  if(data.songAnnotations&&typeof data.songAnnotations==='object'){state.songAnnotations=data.songAnnotations;store('songAnnotations',state.songAnnotations)}
+  if(data.learningProgress&&typeof data.learningProgress==='object'){state.learningProgress=data.learningProgress;store('learningProgress',state.learningProgress)}
   if(data.progressionDraft)state.progression=structuredClone(data.progressionDraft);
   if(data.scoreDraft){
    stopScorePlayback();state.score=structuredClone(data.scoreDraft);
