@@ -4,7 +4,7 @@
  */
 import {notePc,midiName} from './music.js';
 import {measureBeats,validateScore} from './score.js';
-import {extractChordSymbols,chordPitchClasses} from './song-practice.js';
+import {chartChordSequence,chordPitchClasses} from './song-practice.js';
 
 export const SONG_ARRANGEMENT_MODES=Object.freeze([
  {id:'guitar-uke',label:'Guitar → ukulele',description:'Playable ukulele adaptation with optional instrumental backing; source guitar notes are not yet verified'},
@@ -20,12 +20,12 @@ export function chartChordsPerBar(arrangement){
  if(sections){
   for(const section of sections){
    const row=lines.find(line=>line.split(':')[0].trim().toLowerCase()===section.label.trim().toLowerCase());
-   const chords=extractChordSymbols(row?.slice(row.indexOf(':')+1)||'');
+   const chords=chartChordSequence(row?.slice(row.indexOf(':')+1)||'');
    if(!chords.length)continue;
    for(let bar=section.startBar-1;bar<section.endBar&&bar<harmonies.length;bar++)harmonies[bar]=chords[(bar-section.startBar+1)%chords.length];
   }
  }
- const fallback=extractChordSymbols(arrangement.body||'');
+ const fallback=chartChordSequence(arrangement.body||'');
  for(let i=0;i<harmonies.length;i++){
   const event=score.measures[i].events.find(ev=>ev.type==='chord' && ev.symbol);
   if(!harmonies[i])harmonies[i]=event?.symbol||fallback[i%fallback.length]||null;
