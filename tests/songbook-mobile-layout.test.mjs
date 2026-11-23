@@ -37,7 +37,7 @@ test('new songs open full score with only ukulele staff, while audio tracks are 
 });
 test('score-follow primes first staff during count-in and scrolls in the upper third before next group starts',()=>{
  const s=readFileSync(new URL('../src/app.js',import.meta.url),'utf8');
- assert.match(s,/followSongPracticeScore\(\(state\.songPracticeScope==='section'/);
+ assert.match(s,/followSongPracticeScore\(range\.start,run/);
  assert.match(s,/bounds\.top>viewport\*\.36/);
  assert.match(s,/next\.top>viewport\*\.72/);
  assert.match(s,/block:'start'/);
