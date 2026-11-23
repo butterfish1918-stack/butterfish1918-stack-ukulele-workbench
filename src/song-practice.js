@@ -51,6 +51,19 @@ export function extractChordSymbols(body,limit=32){
  }
  return result;
 }
+/** Ordered chart tokens, including repeated chord symbols. Needed for measure-by-measure harmony. */
+export function chartChordSequence(body,limit=300){
+ if(typeof body!=='string')return [];
+ const tokens=[],matcher=/(?:^|[\s|\[])\[?([A-G](?:#|b)?(?:maj7|m7|sus2|sus4|m|7)?)\]?(?=$|[\s|\],;])/g;
+ for(const line of body.split(/\r?\n/)){
+  const text=line.includes(':')?line.slice(line.indexOf(':')+1):line;
+  for(const match of text.matchAll(matcher)){
+   tokens.push(match[1]);
+   if(tokens.length>=limit)return tokens;
+  }
+ }
+ return tokens;
+}
 /** Chord pitch classes for common major/minor/seventh/suspended harmonies. */
 export function chordPitchClasses(symbol){
  const match=/^([A-G])([#b]?)(maj7|m7|sus2|sus4|m|7)?$/.exec(symbol||'');
