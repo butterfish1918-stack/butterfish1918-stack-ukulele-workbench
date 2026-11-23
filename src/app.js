@@ -7,7 +7,7 @@ import {prepareBackupRestore,commitBackupRestore} from './storage-safety.js';
 import {inspectDevice} from './device-qa.js';
 import {BUNDLED_LIBRARY} from './library-seed.js';
 import {attachApprovedRepertoireScores} from './repertoire-migration.js';
-import {sectionScore,chordGuide,practiceTempo,extractChordSymbols,chordPitchClasses,COMMON_HIGH_G_CHORDS} from './song-practice.js';
+import {sectionScore,chordGuide,practiceTempo,extractChordSymbols,chordPitchClasses,COMMON_HIGH_G_CHORDS,repertoireCopyStatus} from './song-practice.js';
 import {DEFAULT_CATALOG_URL,catalogUrl,validateSnapshot,downloadRepository,downloadSingleApprovedArrangement,copyToSongbook} from './song-library.js';
 import {exportMusicXML,importMusicXML} from './musicxml.js';
 import {adaptGuitarPart,exampleGuitarSource} from './guitar-adaptation.js';
@@ -574,7 +574,6 @@ async function selectRepertoireSong(item){
 }
 function approvedRepertoireSongbook(){
  const items=repertoireItems();
- const owned=new Set(songs().filter(s=>s.score && s.repertoireOrigin?.id).map(s=>s.repertoireOrigin.id));
  const selected=items.find(item=>item.id===state.repertoireSelectedId)||items[0]||null;
  const arrangement=selected?availableArrangementForItem(selected):null;
  const sections=Array.isArray(arrangement?.sections)&&arrangement.sections.length?arrangement.sections:songScoreSections(arrangement?.score);
@@ -585,8 +584,8 @@ function approvedRepertoireSongbook(){
  <p class="small-text">Choose <strong>View score</strong> to read an arrangement without copying it. Use <strong>Add to My Songbook</strong> to keep your own editable copy. No existing personal copies are overwritten. To read optional tablature, change the notation display setting.</p>
  ${state.repoError?`<p class="small-text" role="alert">${h(state.repoError)}</p>`:''}
  <div class="song-list">${items.map(item=>{
- const scoreId=repertoireScoreId(item),available=!!availableArrangementForItem(item),isOwned=owned.has(item.id);
- return `<div class="song-row ${selected?.id===item.id?'repo-selected':''}"><div class="song-initial">♫</div><div class="song-title"><b>${h(item.title)}</b><small>${h(item.artist)} · ${h(item.practiceFocus)} · ${isOwned?'Saved in My Songbook':available?(item.preferredArrangementId?'Complete historical tune':'Ukulele accompaniment'):'Open to load accompaniment'}</small></div><button type="button" class="btn compact" data-repertoire-preview="${h(item.id)}" aria-label="View score for ${h(item.title)}">View score</button><button type="button" class="btn compact ${isOwned?'ghost':'gold'}" data-repertoire="${h(item.id)}" ${isOwned?'disabled':''}>${isOwned?'Already added':available?'Add':'Load & add'}</button></div>`;
+ const arrangement=availableArrangementForItem(item),available=!!arrangement,status=repertoireCopyStatus(songs(),item,arrangement);
+ return `<div class="song-row ${selected?.id===item.id?'repo-selected':''}"><div class="song-initial">♫</div><div class="song-title"><b>${h(item.title)}</b><small>${h(item.artist)} · ${h(item.practiceFocus)} · ${status.updateAvailable?'New arrangement revision available':status.upToDate?'Saved in My Songbook':status.existing?'Saved earlier version · check latest score':available?(item.preferredArrangementId?'Complete historical tune':'Ukulele accompaniment'):'Open to load accompaniment'}</small></div><button type="button" class="btn compact" data-repertoire-preview="${h(item.id)}" aria-label="View score for ${h(item.title)}">View score</button><button type="button" class="btn compact ${status.upToDate?'ghost':'gold'}" data-repertoire="${h(item.id)}" ${status.upToDate?'disabled':''}>${status.upToDate?'Already added':status.updateAvailable?'Add new revision':available?'Add score':'Load & add'}</button></div>`;
  }).join('')}</div></section>
  <section class="panel panel-pad"><div class="panel-title"><h2>Practice score</h2></div>
  ${selected?`<h2 class="repo-song-heading">${h(selected.title)}</h2><p class="small-text">${h(selected.artist)} · ${h(selected.practiceFocus)}</p>`:''}
@@ -595,7 +594,7 @@ function approvedRepertoireSongbook(){
  ${sections.length?`<p class="small-text">${arrangement.score.measures.length} measures total; choose a section to practise.</p><div class="repo-tags" role="group" aria-label="Choose musical section">${sections.map((section,index)=>`<button type="button" class="btn compact ${index===state.repertoireSectionIndex?'gold':'ghost'}" data-repertoire-section="${index}" aria-pressed="${index===state.repertoireSectionIndex}">${h(section.label)} (${section.startBar}–${section.endBar})</button>`).join('')}</div>`:''}
  <div class="score-holder score-editor-view repo-score-preview">${renderScoreView(previewScore,{mode:state.display})}</div>${songPracticeControls(previewScore,arrangement.body)}
  <p class="small-text" style="white-space:pre-wrap">${h(arrangement.body||'')}</p><p class="small-text" style="white-space:pre-wrap">${h(arrangement.notes||'')}</p>
- <div class="score-actions"><button type="button" class="btn gold" data-repertoire="${h(selected.id)}" ${owned.has(selected.id)?'disabled':''}>${owned.has(selected.id)?'Already in My Songbook':'＋ Add to My Songbook'}</button></div>`:
+ <div class="score-actions"><button type="button" class="btn gold" data-repertoire="${h(selected.id)}" ${repertoireCopyStatus(songs(),selected,arrangement).upToDate?'disabled':''}>${repertoireCopyStatus(songs(),selected,arrangement).upToDate?'Already in My Songbook':repertoireCopyStatus(songs(),selected,arrangement).updateAvailable?'＋ Add new revision':'＋ Add to My Songbook'}</button></div>`:
  `<p class="small-text">${state.repertoireLoadingId===selected?.id?'Loading this song’s musical score…':state.repoError?h(state.repoError):'Choose View score to fetch notation, chord progressions and fingerings for this song.'}</p>`}
  </section></div>`;
 }
@@ -647,12 +646,14 @@ async function addApprovedSongs(ids=null){
   const items=repertoireItems().filter(item=>ids===null||ids.includes(item.id));
   let next=songs(),added=0,upgraded=0;
   for(const item of items){
-   if(next.some(song=>song.score && song.repertoireOrigin?.id===item.id))continue;
    const snapshot=await ensureApprovedArrangement(item);
    const arrangementId=repertoireScoreId(item);
+   const source=snapshot.songs[arrangementId];
+   if(next.some(song=>song.score && song.repertoireOrigin?.id===item.id &&
+       song.repositoryOrigin?.id===arrangementId && song.repositoryOrigin?.revision===source.revision))continue;
    const migrated=attachApprovedRepertoireScores(snapshot,next,{ids:[item.id]});
    if(migrated.upgraded){next=migrated.songs;upgraded+=migrated.upgraded;continue}
-   if(next.some(song=>song.repositoryOrigin?.id===arrangementId))continue;
+   if(next.some(song=>song.score && song.repositoryOrigin?.id===arrangementId && song.repositoryOrigin?.revision===source.revision))continue;
    const id='repertoire-study-copy-'+(globalThis.crypto?.randomUUID?.()??Date.now()+'-'+Math.floor(Math.random()*1e6))+'-'+added;
    next=copyToSongbook(snapshot,arrangementId,next,{id,validateScore});
    next.at(-1).repertoireOrigin={id:item.id};
