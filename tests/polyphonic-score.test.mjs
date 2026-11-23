@@ -70,3 +70,11 @@ test('ties require successive notes at identical pitch and onset, including acro
  invalidRest.parts[0].voices[0].measures[0].events[0].tieStart=true;
  assert.throws(()=>validateScoreDocument(invalidRest),/Ties require pitched notes/);
 });
+
+test('source measure references are validated when imported repeats are expanded',()=>{
+ const copy=structuredClone(doc);
+ copy.sourceMeasureNumbers=[1,1];
+ assert.equal(validateScoreDocument(copy),true);
+ copy.sourceMeasureNumbers=[1,'<svg onload=alert(1)>'];
+ assert.throws(()=>validateScoreDocument(copy),/Invalid original measure references/);
+});

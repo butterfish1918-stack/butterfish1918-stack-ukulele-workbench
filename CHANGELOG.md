@@ -1,3 +1,14 @@
+## 23 November 2026 — v1.11.3 Beta: bounded MusicXML repeat expansion
+
+- Added a strict, deterministic repeat planner for MusicXML partwise scores. Standard forward/backward repeat signs are supported for two to four passes; conventional first/second endings are supported for exactly two passes.
+- Repeat playback is linearized across all instruments before schema-2 validation, preserving independent parts and voices, written pitch spellings, dynamics, ties and rhythmic onsets where the result forms a valid score. Source-written measure numbers remain attached for navigation.
+- Imported score view labels repeated measures with their original source measure numbers and explicitly warns that exported MusicXML will contain the fully expanded measures without repeat barlines.
+- Detects contradictory repeat instructions between instruments, nested/overlapping repeats, orphaned or incomplete endings, unsupported directions and excessive expansion beyond 200 measures, rather than silently playing the wrong order.
+- Original song-score editing and single-voice score formats remain unchanged.
+- Automated tests cover repeat counts, first/second endings, multipart import-to-playback consistency and unsupported structures. This is intentionally not general MusicXML 4.0 support: D.S./D.C. navigation, segno/coda, nested repeats, third endings and complex repeat structures remain unsupported. Physical Android testing remains outstanding.
+
+---
+
 ## 23 November 2026 — v1.11.2 Beta: contiguous MusicXML ties
 
 - Added validated note-to-note ties within independent instrumental voices, including ties spanning multiple measures and middle notes that both stop and restart a tie.

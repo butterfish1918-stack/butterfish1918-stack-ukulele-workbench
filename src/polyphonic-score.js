@@ -21,6 +21,10 @@ export function validateScoreDocument(doc){
  const [numerator,denominator]=doc.meter.split('/').map(Number);
  const barBeats=numerator*4/denominator;
  if(!Number.isInteger(maxBars)||maxBars<1||maxBars>200)throw Error('Invalid bar count');
+ if(doc.sourceMeasureNumbers!==undefined&&
+   (!Array.isArray(doc.sourceMeasureNumbers)||doc.sourceMeasureNumbers.length!==maxBars||
+    doc.sourceMeasureNumbers.some(x=>!Number.isInteger(x)||x<1||x>200)))
+  throw Error('Invalid original measure references');
  const seen=new Set();
  for(const part of doc.parts){
   if(typeof part.id!=='string'||!part.id||seen.has(part.id)||typeof part.name!=='string'||part.name.length>80)throw Error('Invalid instrument part');

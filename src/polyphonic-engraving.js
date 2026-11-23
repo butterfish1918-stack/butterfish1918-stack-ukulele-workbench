@@ -28,7 +28,8 @@ export function renderPolyphonicDocument(doc,{pageWidth=760}={}){
    for(let line=0;line<5;line++)svg+=`<line x1="75" y1="${y+line*11}" x2="${width-5}" y2="${y+line*11}" stroke="#64736b" stroke-width="1"/>`;
    for(let bar=startBar;bar<=endBar;bar++){
     const x=75+(bar-startBar)*barWidth;
-    svg+=`<line x1="${x}" y1="${y}" x2="${x}" y2="${y+44}" stroke="#36473b"/><text x="${x+5}" y="${y-9}" font-size="10" fill="#56675a">${bar}</text>`;
+    const source=doc.sourceMeasureNumbers?.[bar-1];
+    svg+=`<line x1="${x}" y1="${y}" x2="${x}" y2="${y+44}" stroke="#36473b"/><text x="${x+5}" y="${y-9}" font-size="10" fill="#56675a">${bar}${source&&source!==bar?' ('+source+')':''}</text>`;
     if(bar===startBar)svg+=`<text class="poly-clef" x="${x+5}" y="${y+40}" font-family="serif" font-size="30">𝄞</text>`;
     if(bar===1)svg+=`<text class="poly-meter" x="${x+24}" y="${y+19}" font-size="11" text-anchor="middle">${beats}</text><text class="poly-meter" x="${x+24}" y="${y+36}" font-size="11" text-anchor="middle">${den}</text>`;
     for(const [voiceIndex,voice]of part.voices.entries()){
@@ -36,7 +37,7 @@ export function renderPolyphonicDocument(doc,{pageWidth=760}={}){
      for(const e of events){
       const ex=x+55+e.onset/cap*85+(voiceIndex%2?10:-10),rest=e.type==='rest';
       const name=rest?'':midiName(e.midi),ey=rest?y+22:writtenY(e,y),accidental=e.spelling?.includes('#')?'♯':e.spelling?.includes('b')?'♭':'';
-      svg+=`<g class="poly-voice-event" data-voice="${esc(voice.id)}" data-measure="${bar}" aria-label="${rest?'Rest':esc(name)} in voice ${esc(voice.id)} at beat ${e.onset}">
+      svg+=`<g class="poly-voice-event" data-voice="${esc(voice.id)}" data-measure="${bar}"${source?` data-source-measure="${source}"`:''} aria-label="${rest?'Rest':esc(name)} in voice ${esc(voice.id)} at beat ${e.onset}">
        ${rest?`<rect x="${ex-6}" y="${ey-3}" width="12" height="5" fill="#36473b"/>`:`${ledgerMarks(ex,ey,y)}${accidental?`<text class="poly-accidental" x="${ex-18}" y="${ey+5}" font-size="15">${accidental}</text>`:''}<ellipse cx="${ex}" cy="${ey}" rx="7" ry="5" fill="${e.duration>=2?'none':'#36473b'}" stroke="#36473b" stroke-width="1.5" transform="rotate(-18 ${ex} ${ey})"/>${e.duration>=4?'':`<line x1="${ex+(voiceIndex%2?-7:7)}" y1="${ey}" x2="${ex+(voiceIndex%2?-7:7)}" y2="${ey+(voiceIndex%2?29:-30)}" stroke="#36473b" stroke-width="1.5"/>`}`}
        ${e.articulation&&e.articulation!=='none'?`<text x="${ex}" y="${ey-13}" font-size="10" text-anchor="middle">${e.articulation==='staccato'?'•':e.articulation==='accent'?'>':esc(e.articulation)}</text>`:''}
        ${e.finger!==undefined?`<text x="${ex+13}" y="${ey+2}" font-size="9">${e.finger}</text>`:''}

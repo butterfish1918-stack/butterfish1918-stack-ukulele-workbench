@@ -1325,6 +1325,7 @@ function importedScoreDocumentPanel(){
   </div>
   <input type="file" id="multiPartXmlFile" accept=".xml,.musicxml,text/xml,application/xml" hidden>
   ${doc?`<h3>${h(doc.title)}</h3><p>${doc.parts.length} instrumental parts · ${doc.measures} measures · ${doc.tempo} BPM · ${h(doc.meter)}. These parts have not been independently source-verified.</p>
+   ${doc.sourceMeasureNumbers?`<p class="small-text"><strong>Repeat passages expanded:</strong> ${Math.max(...doc.sourceMeasureNumbers)} written measures become ${doc.measures} playback measures. Bracketed numbers above the score refer to the source measures. MusicXML export writes these measures out in full, without repeat signs.</p>`:''}
    <div class="lesson-list">${doc.parts.map(part=>`<div class="lesson"><div class="lesson-icon">𝄞</div><div><h3>${h(part.name)}</h3>
     <p>${part.voices.length} independent rhythmic voice(s) · ${part.voices.reduce((n,voice)=>n+voice.measures.reduce((m,bar)=>m+bar.events.length,0),0)} events</p></div></div>`).join('')}</div>
    <p class="small-text">Imported individual parts and overlapping voices play at their original onsets with dynamics and note lengths. Ukulele, bass and piano use recorded sample banks where available; other supported sounds use clearly identified generated reference tones, not original recordings.</p>
@@ -1967,7 +1968,7 @@ async function loadMultiPartXmlFile(file){
  try{
   if(file.size>2_000_000)throw Error('Multi-part MusicXML exceeds 2 MB');
   const doc=importMultiPartMusicXML(await file.text());
-  if(!confirm(`Import ${doc.parts.length} instrumental parts and ${doc.measures} bars into your separate multi-part library? The existing editable ukulele score is not replaced.`))return;
+  if(!confirm(`Import ${doc.parts.length} instrumental parts and ${doc.measures} playable bars into your separate multi-part library?${doc.sourceMeasureNumbers?' Repeat passages will be expanded and exported as linear measures.':''} The existing editable ukulele score is not replaced.`))return;
   if(!store('scoreDocument',doc))throw Error('Browser storage is full; export a backup');
   stopImportedEnsemble();state.scoreDocument=doc;state.importedEnsembleMuted={};render();toast('Multi-part MusicXML imported with independent voices');
  }catch(error){toast('Multi-part import: '+error.message)}

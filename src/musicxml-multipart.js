@@ -3,12 +3,62 @@
  * constructs instead of flattening polyphony into one misleading ukulele score.
  */
 import {validateScoreDocument,writtenPitchForMidi} from './polyphonic-score.js';
+import {expandRepeatOrder} from './musicxml-repeat.js';
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]));
 const child=(el,name)=>[...(el?.children||[])].find(e=>e.tagName===name)||null;
 const children=(el,name)=>[...(el?.children||[])].filter(e=>e.tagName===name);
 const val=(el,name,fallback='')=>child(el,name)?.textContent?.trim()??fallback;
 const semitones={C:0,D:2,E:4,F:5,G:7,A:9,B:11};
 const dynamicNames=['pp','p','mp','mf','f','ff'];
+function readMeasureRepeats(measure){
+ const m={};
+ for(const barline of children(measure,'barline')){
+  const location=barline.getAttribute('location')||'';
+  for(const repeat of children(barline,'repeat')){
+   const direction=repeat.getAttribute('direction');
+   if(direction==='forward'){
+    if(location==='right'||m.repeatForward)throw Error('Conflicting forward repeat');
+    m.repeatForward=true;
+   }else if(direction==='backward'){
+    if(location==='left'||m.repeatBackward)throw Error('Conflicting backward repeat');
+    m.repeatBackward=true;
+    const value=repeat.getAttribute('times');
+    if(value!==null){
+     if(!/^[2-4]$/.test(value))throw Error('Supported repeat passes are 2–4');
+     m.times=Number(value);
+    }
+   }else throw Error('Unsupported MusicXML repeat direction');
+  }
+  for(const ending of children(barline,'ending')){
+   const number=ending.getAttribute('number');
+   const type=ending.getAttribute('type');
+   if(!/^[12]$/.test(number||''))throw Error('Only first and second endings are supported');
+   const n=Number(number);
+   if(type==='start'){
+    if(m.endingStart!==undefined)throw Error('Duplicate ending start');
+    if(location==='right')throw Error('Ending start must be on left barline');
+    m.endingStart=n;
+   }else if(type==='stop'||type==='discontinue'){
+    if(m.endingStop!==undefined)throw Error('Duplicate ending closure');
+    if(location==='left')throw Error('Ending closure must be on right barline');
+    m.endingStop=n;
+   }else throw Error('Unsupported MusicXML ending type');
+  }
+ }
+ return m;
+}
+function repeatPlan(parts){
+ const measures=parts.map(p=>children(p,'measure'));
+ if(measures.some(x=>x.length!==measures[0].length))
+  throw Error('Every instrument must contain the same written measure count');
+ const variations=measures.map(list=>list.map(readMeasureRepeats));
+ const isMarked=items=>items.some(m=>Object.keys(m).length);
+ const canonical=variations.find(isMarked)??variations[0];
+ const signature=JSON.stringify(canonical);
+ if(variations.some(items=>isMarked(items)&&JSON.stringify(items)!==signature))
+  throw Error('Different instrument parts contain conflicting repeat instructions');
+ return expandRepeatOrder(canonical);
+}
 export function importMultiPartMusicXML(xml,{DOMParserClass=globalThis.DOMParser}={}){
  if(typeof xml!=='string'||xml.length>2_000_000||/<!DOCTYPE|<!ENTITY/i.test(xml))throw Error('Invalid or unsafe MusicXML input');
  if(typeof DOMParserClass!=='function')throw Error('Browser XML parser required');
@@ -21,8 +71,6 @@ export function importMultiPartMusicXML(xml,{DOMParserClass=globalThis.DOMParser
  const prohibited=['transpose','harmony','sound-deviation'];
  for(const tag of prohibited)if(root.getElementsByTagName(tag).length)throw Error('Unsupported MusicXML element: '+tag);
  for(const part of rawParts)for(const measure of children(part,'measure')){
-  for(const line of children(measure,'barline'))
-   if(line.getElementsByTagName('repeat').length||line.getElementsByTagName('ending').length)throw Error('Repeats and endings require expanded MusicXML measures');
   for(const note of children(measure,'note')){
    const notations=child(note,'notations');
    const kinds=[...children(note,'tie'),...children(notations,'tied')];
@@ -32,6 +80,7 @@ export function importMultiPartMusicXML(xml,{DOMParserClass=globalThis.DOMParser
  }
  const firstMeasures=children(rawParts[0],'measure');
  if(!firstMeasures.length||firstMeasures.length>200)throw Error('Invalid number of measures');
+ const expanded=repeatPlan(rawParts);
  let meter='4/4',tempo=96;const result=[];
  for(const [pIndex,part]of rawParts.entries()){
   const measures=children(part,'measure');
@@ -104,10 +153,15 @@ export function importMultiPartMusicXML(xml,{DOMParserClass=globalThis.DOMParser
    name.toLowerCase().includes('piano')?'piano':
    name.toLowerCase().includes('bass')?'bass':
    name.toLowerCase().includes('flute')?'flute':'unknown',
-   voices:[...byVoice].map(([id,measures])=>({id,measures}))});
+   voices:[...byVoice].map(([id,measures])=>({id,
+    measures:expanded.order.map(source=>({
+     events:measures[source].events.map(event=>({...event,
+      ...(event.tuplet?{tuplet:{...event.tuplet}}:{})}))
+    }))}))});
  }
  const score={schema:2,title:val(root,'movement-title',val(child(root,'work'),'work-title','Imported ensemble')),tempo,
-  meter,measures:firstMeasures.length,parts:result};
+  meter,measures:expanded.expandedMeasures,parts:result,
+  ...(expanded.expanded?{sourceMeasureNumbers:expanded.order.map(i=>i+1)}:{})};
  validateScoreDocument(score);return score;
 }
 /** Export polyphonic MusicXML with cursor-correct voice backups and real chord

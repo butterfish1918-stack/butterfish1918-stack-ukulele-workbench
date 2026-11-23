@@ -49,3 +49,11 @@ test('tied notes are drawn with a connecting curve instead of a second attack gl
  assert.match(html,/data-voice="1"/);
  assert.match(html,/poly-accidental/);
 });
+
+test('expanded playback measure retains original written measure label and data attribute',()=>{
+ const copy=structuredClone(doc);
+ copy.sourceMeasureNumbers=[3];
+ const html=renderPolyphonicDocument(copy);
+ assert.match(html,/data-source-measure="3"/);
+ assert.match(html,/>1 \(3\)<\/text>/);
+});
