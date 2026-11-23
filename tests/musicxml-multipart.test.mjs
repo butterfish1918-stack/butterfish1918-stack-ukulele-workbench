@@ -103,7 +103,7 @@ test('written enharmonic notes preserve step, accidental and octave on export',(
  assert.doesNotMatch(xml,/<step>C<\/step><alter>1<\/alter>/);
 });
 test('malformed repeat directions are refused rather than silently discarded',()=>{
- const N=(tagName,...children)=>({tagName,children,getElementsByTagName(name){return children.flatMap(x=>[...(x.tagName===name?[x]:[]),...x.getElementsByTagName(name)])}});
+ const N=(tagName,...children)=>({tagName,children,getAttribute:()=>null,getElementsByTagName(name){return children.flatMap(x=>[...(x.tagName===name?[x]:[]),...x.getElementsByTagName(name)])}});
  const fake=N('score-partwise',N('part',N('measure',N('barline',N('repeat')))));
  class Parser {parseFromString(){return {documentElement:fake,querySelector:()=>null}}}
  assert.throws(()=>importMultiPartMusicXML('<score-partwise/>',{DOMParserClass:Parser}),/Unsupported MusicXML repeat direction/);

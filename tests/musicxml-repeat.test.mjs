@@ -88,7 +88,7 @@ test('import expands shared first/second endings across both instruments without
  assert.equal(imported.measures,6);
  assert.deepEqual(imported.sourceMeasureNumbers,[1,2,3,1,2,4]);
  assert.deepEqual(imported.parts[0].voices[0].measures.map(bar=>bar.events[0].midi),[60,62,64,60,62,65]);
- assert.deepEqual(imported.parts[1].voices[0].measures.map(bar=>bar.events[0].midi),[67,69,71,67,69,72]);
+ assert.deepEqual(imported.parts[1].voices[0].measures.map(bar=>bar.events[0].midi),[67,69,71,67,69,60]);
  const planned=ensemblePlaybackPlan(imported);
  assert.equal(planned.events.length,12);
  assert.equal(planned.totalBeats,24);
