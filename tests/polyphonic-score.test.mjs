@@ -54,6 +54,7 @@ test('ties require successive notes at identical pitch and onset, including acro
  assert.throws(()=>validateScoreDocument(orphan),/Orphaned/);
  const gap=structuredClone(sample);
  gap.parts[0].voices[0].measures[1].events[0].onset=.5;
+ gap.parts[0].voices[0].measures[1].events[1].onset=2;
  assert.throws(()=>validateScoreDocument(gap),/nonconsecutive/);
  const wrongNote=structuredClone(sample);
  wrongNote.parts[0].voices[0].measures[1].events[0].midi=60;
