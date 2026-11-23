@@ -1,7 +1,7 @@
 /* Ukulele Workbench offline shell. Keep cache deletion scoped to THIS app:
    other tools on the same GitHub Pages origin must never be touched. */
 const CACHE_PREFIX = 'uke-workbench-';
-const CACHE = `${CACHE_PREFIX}v1.9.1-historical-lyrics`;
+const CACHE = `${CACHE_PREFIX}v1.10.0-multipart-practice-backups`;
 const SCOPE = new URL(self.registration.scope);
 const SHELL = new URL('./index.html', SCOPE).href;
 const LIBRARY_PATH = new URL('./library/', SCOPE).pathname;
@@ -11,6 +11,11 @@ const ASSETS = [
  './src/history.js', './src/progression.js', './src/rhythm-lessons.js',
  './src/reading-lessons.js', './src/musicxml.js', './src/engraving.js',
  './src/tuner-dsp.js', './src/storage-safety.js', './src/device-qa.js',
+ './src/practice-engine.js', './src/guitar-polyphony.js', './src/instrument-voices.js',
+ './src/advanced-theory.js', './src/learning-path.js', './src/song-organizer.js',
+ './src/polyphonic-score.js', './src/musicxml-multipart.js', './src/polyphonic-engraving.js',
+ './src/microphone-feedback.js', './src/instrument-settings.js', './src/chordpro.js',
+ './src/mobile-qa.js', './src/encrypted-backup.js',
  './assets/icon.svg', './assets/icon-192.png', './assets/icon-512.png',
  './manifest.webmanifest', './library/catalog.json', './library/songs/first-melody-study.json', './library/songs/primary-chord-changes.json',
  './library/songs/isolation.json',
