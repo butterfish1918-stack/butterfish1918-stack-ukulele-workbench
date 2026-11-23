@@ -1,7 +1,7 @@
 /* Ukulele Workbench offline shell. Keep cache deletion scoped to THIS app:
    other tools on the same GitHub Pages origin must never be touched. */
 const CACHE_PREFIX = 'uke-workbench-';
-const CACHE = `${CACHE_PREFIX}v1.8.4-rehearsal-audio`;
+const CACHE = `${CACHE_PREFIX}v1.8.5-sheet-music-uke`;
 const SCOPE = new URL(self.registration.scope);
 const SHELL = new URL('./index.html', SCOPE).href;
 const LIBRARY_PATH = new URL('./library/', SCOPE).pathname;
@@ -81,7 +81,7 @@ self.addEventListener('fetch', event => {
   try {
    const response = await fetch(request);
    // Cache app-owned static assets, not arbitrary dynamic URLs or queries.
-   const isStatic = /\.(?:html|css|js|svg|png|webmanifest)$/i.test(url.pathname);
+   const isStatic = /\.(?:html|css|js|svg|png|flac|webmanifest)$/i.test(url.pathname);
    if (response.ok && response.type !== 'opaque' && isStatic) {
     const copy = response.clone();
     event.waitUntil(caches.open(CACHE).then(cache => cache.put(request, copy)));
