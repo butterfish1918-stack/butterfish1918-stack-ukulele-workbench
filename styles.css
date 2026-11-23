@@ -604,3 +604,21 @@ input[type=range]{accent-color:var(--lime)}
  #printSheet svg.composed-score{width:100%!important;max-width:100%!important;height:auto!important;break-inside:avoid}
  #printSheet .score-reading-cues{page-break-inside:avoid;break-inside:avoid}
 }
+
+/* Source-driven ensemble mixer and owner-authorized instrument imports. */
+.imported-mixer{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.imported-mixer-track{display:flex;align-items:center;flex:1 1 210px;gap:9px;min-width:0;
+ padding:7px 9px;border:1px solid #506455;border-radius:6px}
+.imported-mixer-track button{flex-shrink:0}
+.imported-mixer-track label{display:flex;align-items:center;gap:6px;min-width:50px;flex:1;
+ font-size:12px}
+.imported-mixer-track input[type=range]{width:100%;min-width:45px;accent-color:#b9f700}
+.song-instrument-source-import{border-top:1px solid #506455;margin-top:12px;padding-top:12px}
+.song-instrument-source-import strong{font-size:12px}
+.song-instrument-source-import .score-actions{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.song-instrument-source-import select{min-height:36px;padding:5px;font-size:14px}
+@media(max-width:650px){
+ .imported-mixer-track{flex-basis:100%;padding:6px}
+ .imported-mixer-track button{min-width:108px}
+ .song-instrument-source-import .score-actions>*{flex:1 1 40%}
+}
