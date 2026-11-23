@@ -19,8 +19,8 @@ test('derived bass and piano contain actual playable staff notes in their own re
  assert.deepEqual(chartChordsPerBar(item),['Em','C','D','Em','Em','C','D','Em']);
  const tracks=buildPracticeParts(item);
  tracks.forEach(part=>{assert.equal(validateScore(part.score),true);assert.equal(part.score.measures.length,8)});
- assert.equal(tracks[1].score.clef,'bass8vb');
- assert.ok(tracks[1].score.measures.every(bar=>bar.events[0].midi>=28&&bar.events[0].midi<=39));
+ assert.equal(tracks[1].score.clef,'bass');
+ assert.ok(tracks[1].score.measures.every(bar=>bar.events[0].midi>=36&&bar.events[0].midi<=47));
  assert.ok(tracks[2].score.measures.every(bar=>bar.events.length===4));
  assert.equal(item.score.measures[0].events[0].midi,64);
 });
