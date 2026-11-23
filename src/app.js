@@ -1,6 +1,6 @@
 import {ROOTS,SCALES,TUNINGS,PITCH_CLASSES,mod,spelledScale,midiName,midiFreq,freqMidi,fretboard,optionsForMidi,scalePositions,harmonizedChords,chordVoicings,scaleMelody,staffYForSpelling} from './music.js';
 import {createScore,validateScore,appendEvent,insertEvent,appendMeasure,findEvent,removeEvent,replaceEvent,assignPosition,changeTuning,timeline,measureBeats,remainingBeats,preferredPosition,DURATIONS,METERS,KEY_SIGNATURES,QUARTER_LABELS,spellingsForMidi,setTieToNext,canTieNext,setKeySignature,CHORD_SHAPES,ARTICULATIONS,STROKES,setArticulation,setSlurToNext,setStroke} from './score.js';
-import {renderScoreView} from './score-view.js';
+import {renderScoreView,scoreSystems} from './score-view.js';
 import {prepareUkuleleSamples,playUkuleleSample} from './ukulele-samples.js';
 import {prepareBackingSamples,playBackingSample} from './instrument-samples.js';
 import {SONG_ARRANGEMENT_MODES,arrangementModeTracks} from './arrangement-modes.js';
@@ -430,13 +430,26 @@ function songArrangementSwitch(){
 function renderSongArrangementSheets(arrangement,sections,index,containerClass){
  const tracks=arrangementModeTracks(arrangement,state.songArrangementMode);
  const offset=state.songPracticeScope==='full'?0:(sections[index]?.startBar??1)-1;
- return `${songArrangementSwitch()}${tracks.filter(track=>state.songArrangementMode==='ensemble'||track.id==='ukulele').map(track=>{
-  const shown=state.songPracticeScope==='full'?track.score:sectionScore(track.score,sections,index);
-  return `<div class="song-score-track" data-score-part="${track.id}">
-   <div class="song-track-title"><strong>${h(track.label)}</strong><span>${h(track.source)}</span></div>
-   <div class="score-holder score-editor-view ${containerClass}">${renderScoreView(shown,{mode:track.id==='ukulele'?state.display:'notation',layout:'systems',measureOffset:offset})}</div>
-   </div>`;
- }).join('')}`;
+ const selected=tracks.map(track=>({...track,shown:state.songPracticeScope==='full'?track.score:sectionScore(track.score,sections,index)}));
+ if(state.songArrangementMode==='ensemble'){
+  const mobile=window.innerWidth<820;
+  const layout=scoreSystems(selected[0].shown,{maxSystemWidth:mobile?490:840,maxBarsPerSystem:mobile?2:4});
+  return `${songArrangementSwitch()}<div class="ensemble-score" aria-label="Multi-instrument full score with synchronized staves">${layout.map(({start,end})=>
+   `<section class="ensemble-score-group" data-first-measure="${offset+start+1}" data-last-measure="${offset+end}" aria-label="Ensemble measures ${offset+start+1} to ${offset+end}">
+    ${selected.map(part=>{
+      const score={...part.shown,measures:part.shown.measures.slice(start,end)};
+      return `<div class="song-score-track" data-score-part="${part.id}">
+       <div class="song-track-title"><strong>${h(part.label)}</strong><span>${h(part.source)}</span></div>
+       <div class="score-holder score-editor-view ${containerClass}">${renderScoreView(score,{mode:part.id==='ukulele'?state.display:'notation',layout:'systems',measureOffset:offset+start})}</div>
+      </div>`;
+    }).join('')}
+   </section>`
+  ).join('')}</div>`;
+ }
+ return `${songArrangementSwitch()}${selected.filter(track=>track.id==='ukulele').map(track=>
+ `<div class="song-score-track" data-score-part="${track.id}"><div class="song-track-title"><strong>${h(track.label)}</strong><span>${h(track.source)}</span></div>
+  <div class="score-holder score-editor-view ${containerClass}">${renderScoreView(track.shown,{mode:state.display,layout:'systems',measureOffset:offset})}</div></div>`
+ ).join('')}`;
 }
 function activeSongPractice(){
  if(state.page!=='songbook')return null;
@@ -497,15 +510,16 @@ function followSongPracticeScore(absoluteBar,run,{force=false}={}){
  if(!run || songPracticePlayback!==run || !Number.isInteger(absoluteBar) || absoluteBar<1)return;
  if(run.followedBar===absoluteBar&&!force)return;
  run.followedBar=absoluteBar;
- const systems=$$('.song-score-preview .score-system[data-first-measure],.repo-score-preview .score-system[data-first-measure]');
+ const grouped=$$('.ensemble-score-group[data-first-measure]');
+ const systems=grouped.length?grouped:$$('.song-score-preview .score-system[data-first-measure],.repo-score-preview .score-system[data-first-measure]');
  const system=systems.find(el=>Number(el.dataset.firstMeasure)<=absoluteBar&&Number(el.dataset.lastMeasure)>=absoluteBar);
  if(!system)return;
- systems.forEach(el=>el.classList.toggle('score-system-current',el===system));
- const rect=system.getBoundingClientRect();
- // Only move if the active stave is outside the mobile safe viewing area.
- const viewportHeight=window.innerHeight||document.documentElement.clientHeight;
- if(force||rect.top<90||rect.bottom>viewportHeight-110){
-  system.scrollIntoView({behavior:window.matchMedia?.('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'center',inline:'nearest'});
+ systems.forEach(el=>el.classList.toggle(grouped.length?'ensemble-group-current':'score-system-current',el===system));
+ if(run.followedGroup===system&&!force)return;
+ run.followedGroup=system;
+ const rect=system.getBoundingClientRect(),viewportHeight=window.innerHeight||document.documentElement.clientHeight;
+ if(force||rect.top<85||rect.top>viewportHeight-200||(!grouped.length&&rect.bottom>viewportHeight-110)){
+  system.scrollIntoView({behavior:window.matchMedia?.('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:grouped.length?'start':'center',inline:'nearest'});
  }
 }
 function stopSongPractice(){
@@ -614,8 +628,7 @@ async function playSongPractice(){
    if(!ev.continuation && ev.type!=='rest')run.voices.push(...synthEvent(ev,at,seconds,ev.tiedDuration,voice));
    run.timers.push(setTimeout(()=>{
     if(songPracticePlayback!==run)return;
-    const track=document.querySelector('[data-score-part="'+ev.trackId+'"]');
-    track?.querySelectorAll('.score-event').forEach(el=>el.classList.toggle('playing',el.dataset.eventId===ev.id));
+    $$('[data-score-part="'+ev.trackId+'"] .score-event').forEach(el=>el.classList.toggle('playing',el.dataset.eventId===ev.id));
     const atBar=(state.songPracticeScope==='section'&&selection.section?selection.section.startBar-1:0)+ev.measureIndex+1;
     followSongPracticeScore(atBar,run);
     const current=$('#songPracticeStatus');
