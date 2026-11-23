@@ -23,8 +23,12 @@ export function importMultiPartMusicXML(xml,{DOMParserClass=globalThis.DOMParser
  for(const part of rawParts)for(const measure of children(part,'measure')){
   for(const line of children(measure,'barline'))
    if(line.getElementsByTagName('repeat').length||line.getElementsByTagName('ending').length)throw Error('Repeats and endings require expanded MusicXML measures');
-  for(const note of children(measure,'note'))
-   if(child(note,'tie')||child(child(note,'notations'),'tied'))throw Error('Tied notes require explicit supported conversion');
+  for(const note of children(measure,'note')){
+   const notations=child(note,'notations');
+   const kinds=[...children(note,'tie'),...children(notations,'tied')];
+   if(kinds.some(item=>!['start','stop'].includes(item.getAttribute('type'))))
+    throw Error('Unsupported MusicXML tie type');
+  }
  }
  const firstMeasures=children(rawParts[0],'measure');
  if(!firstMeasures.length||firstMeasures.length>200)throw Error('Invalid number of measures');
@@ -76,11 +80,22 @@ export function importMultiPartMusicXML(xml,{DOMParserClass=globalThis.DOMParser
     const articulation=child(art,'staccato')?'staccato':child(art,'tenuto')?'tenuto':
       child(art,'accent')?'accent':child(art,'strong-accent')?'marcato':
       child(notations,'fermata')?'fermata':child(child(notations,'ornaments'),'trill-mark')?'trill':'none';
+    const playbackTies=children(el,'tie').map(t=>t.getAttribute('type'));
+    const engravedTies=children(notations,'tied').map(t=>t.getAttribute('type'));
+    if(playbackTies.some(t=>!['start','stop'].includes(t))||
+       engravedTies.some(t=>!['start','stop'].includes(t))||
+       (playbackTies.length&&engravedTies.length&&
+        (new Set([...playbackTies,...engravedTies]).size!==new Set(playbackTies).size||
+         playbackTies.some(t=>!engravedTies.includes(t)))))
+      throw Error('Conflicting or unsupported MusicXML tie markers');
+    const tieStart=playbackTies.includes('start')||engravedTies.includes('start');
+    const tieStop=playbackTies.includes('stop')||engravedTies.includes('stop');
+    if(rest&&(tieStart||tieStop))throw Error('Rest cannot have MusicXML ties');
     const technical=child(child(el,'notations'),'technical'),finger=Number(val(technical,'fingering',''));
     const timeMod=child(el,'time-modification'),actual=Number(val(timeMod,'actual-notes','')),normal=Number(val(timeMod,'normal-notes',''));
     const tuplet=timeMod&&actual>=2&&normal>=1?{actual,normal}:undefined;
     byVoice.get(voiceId)[mi].events.push({type:rest?'rest':'note',onset,duration,
-     ...(rest?{}:{midi,spelling}),dynamics:voiceDynamics.get(voiceId)??dynamics,articulation,...(finger>=0&&finger<=4&&val(technical,'fingering')!==''?{finger}:{}),
+     ...(rest?{}:{midi,spelling,...(tieStart?{tieStart:true}:{}),...(tieStop?{tieStop:true}:{})}),dynamics:voiceDynamics.get(voiceId)??dynamics,articulation,...(finger>=0&&finger<=4&&val(technical,'fingering')!==''?{finger}:{}),
      ...(tuplet?{tuplet}:{})});
    }
   }
@@ -145,13 +160,17 @@ export function exportMultiPartMusicXML(doc){
      const pitch=ev.type==='rest'?'<rest/>':encodePitch(ev.midi,ev.spelling);
      const articulation=ev.articulation==='marcato'?'strong-accent':ev.articulation;
      let notation='';
+     if(ev.tieStop)notation+='<tied type="stop"/>';
+     if(ev.tieStart)notation+='<tied type="start"/>';
      if(articulation==='fermata')notation+='<fermata/>';
      else if(articulation==='trill')notation+='<ornaments><trill-mark/></ornaments>';
      else if(articulation&&articulation!=='none')notation+='<articulations><'+articulation+'/></articulations>';
      if(ev.finger!==undefined)notation+='<technical><fingering>'+ev.finger+'</fingering></technical>';
      const tuplet=ev.tuplet?'<time-modification><actual-notes>'+ev.tuplet.actual+
       '</actual-notes><normal-notes>'+ev.tuplet.normal+'</normal-notes></time-modification>':'';
-     return out+'<note>'+(isChord?'<chord/>':'')+pitch+'<duration>'+dur+'</duration>'+
+     const soundingTie=(ev.tieStop?'<tie type="stop"/>':'')+
+      (ev.tieStart?'<tie type="start"/>':'');
+     return out+'<note>'+(isChord?'<chord/>':'')+pitch+'<duration>'+dur+'</duration>'+soundingTie+
       '<voice>'+esc(voice.id)+'</voice>'+tuplet+(notation?'<notations>'+notation+'</notations>':'')+'</note>';
     }).join('');
     const backup=index&&previousCursor>0?'<backup><duration>'+previousCursor+'</duration></backup>':'';

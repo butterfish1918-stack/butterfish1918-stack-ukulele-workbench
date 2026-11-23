@@ -36,3 +36,36 @@ test('enharmonic labels must agree with sounding MIDI',()=>{
  clone.parts[0].voices[0].measures[0].events[0].spelling='Db';
  assert.throws(()=>validateScoreDocument(clone),/Written spelling/);
 });
+
+
+test('ties require successive notes at identical pitch and onset, including across a barline',()=>{
+ const sample=structuredClone(doc);
+ sample.parts[0].voices[0].measures[0].events=[
+  {type:'rest',onset:0,duration:3},
+  {type:'note',midi:61,spelling:'Db',onset:3,duration:1,tieStart:true}
+ ];
+ sample.parts[0].voices[0].measures[1].events=[
+  {type:'note',midi:61,spelling:'Db',onset:0,duration:1,tieStop:true,tieStart:true},
+  {type:'note',midi:61,spelling:'Db',onset:1,duration:1,tieStop:true}
+ ];
+ assert.equal(validateScoreDocument(sample),true);
+ const orphan=structuredClone(sample);
+ delete orphan.parts[0].voices[0].measures[0].events[1].tieStart;
+ assert.throws(()=>validateScoreDocument(orphan),/Orphaned/);
+ const gap=structuredClone(sample);
+ gap.parts[0].voices[0].measures[1].events[0].onset=.5;
+ assert.throws(()=>validateScoreDocument(gap),/nonconsecutive/);
+ const wrongNote=structuredClone(sample);
+ wrongNote.parts[0].voices[0].measures[1].events[0].midi=60;
+ wrongNote.parts[0].voices[0].measures[1].events[0].spelling='C';
+ assert.throws(()=>validateScoreDocument(wrongNote),/Orphaned/);
+ const respelled=structuredClone(sample);
+ respelled.parts[0].voices[0].measures[1].events[0].spelling='C#';
+ assert.throws(()=>validateScoreDocument(respelled),/Orphaned/);
+ const dangling=structuredClone(sample);
+ delete dangling.parts[0].voices[0].measures[1].events[1].tieStop;
+ assert.throws(()=>validateScoreDocument(dangling),/Unresolved tie|Missing tie stop/);
+ const invalidRest=structuredClone(sample);
+ invalidRest.parts[0].voices[0].measures[0].events[0].tieStart=true;
+ assert.throws(()=>validateScoreDocument(invalidRest),/Ties require pitched notes/);
+});

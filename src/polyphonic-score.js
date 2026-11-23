@@ -38,6 +38,9 @@ export function validateScoreDocument(doc){
      if(!Number.isFinite(e.onset)||e.onset<0||!Number.isFinite(e.duration)||e.duration<=0||e.duration>barBeats+1e-8||e.onset+e.duration>barBeats+1e-8)throw Error('Invalid note timing: measure overflow');
      if(e.type!=='rest'&&(!Number.isInteger(e.midi)||e.midi<20||e.midi>110))throw Error('Invalid pitch');
      if(e.type!=='note'&&e.type!=='rest')throw Error('Unsupported event type in voice');
+     if(e.tieStart!==undefined&&typeof e.tieStart!=='boolean'||
+        e.tieStop!==undefined&&typeof e.tieStop!=='boolean')throw Error('Invalid MusicXML tie marker');
+     if((e.tieStart||e.tieStop)&&e.type!=='note')throw Error('Ties require pitched notes');
      if(e.spelling!==undefined){if(e.type!=='note')throw Error('Rest cannot have written pitch');writtenPitchForMidi(e.midi,e.spelling)}
      if(e.dynamics!==undefined&&!SUPPORTED_DYNAMICS.includes(e.dynamics))throw Error('Invalid dynamics');
      if(e.articulation!==undefined&&!SUPPORTED_ARTICULATIONS.includes(e.articulation))throw Error('Invalid articulation');
@@ -57,6 +60,29 @@ export function validateScoreDocument(doc){
      }else{previousOnset=e.onset;previousEnd=e.onset+e.duration;previousDuration=e.duration}
     }
    }
+   // Ties connect the same sounding and (when supplied) written pitch at an
+   // exactly contiguous onset. They may cross any number of barlines.
+   const openTies=new Map(),eps=1e-7;
+   for(const [mi,bar] of voice.measures.entries()){
+    const notes=bar.events.filter(e=>e.type==='note')
+     .sort((a,b)=>a.onset-b.onset||a.midi-b.midi);
+    for(const event of notes){
+     const onset=mi*barBeats+event.onset,open=openTies.get(event.midi);
+     if(event.tieStop){
+      if(!open||Math.abs(open.end-onset)>eps||
+         (open.spelling&&event.spelling&&open.spelling!==event.spelling))
+       throw Error('Orphaned or nonconsecutive tied note');
+      openTies.delete(event.midi);
+     }else if(open&&onset>=open.end-eps){
+      throw Error('Missing tie stop before repeated pitch');
+     }
+     if(event.tieStart){
+      if(openTies.has(event.midi))throw Error('Repeated tie start without continuation');
+      openTies.set(event.midi,{end:onset+event.duration,spelling:event.spelling});
+     }
+    }
+   }
+   if(openTies.size)throw Error('Unresolved tie at end of score');
   }
  }
  return true;

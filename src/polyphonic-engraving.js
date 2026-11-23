@@ -43,6 +43,28 @@ export function renderPolyphonicDocument(doc,{pageWidth=760}={}){
        ${e.tuplet?`<text x="${ex}" y="${ey-19}" font-size="10" fill="#425743"> ${e.tuplet.actual}:${e.tuplet.normal}</text>`:''}
        ${e.dynamics&&e.dynamics!=='mf'?`<text x="${ex}" y="${y+66}" font-style="italic" text-anchor="middle" font-size="10">${esc(e.dynamics)}</text>`:''}
        </g>`;
+      if(e.type==='note'&&e.tieStart){
+       const nextBar=e.onset+e.duration<cap-1e-7?bar:bar+1;
+       const successor=nextBar<=doc.measures?voice.measures[nextBar-1].events.find(next=>
+        next.type==='note'&&next.tieStop&&next.midi===e.midi&&
+        Math.abs((nextBar-bar)*cap+next.onset-e.onset-e.duration)<1e-7):null;
+       if(successor){
+        const offset=voiceIndex%2?10:-10,arcY=ey+10;
+        const nextX=75+(nextBar-startBar)*barWidth+55+successor.onset/cap*85+offset;
+        const endpoint=nextBar<=endBar?nextX-8:width-8;
+        const mid=(ex+8+endpoint)/2;
+        svg+=`<path class="poly-tie${nextBar>endBar?'-out':''}" data-voice="${esc(voice.id)}" d="M${ex+8} ${arcY} Q${mid} ${arcY+17} ${endpoint} ${arcY}" fill="none" stroke="#36473b" stroke-width="1.5"/>`;
+       }
+      }
+      if(e.type==='note'&&e.tieStop&&bar===startBar&&bar>1){
+       const prior=voice.measures[bar-2].events.find(previous=>
+        previous.type==='note'&&previous.tieStart&&previous.midi===e.midi&&
+        Math.abs(previous.onset+previous.duration-cap-e.onset)<1e-7);
+       if(prior){
+        const arcY=ey+10,startX=x+7;
+        svg+=`<path class="poly-tie-in" data-voice="${esc(voice.id)}" d="M${startX} ${arcY} Q${(startX+ex-8)/2} ${arcY+14} ${ex-8} ${arcY}" fill="none" stroke="#36473b" stroke-width="1.5"/>`;
+       }
+      }
      }
      // Beam consecutive notes from the same independent voice; never bridge
      // rests, gaps, bar lines or competing voices.

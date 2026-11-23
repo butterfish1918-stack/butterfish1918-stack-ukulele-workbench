@@ -21,15 +21,39 @@ export function ensemblePlaybackPlan(doc,{startBar=1,endBar=doc?.measures}={}){
   throw Error('Invalid ensemble playback bar range');
  const beats=doc.meter.split('/').map(Number).reduce((a,b)=>a*4/b);
  const instruments=new Map(doc.parts.map(part=>[part.id,ensembleInstrument(part)]));
- const events=flattenDocumentEvents(doc).filter(ev=>ev.type==='note'&&ev.measureIndex+1>=startBar&&ev.measureIndex+1<=endBar)
- .map(ev=>{
-  const instrument=instruments.get(ev.partId);
+ const noteEvents=flattenDocumentEvents(doc).filter(e=>e.type==='note')
+  .sort((a,b)=>a.absoluteOnset-b.absoluteOnset||a.partId.localeCompare(b.partId)||
+   a.voiceId.localeCompare(b.voiceId)||a.midi-b.midi);
+ const attacks=[],openTies=new Map();
+ for(const ev of noteEvents){
+  const key=ev.partId+':'+ev.voiceId+':'+ev.midi;
+  if(ev.tieStop){
+   const previous=openTies.get(key);
+   if(!previous||Math.abs(previous.onset+previous.originalDuration-ev.absoluteOnset)>1e-7)
+    throw Error('Unresolved tie in ensemble playback');
+   previous.originalDuration+=ev.duration;
+   previous.duration=previous.originalDuration*.98;
+   if(!ev.tieStart)openTies.delete(key);
+   continue;
+  }
   const articulationFactor=ev.articulation==='staccato'?.48:ev.articulation==='tenuto'?.98:.88;
-  return {id:`${ev.partId}:${ev.voiceId}:${ev.measureIndex}:${ev.onset}:${ev.midi}`,
-   partId:ev.partId,instrument,voiceId:ev.voiceId,midi:ev.midi,
-   onset:ev.absoluteOnset-(startBar-1)*beats,duration:ev.duration*articulationFactor,
-   velocity:dynamicGain[ev.dynamics]??.65,
-   originalDuration:ev.duration,measure:ev.measureIndex+1};
+  const item={id:ev.partId+':'+ev.voiceId+':'+ev.measureIndex+':'+ev.onset+':'+ev.midi,
+   partId:ev.partId,instrument:instruments.get(ev.partId),voiceId:ev.voiceId,midi:ev.midi,
+   onset:ev.absoluteOnset,duration:ev.duration*(ev.tieStart?.98:articulationFactor),
+   velocity:dynamicGain[ev.dynamics]??.65,originalDuration:ev.duration,
+   measure:ev.measureIndex+1,tied:!!ev.tieStart};
+  attacks.push(item);
+  if(ev.tieStart)openTies.set(key,item);
+ }
+ const first=(startBar-1)*beats,last=endBar*beats;
+ const events=attacks.flatMap(item=>{
+  const end=item.onset+item.originalDuration;
+  if(end<=first+1e-8||item.onset>=last-1e-8)return [];
+  const clippedStart=Math.max(first,item.onset),clippedEnd=Math.min(last,end);
+  const segment=clippedEnd-clippedStart;
+  return [{...item,onset:clippedStart-first,originalDuration:segment,
+   duration:segment*(item.duration/(end-item.onset)),
+   measure:Math.max(startBar,item.measure)}];
  }).sort((a,b)=>a.onset-b.onset||a.partId.localeCompare(b.partId)||a.voiceId.localeCompare(b.voiceId));
  const unsupported=[...new Set(events.filter(ev=>ev.instrument==='unsupported').map(ev=>ev.partId))];
  return {events,unsupported,totalBeats:(endBar-startBar+1)*beats,beatsPerBar:beats,startBar,endBar,

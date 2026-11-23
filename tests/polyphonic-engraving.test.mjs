@@ -34,3 +34,18 @@ test('imported staff includes clef, time signature, spelled accidentals and stem
  assert.match(html,/♭/);
  assert.doesNotMatch(html,/class="poly-voice-flag"/);
 });
+
+
+test('tied notes are drawn with a connecting curve instead of a second attack glyph',()=>{
+ const sample=structuredClone(doc);
+ sample.measures=2;
+ sample.parts[0].voices=sample.parts[0].voices.slice(0,1);
+ sample.parts[0].voices[0].measures=[
+  {events:[{type:'note',midi:61,spelling:'Db',onset:3,duration:1,tieStart:true}]},
+  {events:[{type:'note',midi:61,spelling:'Db',onset:0,duration:1,tieStop:true}]}
+ ];
+ const html=renderPolyphonicDocument(sample);
+ assert.match(html,/class="poly-tie"/);
+ assert.match(html,/data-voice="1"/);
+ assert.match(html,/poly-accidental/);
+});

@@ -108,3 +108,54 @@ test('unsupported repeat instructions are refused rather than silently discarded
  class Parser {parseFromString(){return {documentElement:fake,querySelector:()=>null}}}
  assert.throws(()=>importMultiPartMusicXML('<score-partwise/>',{DOMParserClass:Parser}),/Repeats and endings/);
 });
+
+
+test('ties round-trip as sounding and visual MusicXML markup across measures',()=>{
+ const sample=structuredClone(doc);
+ sample.measures=2;sample.parts=sample.parts.slice(0,1);
+ sample.parts[0].voices[0].measures=[
+  {events:[{type:'note',midi:61,spelling:'Db',onset:3,duration:1,tieStart:true}]},
+  {events:[{type:'note',midi:61,spelling:'Db',onset:0,duration:2,tieStop:true}]}
+ ];
+ const xml=exportMultiPartMusicXML(sample);
+ assert.match(xml,/<step>D<\/step><alter>-1<\/alter><octave>4<\/octave>/);
+ assert.match(xml,/<tie type="start"\/>/);
+ assert.match(xml,/<tie type="stop"\/>/);
+ assert.match(xml,/<tied type="start"\/>/);
+ assert.match(xml,/<tied type="stop"\/>/);
+ assert.equal((xml.match(/<tie type="start"\/>/g)||[]).length,1);
+});
+test('MusicXML import accepts a contiguous tied note and rejects a conflicting visual tie',()=>{
+ const node=(tagName,attrs={},...parts)=>{
+  const children=parts.filter(x=>typeof x==='object');
+  return {tagName,children,getAttribute:k=>attrs[k]??null,
+   hasAttribute:k=>Object.hasOwn(attrs,k),
+   get firstElementChild(){return children[0]??null},
+   get textContent(){return parts.map(x=>typeof x==='string'?x:x.textContent).join('')},
+   getElementsByTagName:name=>children.flatMap(x=>[...(x.tagName===name?[x]:[]),...x.getElementsByTagName(name)])
+  };
+ };
+ const n=node;
+ const pitch=()=>n('pitch',{},n('step',{},'D'),n('alter',{},'-1'),n('octave',{},'4'));
+ const mark=type=>n('note',{},pitch(),n('duration',{},type==='start'?'480':'960'),
+  n('voice',{},'1'),n('tie',{type}),n('notations',{},n('tied',{type})));
+ const first=mark('start'),last=mark('stop');
+ const root=n('score-partwise',{},
+  n('movement-title',{},'Tie example'),
+  n('part-list',{},n('score-part',{id:'P1'},n('part-name',{},'Ukulele'))),
+  n('part',{id:'P1'},
+   n('measure',{},n('attributes',{},n('divisions',{},'480'),n('time',{},
+    n('beats',{},'4'),n('beat-type',{},'4'))),n('forward',{},n('duration',{},'1440')),first),
+   n('measure',{},last)));
+ class FakeParser {parseFromString(){return {documentElement:root,querySelector:()=>null}}}
+ const imported=importMultiPartMusicXML('<score-partwise/>',{DOMParserClass:FakeParser});
+ const events=imported.parts[0].voices[0].measures;
+ assert.equal(events[0].events[0].tieStart,true);
+ assert.equal(events[1].events[0].tieStop,true);
+ assert.equal(events[0].events[0].onset,3);
+ assert.equal(events[1].events[0].midi,61);
+ assert.match(exportMultiPartMusicXML(imported),/<tied type="stop"\/>/);
+ const visual=last.children.find(x=>x.tagName==='notations').children[0];
+ visual.getAttribute=()=> 'start';
+ assert.throws(()=>importMultiPartMusicXML('<score-partwise/>',{DOMParserClass:FakeParser}),/Conflicting/);
+});

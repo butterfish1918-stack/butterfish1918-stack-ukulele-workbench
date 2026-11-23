@@ -29,3 +29,42 @@ test('unsupported parts are visible as unsupported, never silently treated as pi
  assert.deepEqual(ensemblePlaybackPlan(variant).unsupported,['P2']);
  assert.equal(ensembleInstrument({name:'Cello'}),'strings');
 });
+
+
+test('a cross-bar tie sustains one note rather than retriggering it at the barline',()=>{
+ const sample=structuredClone(doc);
+ sample.parts=sample.parts.slice(0,1);
+ sample.parts[0].voices=sample.parts[0].voices.slice(0,1);
+ sample.parts[0].voices[0].measures=[
+  {events:[{type:'note',midi:60,onset:3,duration:1,tieStart:true}]},
+  {events:[{type:'note',midi:60,onset:0,duration:2,tieStop:true}]}
+ ];
+ const full=ensemblePlaybackPlan(sample);
+ assert.equal(full.events.length,1);
+ assert.equal(full.events[0].onset,3);
+ assert.equal(full.events[0].originalDuration,3);
+ assert.ok(full.events[0].duration>2.9);
+ const excerpt=ensemblePlaybackPlan(sample,{startBar:2,endBar:2});
+ assert.equal(excerpt.events.length,1);
+ assert.equal(excerpt.events[0].onset,0);
+ assert.equal(excerpt.events[0].originalDuration,2);
+ assert.ok(excerpt.events[0].duration>1.9);
+ const first=ensemblePlaybackPlan(sample,{startBar:1,endBar:1});
+ assert.equal(first.events[0].originalDuration,1);
+});
+test('ties do not accidentally merge independent simultaneous musical voices',()=>{
+ const sample=structuredClone(doc);
+ sample.parts=sample.parts.slice(0,1);
+ sample.parts[0].voices[0].measures=[
+  {events:[{type:'note',midi:60,onset:3,duration:1,tieStart:true}]},
+  {events:[{type:'note',midi:60,onset:0,duration:1,tieStop:true}]}
+ ];
+ sample.parts[0].voices[1].measures=[
+  {events:[{type:'note',midi:60,onset:3,duration:1,tieStart:true}]},
+  {events:[{type:'note',midi:60,onset:0,duration:1,tieStop:true}]}
+ ];
+ const plan=ensemblePlaybackPlan(sample);
+ assert.equal(plan.events.length,2);
+ assert.equal(plan.events[0].originalDuration,2);
+ assert.equal(plan.events[1].originalDuration,2);
+});
