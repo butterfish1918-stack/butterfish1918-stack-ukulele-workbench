@@ -619,10 +619,13 @@ function stopSongPractice(){
  for(const timer of run.timers)clearTimeout(timer);
  const now=run.audioContext.currentTime;
  for(const voice of run.voices)try{voice.stop(now+.006)}catch{}
+ if(run.audioContext.state==='suspended')run.audioContext.resume().catch(()=>{});
  $$('.song-score-preview .score-event.playing,.repo-score-preview .score-event.playing').forEach(el=>el.classList.remove('playing'));
  const button=document.querySelector('[data-action="song-practice-play"]');
  if(button){button.textContent='▶ Listen to score';button.setAttribute('aria-pressed','false')}
  const status=$('#songPracticeStatus');if(status)status.textContent='Stopped. Select a section or restart playback.';
+ if(resumeSongTimer){clearTimeout(resumeSongTimer);resumeSongTimer=null;}
+ lastSongTapAt=0;syncSongPlaybackControls();
 }
 function recordedUkuleleVoice(ctx){
  return (midi,at,duration,volume)=>playUkuleleSample(ctx,midi,at,duration,volume)??synth(midi,at,duration,volume);
@@ -655,8 +658,33 @@ async function previewDrumEvent(event){
  const at=ctx.currentTime+.03;
  hits.forEach(hit=>playDrumSample(ctx,hit,at,.12,style));
 }
+function updateSongPlayhead(run,selection,score){
+ if(songPracticePlayback!==run||run.paused)return;
+ const elapsed=run.audioContext.currentTime-run.start;
+ if(elapsed<0)return;
+ const rawBeat=Math.max(0,elapsed/run.seconds),beat=state.songPracticeLoop?(rawBeat%run.totalBeats):Math.min(rawBeat,run.totalBeats-.00001);
+ const cap=measureBeats(score.meter);
+ const localBar=Math.max(1,Math.min(score.measures.length,Math.floor(beat/cap)+1));
+ const atBar=(state.songPracticeScope==='section'&&selection.section?selection.section.startBar-1:0)+localBar;
+ followSongPracticeScore(atBar,run);
+ // Visual state derives from AudioContext.currentTime, not wall-clock timers:
+ // suspension freezes the position and prevents a paused score from scrolling.
+ const current=new Map();
+ for(const ev of run.events){
+  if(ev.onset<=beat && beat<ev.onset+ev.duration)
+   current.set(ev.trackId,ev.id);
+ }
+ for(const track of selection.parts){
+  const id=current.get(track.id);
+  $$('[data-score-part="'+track.id+'"] .score-event').forEach(node=>node.classList.toggle('playing',!!id&&node.dataset.eventId===id));
+ }
+ const status=$('#songPracticeStatus');
+ if(status)status.textContent=`Playing bar ${atBar} / ${selection.score.measures.length} · ${Math.round(practiceTempo(score.tempo,state.songPracticeSpeed))} BPM`;
+ if(run.lastBar!==atBar){run.lastBar=atBar;syncSongPlaybackControls()}
+}
 async function playSongPractice(){
- if(songPracticePlayback||state.songSampleLoading){stopSongPractice();if(state.page==='songbook')render();return}
+ if(songPracticePlayback){toggleSongPracticePause();return}
+ if(state.songSampleLoading){stopSongPractice();if(state.page==='songbook')render();return}
  const selection=activeSongPractice();
  if(!selection){toast('Open a song with a written score first');return}
  const enabled=selection.parts.filter(part=>state.songPartEnabled[part.id]!==false);
@@ -703,13 +731,13 @@ async function playSongPractice(){
  const countIn=score.meter==='3/4'?3:score.meter==='6/8'?3:4;
  const start=ctx.currentTime+.15+countIn*seconds;
  const totalBeats=score.measures.length*measureBeats(score.meter);
- const run={audioContext:ctx,events,seconds,start,totalBeats,timers:[],voices:[],nextIndex:0,cycle:0,interval:null,followedBar:null};
+ const run={audioContext:ctx,events,seconds,start,totalBeats,timers:[],voices:[],nextIndex:0,cycle:0,interval:null,followedBar:null,paused:false,totalBars:selection.score.measures.length,lastBar:null};
  songPracticePlayback=run;
  for(let n=0;n<countIn;n++)tick(ctx.currentTime+.15+n*seconds,n===0);
  render();
  const status=$('#songPracticeStatus');if(status)status.textContent=`Count in: ${countIn} beats · ${Math.round(practiceTempo(score.tempo,state.songPracticeSpeed))} BPM`;
  const schedule=()=>{
-  if(songPracticePlayback!==run)return;
+  if(songPracticePlayback!==run||run.paused)return;
   const currentTime=ctx.currentTime;
   const horizon=currentTime+.30;
   let budget=150;
@@ -729,17 +757,10 @@ async function playSongPractice(){
      if(drum)run.voices.push(drum);
     }
    }else if(!ev.continuation && ev.type!=='rest')run.voices.push(...synthEvent(ev,at,seconds,ev.tiedDuration,voice));
-   run.timers.push(setTimeout(()=>{
-    if(songPracticePlayback!==run)return;
-    $$('[data-score-part="'+ev.trackId+'"] .score-event').forEach(el=>el.classList.toggle('playing',el.dataset.eventId===ev.id));
-    const atBar=(state.songPracticeScope==='section'&&selection.section?selection.section.startBar-1:0)+ev.measureIndex+1;
-    followSongPracticeScore(atBar,run);
-    const current=$('#songPracticeStatus');
-    if(current)current.textContent=`Playing bar ${atBar} / ${selection.score.measures.length} · ${Math.round(practiceTempo(score.tempo,state.songPracticeSpeed))} BPM${run.cycle?' · repeat '+(run.cycle+1):''}`;
-   },Math.max(0,(at-ctx.currentTime)*1000)));
    run.nextIndex++;
   }
-  const end=start+(run.cycle*totalBeats+totalBeats)*seconds;
+  updateSongPlayhead(run,selection,score);
+  const end=start+totalBeats*seconds;
   if(!state.songPracticeLoop&&run.nextIndex>=events.length&&currentTime>=end+.12){
    stopSongPractice();toast('Song practice playback complete');
   }
