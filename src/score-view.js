@@ -155,13 +155,14 @@ export function scoreSystems(score,{maxSystemWidth=490,maxBarsPerSystem=3}={}){
  systems.push({start:from,end:score.measures.length});
  return systems;
 }
-export function renderScoreView(score,{mode='notation',selectedEventId=null,playingEventId=null,showNames=false,annotations=null,layout='strip',measureOffset=0}={}){
+export function renderScoreView(score,{mode='notation',selectedEventId=null,playingEventId=null,showNames=false,annotations=null,layout='strip',measureOffset=0,chordSymbols=null}={}){
  if(layout==='systems'&&score?.measures?.length){
   const desktop=typeof window!=='undefined'&&window.innerWidth>=820;
   const systems=scoreSystems(score,{maxSystemWidth:desktop?840:490,maxBarsPerSystem:desktop?4:2});
   return `<div class="score-systems" role="group" aria-label="Multi-line sheet music: ${systems.length} stave systems, ${score.measures.length} measures">${systems.map(({start,end})=>{
    const single={...score,measures:score.measures.slice(start,end)};
-   return `<div class="score-system" data-first-measure="${measureOffset+start+1}" data-last-measure="${measureOffset+end}" role="group" aria-label="Measures ${measureOffset+start+1} to ${measureOffset+end}">${renderScoreView(single,{mode,selectedEventId,playingEventId,showNames,annotations,layout:'compact',measureOffset:measureOffset+start})}</div>`;
+   const chords=Array.isArray(chordSymbols)?chordSymbols.slice(start,end):null;
+   return `<div class="score-system" data-first-measure="${measureOffset+start+1}" data-last-measure="${measureOffset+end}" role="group" aria-label="Measures ${measureOffset+start+1} to ${measureOffset+end}">${renderScoreView(single,{mode,selectedEventId,playingEventId,showNames,annotations,layout:'compact',measureOffset:measureOffset+start,chordSymbols:chords})}</div>`;
   }).join('')}</div>`;
  }
 
@@ -199,6 +200,7 @@ export function renderScoreView(score,{mode='notation',selectedEventId=null,play
   const {bar,i,width:barWidth}=seg;
   const start=x,end=x+barWidth;
   out+=`<text x="${start+9}" y="40" fill="#849386" font-size="10">${measureOffset+i+1}</text>`;
+  if(chordSymbols?.[i])out+=`<text class="score-chord-symbol" x="${start+25}" y="26" fill="#2d4837" font-size="15" font-weight="700">${esc(chordSymbols[i])}</text>`;
   const count=Math.max(bar.events.length,1);
   let elapsed=0;
   const cap=measureBeats(score.meter),span=barWidth-64;
