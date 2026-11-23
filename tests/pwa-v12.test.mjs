@@ -18,4 +18,8 @@ test('service worker pre-cache lists existing code and offline dependencies, inc
  assert.ok(listed.includes('assets/icon-192.png')&&listed.includes('assets/icon-512.png'));
  assert.match(sw,/k\.startsWith\(CACHE_PREFIX\)/,'cache cleanup must be scoped to this app');
 });
-test('service worker cache has a new version for changed source',()=>{assert.match(sw,/const CACHE_PREFIX = 'uke-workbench-'/);assert.match(sw,/v1\.6\.0-preview/)});
+test('service worker cache version follows the current application release',()=>{
+ assert.match(sw,/const CACHE_PREFIX = 'uke-workbench-'/);
+ const version=JSON.parse(readFileSync(resolve(root,'package.json'),'utf8')).version.split('-')[0];
+ assert.ok(sw.includes('v'+version+'-'),'new worker cache must use the app release version');
+});
