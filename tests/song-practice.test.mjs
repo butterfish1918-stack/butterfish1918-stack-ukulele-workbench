@@ -36,3 +36,13 @@ test('extracts the chord chart for Blackbird-style fingerpicking scores without 
 test('supports the ChordPro bracket format for traditional arrangements',()=>{
  assert.deepEqual(extractChordSymbols('Intro: [Em] [C] [D] [Em]'),['Em','C','D']);
 });
+\nimport {repertoireCopyStatus} from '../src/song-practice.js';
+test('approved repertoire allows a newer revision without replacing old local copies',()=>{
+ const item={id:'blackbird',title:'Blackbird'};
+ const old={id:'old-local-blackbird',score:{measures:[{events:[]}]},repertoireOrigin:{id:'blackbird'},repositoryOrigin:{id:'blackbird',revision:1}};
+ const newArrangement={id:'blackbird',revision:2};
+ assert.deepEqual(repertoireCopyStatus([old],item,newArrangement),{existing:true,upToDate:false,updateAvailable:true});
+ const newCopy={...old,id:'new-local-blackbird',repositoryOrigin:{id:'blackbird',revision:2}};
+ assert.deepEqual(repertoireCopyStatus([old,newCopy],item,newArrangement),{existing:true,upToDate:true,updateAvailable:false});
+ assert.deepEqual(repertoireCopyStatus([],item,newArrangement),{existing:false,upToDate:false,updateAvailable:false});
+});
