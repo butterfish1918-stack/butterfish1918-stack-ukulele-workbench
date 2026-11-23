@@ -40,6 +40,7 @@ state.songPracticeLoop=!!read('songPracticeLoop',false);
 state.songPracticeScope='section';
 state.songArrangementMode=['guitar-uke','ensemble','solo'].includes(read('songArrangementMode','solo'))?read('songArrangementMode','solo'):'solo';
 state.songPartEnabled=read('songPartEnabled',{ukulele:true,bass:true,piano:true});
+state.songGuitarAdaptations=read('songGuitarAdaptations',{});
 let songPracticePlayback=null;
 let songSampleLoadToken=0;
 state.songSampleLoading=false;
@@ -414,21 +415,45 @@ function songScoreSections(score){
  });
  return result;
 }
+function currentSongSource(){
+ if(state.page!=='songbook')return null;
+ if(state.songbookView==='mine')return songs().find(x=>x.id===state.songOpen)||null;
+ if(state.songbookView==='repository')return state.repositorySnapshot.songs[state.repoSelectedId]??null;
+ const item=repertoireItems().find(x=>x.id===state.repertoireSelectedId);
+ return item?availableArrangementForItem(item):null;
+}
+function guitarOverrideKey(song){return song?.repertoireOrigin?.id||song?.id}
+function effectiveSongArrangement(song){
+ const key=guitarOverrideKey(song);
+ const source=state.songArrangementMode==='guitar-uke'?state.songGuitarAdaptations?.[key]:null;
+ if(!source?.score)return {arrangement:song,verifiedGuitar:false,source:null};
+ try{
+  validateScore(source.score);
+  if(source.score.meter!==song.score.meter||source.score.tempo!==song.score.tempo||source.score.measures.length!==song.score.measures.length)throw Error('Source is not time-aligned');
+  return {arrangement:{...song,score:source.score},verifiedGuitar:true,source};
+ }catch{return {arrangement:song,verifiedGuitar:false,source:null}}
+}
 function preparedSongSelection(song,label,sections,index){
- const preview=state.songPracticeScope==='full'?song.score:sectionScore(song.score,sections,index);
- const parts=arrangementModeTracks(song,state.songArrangementMode);
- return {score:song.score,preview,label,body:song.body||'',section:sections[index],sectionIndex:index,sections,arrangement:song,parts};
+ const chosen=effectiveSongArrangement(song),active=chosen.arrangement;
+ const preview=state.songPracticeScope==='full'?active.score:sectionScore(active.score,sections,index);
+ const parts=arrangementModeTracks(active,state.songArrangementMode);
+ return {score:active.score,preview,label,body:song.body||'',section:sections[index],sectionIndex:index,sections,arrangement:active,parts,verifiedGuitar:chosen.verifiedGuitar,sourceGuitar:chosen.source};
 }
 function songArrangementSwitch(){
  const selected=SONG_ARRANGEMENT_MODES.find(x=>x.id===state.songArrangementMode);
+ const source=activeSongPractice(),hasGuitar=!!source?.verifiedGuitar;
+ const sourceDetails=hasGuitar?
+  `<p class="small-text"><strong>Imported guitar source:</strong> ${source.sourceGuitar.sourceNotes} notes adapted, ${source.sourceGuitar.octaveShiftedNotes} octave changes. Original rhythmic positions retained. This is the supplied part, not an independently authenticated transcription.</p>`:
+  `<p class="small-text"><strong>Source guitar notes not supplied.</strong> The guitar-focused view currently uses the pre-existing harmony-led ukulele study. It is not a note-for-note conversion of the commercial guitar part.</p>`;
  return `<div class="song-arrangement-modes" role="group" aria-label="Score arrangement">
  <p class="small-text"><strong>Choose arrangement and instruments</strong></p>
  <div class="song-arrangement-tabs">${SONG_ARRANGEMENT_MODES.map(mode=>`<button type="button" class="btn compact ${mode.id===state.songArrangementMode?'gold':'ghost'}" data-song-arrangement="${mode.id}" aria-pressed="${mode.id===state.songArrangementMode}">${h(mode.label)}</button>`).join('')}</div>
- <p class="small-text">${h(selected.description)}. <strong>The commercial recording's complete parts have not been transcribed:</strong> ensemble bass and piano are newly generated accompaniment studies, not original stems.</p>
+ <p class="small-text">${h(selected.description)}. The generated bass and piano lines are practice accompaniments, not transcribed original instrumental parts.</p>
+ ${state.songArrangementMode==='guitar-uke'?`${sourceDetails}<div class="score-actions"><button type="button" class="btn compact" data-action="song-guitar-import">↑ Import authorized six-string guitar notes (JSON)</button><button type="button" class="btn compact ghost" data-action="song-guitar-template">↓ Source template</button></div><input type="file" id="songGuitarSourceFile" accept=".json,application/json" hidden>`:''}
  </div>`;
 }
 function renderSongArrangementSheets(arrangement,sections,index,containerClass){
- const tracks=arrangementModeTracks(arrangement,state.songArrangementMode);
+ const tracks=arrangementModeTracks(effectiveSongArrangement(arrangement).arrangement,state.songArrangementMode);
  const offset=state.songPracticeScope==='full'?0:(sections[index]?.startBar??1)-1;
  const selected=tracks.map(track=>({...track,shown:state.songPracticeScope==='full'?track.score:sectionScore(track.score,sections,index)}));
  if(state.songArrangementMode==='ensemble'){
@@ -1039,6 +1064,8 @@ function handleClick(e){const node=e.target.closest('[data-prog-degree],[data-pr
  }break;
  case 'score-import-xml':$('#musicXmlFile')?.click();break;
  case 'score-import-guitar':$('#guitarPartFile')?.click();break;
+ case 'song-guitar-import':$('#songGuitarSourceFile')?.click();break;
+ case 'song-guitar-template':downloadSongGuitarTemplate();break;
  case 'score-guitar-template':{
   const blob=new Blob([JSON.stringify(exampleGuitarSource(),null,2)],{type:'application/json'});
   const url=URL.createObjectURL(blob),link=document.createElement('a');
@@ -1107,7 +1134,7 @@ function handleChange(e){const el=e.target;
  if(el.id==='scoreDuration'){state.draftDuration=Number(el.value);return}
  if(el.id==='scorePitch'){state.draftMidi=Number(el.value);const entries=spellingsForMidi(state.draftMidi);state.draftSpelling=entries[0];const target=$('#scoreSpelling');if(target)target.innerHTML=entries.map(x=>`<option value="${h(x)}">${h(x.replace('#','♯').replace('b','♭'))}</option>`).join('');return}
  if(el.id==='scoreSpelling'){state.draftSpelling=el.value;return}
-if(['root','scale','tuning'].includes(el.id)){state[el.id]=el.value;if(el.id==='tuning')store('tuning',state.tuning);state.chordDegree=0;state.chordIndex=0;state.selectedMidi=melody()[0]?.midi??60;render()}if(el.id==='showHints'){state.showHints=el.checked;store('hints',el.checked);render()}if(el.id==='rhythmTempo'){state.tempo=Number(el.value);store('tempo',state.tempo);render()}if(el.id==='backupFile'&&el.files?.[0])importBackup(el.files[0]);if(el.id==='musicXmlFile'&&el.files?.[0])loadMusicXMLFile(el.files[0]);if(el.id==='guitarPartFile'&&el.files?.[0])loadGuitarPartFile(el.files[0]);}
+if(['root','scale','tuning'].includes(el.id)){state[el.id]=el.value;if(el.id==='tuning')store('tuning',state.tuning);state.chordDegree=0;state.chordIndex=0;state.selectedMidi=melody()[0]?.midi??60;render()}if(el.id==='showHints'){state.showHints=el.checked;store('hints',el.checked);render()}if(el.id==='rhythmTempo'){state.tempo=Number(el.value);store('tempo',state.tempo);render()}if(el.id==='backupFile'&&el.files?.[0])importBackup(el.files[0]);if(el.id==='musicXmlFile'&&el.files?.[0])loadMusicXMLFile(el.files[0]);if(el.id==='guitarPartFile'&&el.files?.[0])loadGuitarPartFile(el.files[0]);if(el.id==='songGuitarSourceFile'&&el.files?.[0])loadSongGuitarPartFile(el.files[0]);}
 async function loadGuitarPartFile(file){
  try{
   if(file.size>1_000_000)throw new Error('Guitar source JSON exceeds 1 MB');
@@ -1117,6 +1144,35 @@ async function loadGuitarPartFile(file){
   if(!confirm(note))return;
   setScore(score);navigate('score');toast('Source guitar notes adapted; check octave shifts before practising');
  }catch(error){toast('Guitar adaptation failed: '+error.message)}
+}
+function downloadSongGuitarTemplate(){
+ const song=currentSongSource();if(!song?.score){toast('Open a song first');return}
+ const base=exampleGuitarSource();
+ base.title=song.title;base.tempo=song.score.tempo;base.meter=song.score.meter;base.key=song.score.key;
+ base.measures=song.score.measures.map(bar=>({...(bar.section?{section:bar.section}:{}),events:[]}));
+ const blob=new Blob([JSON.stringify(base,null,2)],{type:'application/json'});
+ const url=URL.createObjectURL(blob),a=document.createElement('a');
+ a.href=url;a.download='guitar-source-'+guitarOverrideKey(song)+'.json';a.click();
+ setTimeout(()=>URL.revokeObjectURL(url),3000);
+ toast('Source template saved; enter the source guitar notes in its bars');
+}
+async function loadSongGuitarPartFile(file){
+ try{
+  const song=currentSongSource();
+  if(!song?.score)throw Error('Open a song score before importing');
+  if(file.size>1_000_000)throw Error('Source JSON exceeds 1 MB');
+  const source=JSON.parse(await file.text());
+  const adapted=adaptGuitarPart(source);
+  if(!adapted.sourceNotes)throw Error('The supplied guitar part has no notes');
+  if(adapted.score.meter!==song.score.meter||adapted.score.tempo!==song.score.tempo||adapted.score.measures.length!==song.score.measures.length)
+   throw Error('The source must have the same meter, tempo and number of bars as the chosen song for synchronized accompaniment');
+  const note='Use '+adapted.sourceNotes+' supplied guitar notes and '+adapted.octaveShiftedNotes+' explicit octave adjustments for this song? Your existing song score will be preserved.';
+  if(!confirm(note))return;
+  const saved={...state.songGuitarAdaptations,[guitarOverrideKey(song)]:{score:adapted.score,sourceNotes:adapted.sourceNotes,octaveShiftedNotes:adapted.octaveShiftedNotes,warnings:adapted.warnings}};
+  if(!store('songGuitarAdaptations',saved))throw Error('Unable to save the adapted score in browser storage');
+  state.songGuitarAdaptations=saved;stopSongPractice();render();
+  toast('Guitar source adapted into playable ukulele notes');
+ }catch(error){toast('Guitar part import: '+error.message)}
 }
 async function loadMusicXMLFile(file){
  try{if(file.size>2_000_000)throw new Error('MusicXML exceeds 2 MB');
