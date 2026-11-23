@@ -42,7 +42,7 @@ test('score playback can be paused without restarting, and mobile gestures ignor
  assert.match(app,/audioContext\.resume\(\)/);
  assert.match(app,/function onSongScorePointerUp\(/);
  assert.match(app,/Math\.hypot\(event\.clientX-started\.x,event\.clientY-started\.y\)>15/);
- assert.match(app,/if\(run\.paused\)return/);
+ assert.match(app,/songPracticePlayback!==run\|\|run\.paused/);
  assert.match(app,/data-action="song-practice-stop"/);
  assert.match(app,/updateSongPlayhead\(run,selection,score\)/);
  assert.match(app,/run\.audioContext\.currentTime-run\.start/);
