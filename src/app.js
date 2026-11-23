@@ -644,7 +644,7 @@ function followSongPracticeScore(absoluteBar,run,{force=false}={}){
  const behindDock=next&&next.top>viewport*.72;
  const needsAdvance=force||bounds.top<92||bounds.top>viewport*.36||(behindDock&&bounds.top>110);
  if(needsAdvance){
-  system.scrollIntoView({behavior:window.matchMedia?.('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start',inline:'nearest'});
+  system.scrollIntoView({behavior:'auto',block:'start',inline:'nearest'});
  }
 }
 function stopSongPractice(){
