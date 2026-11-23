@@ -443,6 +443,7 @@ function preparedSongSelection(song,label,sections,index){
 function songArrangementSwitch(){
  const selected=SONG_ARRANGEMENT_MODES.find(x=>x.id===state.songArrangementMode);
  const source=activeSongPractice(),hasGuitar=!!source?.verifiedGuitar;
+ const availableBacking=source?.parts.filter(part=>part.id!=='ukulele').map(part=>part.label.split(' · ')[0])||[];
  const profile=originalInstrumentProfile(currentSongSource());
  const credited=profile.parts.map(x=>({bass:'bass',piano:'piano',drums:profile.percussion==='electronic'?'electronic percussion':'drum kit'}[x]||x));
  const sourceDetails=hasGuitar?
@@ -451,7 +452,7 @@ function songArrangementSwitch(){
  return `<div class="song-arrangement-modes" role="group" aria-label="Score arrangement">
  <p class="small-text"><strong>Choose arrangement and instruments</strong></p>
  <div class="song-arrangement-tabs">${SONG_ARRANGEMENT_MODES.map(mode=>`<button type="button" class="btn compact ${mode.id===state.songArrangementMode?'gold':'ghost'}" data-song-arrangement="${mode.id}" aria-pressed="${mode.id===state.songArrangementMode}">${h(mode.label)}</button>`).join('')}</div>
- <p class="small-text">${h(selected.description)}. Drum, bass and piano parts shown below are original practice reconstructions, not transcriptions.</p>
+ <p class="small-text">${h(selected.description)}. ${availableBacking.length?'Available additional practice staves: '+h(availableBacking.join(', '))+'. These are reconstructed accompaniments, not original transcriptions.':'This recording has no additional sampled instrumental staves available in the current score.'}</p>
  <p class="small-text"><strong>Recording instrumentation:</strong> ${h([...credited,...profile.other].join(', ')||'Only the supplied acoustic/ukulele study is documented')}. ${profile.source?`<a href="${h(profile.source)}" target="_blank" rel="noopener noreferrer">Personnel/source reference</a>`:''}</p>
  ${profile.other.length?'<p class="small-text">Other recorded instruments listed above do not yet have independent playable notation in this app.</p>':''}
  ${state.songArrangementMode==='guitar-uke'?`${sourceDetails}<div class="score-actions"><button type="button" class="btn compact" data-action="song-guitar-import">↑ Import authorized six-string guitar notes (JSON)</button><button type="button" class="btn compact ghost" data-action="song-guitar-template">↓ Source template</button></div><input type="file" id="songGuitarSourceFile" accept=".json,application/json" hidden>`:''}
