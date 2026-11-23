@@ -3,7 +3,7 @@ import {createScore,validateScore,appendEvent,insertEvent,appendMeasure,findEven
 import {renderScoreView,scoreSystems} from './score-view.js';
 import {validateLoopRange,practiceExcerpt,nextPracticeSpeed,saveSongBookmark,practiceLog,songPracticeStats,reviewDue,validatedPracticePreferences} from './practice-engine.js';
 import {arpeggioDegrees,chordInversions,harmonicFunctions,basicChordSubstitutions,nextEarTrainingQuestion} from './advanced-theory.js';
-import {LEARNING_UNITS,learningReview,recordLearningReview} from './learning-path.js';
+import {LEARNING_UNITS,learningReview,suggestedLearningUnits,recordLearningReview} from './learning-path.js';
 import {addSongToPlaylist,annotateSong,printableSongFilename} from './song-organizer.js';
 import {validateScoreDocument,flattenDocumentEvents,planScoreSystems} from './polyphonic-score.js';
 import {ensemblePlaybackPlan} from './ensemble-playback.js';
@@ -23,7 +23,7 @@ import {SONG_ARRANGEMENT_MODES,arrangementModeTracks,chartChordsPerBar} from './
 import {originalInstrumentProfile} from './song-instrumentation.js';
 import {engravingPlan,loadVexFlow,renderEngravedScore} from './engraving.js';
 import {estimateFundamental} from './tuner-dsp.js';
-import {pitchPracticeFeedback,onsetPracticeFeedback} from './microphone-feedback.js';
+import {pitchPracticeFeedback,onsetPracticeFeedback,stablePitchFeedback} from './microphone-feedback.js';
 import {validateCustomTuning,capoAdjustedMidi,leftHandedX,parseCustomTuning} from './instrument-settings.js';
 import {prepareBackupRestore,commitBackupRestore} from './storage-safety.js';
 import {inspectDevice} from './device-qa.js';
@@ -208,11 +208,17 @@ function advancedTheoryPanel(){
 }
 function learningReviewPanel(){
  const reviewed=learningReview(LEARNING_UNITS,state.learningProgress);
+ const suggestions=suggestedLearningUnits(LEARNING_UNITS,state.learningProgress);
  return `<section class="panel panel-pad" style="margin-top:18px">
  <div class="panel-title"><h2>Guided advanced learning</h2><span class="sub-label">NO LOCKED LEVELS</span></div>
- <p class="small-text">Each unit includes a practical goal. Rate your own confidence after practising; this is not microphone-verified performance.</p>
+ <p class="small-text">Suggested practice is based on recorded sessions and self-reported confidence, not an automatic assessment. Every unit remains available.</p>
+ <div class="panel" style="padding:12px;margin:12px 0"><strong>Suggested next session · ${suggestions.reduce((n,u)=>n+u.minutes,0)} min</strong>
+ <ol class="small-text">${suggestions.map(u=>`<li><strong>${h(u.name)}</strong> (${u.minutes} min): ${h(u.steps[0])}</li>`).join('')}</ol></div>
  <div class="lesson-list">${reviewed.map(unit=>`<div class="lesson"><div class="lesson-icon">${unit.level}</div>
- <div><h3>${unit.name}</h3><p>${unit.target} · ${unit.sessions} sessions ${unit.needsReview?'· Review suggested':''}</p></div>
+ <div><h3>${h(unit.name)}</h3><p>${h(unit.target)} · ${unit.sessions} sessions ${unit.needsReview?'· Review suggested':'· Review scheduled'}</p>
+ <details><summary class="small-text">Practice steps · ${unit.minutes} minutes</summary>
+ <ol class="small-text">${unit.steps.map(step=>`<li>${h(step)}</li>`).join('')}</ol>
+ <p class="small-text"><strong>Check:</strong> ${h(unit.success)}</p></details></div>
  <label>Confidence<select id="learningConfidence-${unit.id}">${[1,2,3,4,5].map(n=>`<option value="${n}" ${n===(unit.confidence||3)?'selected':''}>${n}/5</option>`).join('')}</select></label>
  <button class="btn compact" type="button" data-action="learning-review" data-learning-id="${unit.id}">Log review</button></div>`).join('')}</div>
  </section>`;
@@ -763,17 +769,20 @@ async function toggleSongMicrophone(){
   ctx=new (window.AudioContext||window.webkitAudioContext)();
   const source=ctx.createMediaStreamSource(stream),analyser=ctx.createAnalyser();analyser.fftSize=4096;source.connect(analyser);
   const samples=new Float32Array(analyser.fftSize);
-  const session={stream,context:ctx,source,analyser,samples,frame:0,target};
+  const session={stream,context:ctx,source,analyser,samples,frame:0,target,history:[]};
   songMicSession=session;render();
   const frame=()=>{
    if(songMicSession!==session)return;
    analyser.getFloatTimeDomainData(samples);
    const detected=estimateFundamental(samples,ctx.sampleRate,{minHz:75,maxHz:1100});
-   const result=pitchPracticeFeedback(target,detected?.hz);
+   if(detected){session.history.push({hz:detected.hz,confidence:detected.confidence});if(session.history.length>8)session.history.shift();}
+   else session.history=[];
+   const result=stablePitchFeedback(target,session.history);
    const label=$('#songMicrophoneStatus');
-   if(label)label.textContent=result.detected?
-    `Target ${midiName(target)} · heard ${detected.hz.toFixed(1)} Hz · ${result.cents>0?'+':''}${result.cents} cents · ${result.direction}`:
-    `Listening for ${midiName(target)} · play one clear note (no recording saved)`;
+   if(label)label.textContent=result.stable?
+    `Stable ${midiName(target)} target · heard ${result.measuredHz.toFixed(1)} Hz · ${result.cents>0?'+':''}${result.cents} cents · ${result.direction}`:
+    result.status==='unstable'?'Pitch is fluctuating: play one sustained note and reduce background noise':
+    `Listening for ${midiName(target)} · hold a single note steadily (local, no recording saved)`;
    session.frame=requestAnimationFrame(frame);
   };session.frame=requestAnimationFrame(frame);
  }catch(error){
@@ -785,7 +794,7 @@ function songMicrophoneControls(){
  const score=activeSongPractice()?.score;
  if(!score)return '';
  return `<div class="song-microphone-check"><strong>Experimental on-device note check</strong>
- <p class="small-text">Tap an individual written note, then play it on your ukulele. The phone estimates pitch in cents. It does not grade chords or record/transmit audio; timing remains uncalibrated.</p>
+ <p class="small-text">Tap an individual written note and sustain it. Feedback appears only after several consistent local pitch estimates; uncertain readings are not graded. It does not grade chords or save/transmit audio. Onset timing remains uncalibrated.</p>
  <button class="btn compact ${songMicSession?'gold':'ghost'}" type="button" data-action="song-microphone">${songMicSession?'Stop microphone':'Start microphone note check'}</button>
  <span id="songMicrophoneStatus" class="small-text">${songMicSession?'Listening for '+midiName(songMicSession.target):'Microphone off'}</span>
  </div>`;
