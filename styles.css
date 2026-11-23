@@ -423,3 +423,16 @@ input[type=range]{accent-color:var(--lime)}
  .score-systems{gap:6px}
  .score-system{padding:1px 0 6px}
 }
+
+/* Arrangements: compact score selector and synchronized multitrack staves */
+.song-arrangement-modes{margin:12px 0 16px;padding:12px;border:1px solid #546454;border-radius:7px}
+.song-arrangement-tabs{display:flex;flex-wrap:wrap;gap:7px;margin:7px 0}
+.song-arrangement-tabs button{flex:1 1 145px}
+.song-score-track{margin:10px 0 20px}
+.song-track-title{display:flex;align-items:center;flex-wrap:wrap;justify-content:space-between;gap:6px;margin:0 0 7px;font-size:13px}
+.song-track-title span{font-size:11px;color:var(--muted,#83948a)}
+.song-track-mixer{margin:12px 0;border-top:1px solid #546454;padding-top:12px}
+.song-track-mixer .repo-tags{margin-top:8px}
+.score-systems .score-system-current{border-bottom-color:#b9f700;outline:1px solid rgba(185,247,0,.27);outline-offset:2px}
+.score-system{scroll-margin-block:92px 112px}
+@media(max-width:650px){.song-arrangement-modes{padding:10px 8px}.song-track-title{align-items:start;flex-direction:column}}
