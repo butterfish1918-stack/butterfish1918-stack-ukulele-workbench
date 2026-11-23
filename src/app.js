@@ -417,7 +417,7 @@ function songScoreSections(score){
 function preparedSongSelection(song,label,sections,index){
  const preview=state.songPracticeScope==='full'?song.score:sectionScore(song.score,sections,index);
  const parts=arrangementModeTracks(song,state.songArrangementMode);
- return {score:song.score,preview,label,body:song.body||'',section:sections[index],sections,arrangement:song,parts};
+ return {score:song.score,preview,label,body:song.body||'',section:sections[index],sectionIndex:index,sections,arrangement:song,parts};
 }
 function songArrangementSwitch(){
  const selected=SONG_ARRANGEMENT_MODES.find(x=>x.id===state.songArrangementMode);
@@ -537,43 +537,70 @@ async function previewRecordedUkulele(midis,callback){
   callback(recordedUkuleleVoice(ctx),ctx.currentTime+.03);
  }catch(error){state.songSampleFallback=true;toast('Recorded ukulele unavailable: '+error.message);callback(synth,audio().currentTime+.03)}
 }
+async function previewRecordedBacking(instrument,midis,callback){
+ const ctx=audio();
+ try{
+  const result=await prepareBackingSamples(ctx,[{instrument,midis}]);
+  state.songSampleFallback=result.errors.length>0;
+  callback((midi,at,dur,vol)=>playBackingSample(ctx,instrument,midi,at,dur,vol)??synth(midi,at,dur,vol),ctx.currentTime+.03);
+ }catch(error){state.songSampleFallback=true;callback(synth,ctx.currentTime+.03)}
+}
 async function playSongPractice(){
  if(songPracticePlayback||state.songSampleLoading){stopSongPractice();if(state.page==='songbook')render();return}
  const selection=activeSongPractice();
  if(!selection){toast('Open a song with a written score first');return}
+ const enabled=selection.parts.filter(part=>state.songPartEnabled[part.id]!==false);
+ if(!enabled.length){toast('Enable at least one instrument to listen');return}
+ const working=enabled.map(part=>{
+  const score=state.songPracticeScope==='full'?part.score:sectionScore(part.score,selection.sections,selection.sectionIndex);
+  const ev=timeline(score);
+  return {...part,score,events:ev};
+ });
+ const events=working.flatMap(part=>part.events.map((event,index)=>({
+  ...event,trackId:part.id,instrument:part.instrument,
+  continuation:index>0&&part.events[index-1].tieToNext,
+  tiedDuration:(()=>{
+   let duration=event.duration,j=index;
+   while(part.events[j]?.tieToNext&&part.events[j+1]){
+    j++;duration+=part.events[j].duration;
+   }
+   return duration;
+  })()
+ }))).sort((x,y)=>x.onset-y.onset||x.trackId.localeCompare(y.trackId));
+ if(!events.length){toast('These tracks have no playable events');return}
  const score=state.songPracticeScope==='full'?selection.score:selection.preview;
- const events=timeline(score);
- if(!events.length){toast('This section has no playable events');return}
  const loadId=++songSampleLoadToken;
  state.songSampleLoading=true;render();
  const ctx=audio();
  try{
-  const prepared=await prepareUkuleleSamples(ctx,scoreEventPitches(events));
+  const results=await Promise.all([
+   working.some(part=>part.instrument==='ukulele')?prepareUkuleleSamples(ctx,scoreEventPitches(working.filter(part=>part.instrument==='ukulele').flatMap(part=>part.events))):Promise.resolve({errors:[]}),
+   prepareBackingSamples(ctx,working.filter(part=>part.instrument!=='ukulele').map(part=>({instrument:part.instrument,midis:scoreEventPitches(part.events)})))
+  ]);
   if(loadId!==songSampleLoadToken)return;
-  state.songSampleFallback=prepared.errors.length>0;
-  if(prepared.errors.length)toast('Some recorded notes unavailable; using backup sound');
+  state.songSampleFallback=results.some(result=>result.errors?.length);
+  if(state.songSampleFallback)toast('Some instrument samples unavailable; fallback enabled');
  }catch(error){
   if(loadId!==songSampleLoadToken)return;
   state.songSampleFallback=true;
-  toast('Recorded audio unavailable; using backup sound');
+  toast('Recorded audio unavailable; a fallback will be used');
  }
  if(loadId!==songSampleLoadToken)return;
  state.songSampleLoading=false;
  const seconds=60/practiceTempo(score.tempo,state.songPracticeSpeed);
  const countIn=score.meter==='3/4'?3:score.meter==='6/8'?3:4;
  const start=ctx.currentTime+.15+countIn*seconds;
- const totalBeats=Math.max(...events.map(event=>event.onset+event.duration));
+ const totalBeats=score.measures.length*measureBeats(score.meter);
  const run={audioContext:ctx,events,seconds,start,totalBeats,timers:[],voices:[],nextIndex:0,cycle:0,interval:null,followedBar:null};
  songPracticePlayback=run;
  for(let n=0;n<countIn;n++)tick(ctx.currentTime+.15+n*seconds,n===0);
  render();
  const status=$('#songPracticeStatus');if(status)status.textContent=`Count in: ${countIn} beats · ${Math.round(practiceTempo(score.tempo,state.songPracticeSpeed))} BPM`;
- const voice=recordedUkuleleVoice(ctx);
  const schedule=()=>{
   if(songPracticePlayback!==run)return;
   const currentTime=ctx.currentTime;
   const horizon=currentTime+.30;
-  let budget=100;
+  let budget=150;
   while(budget-->0){
    if(run.nextIndex>=events.length){
     if(!state.songPracticeLoop)break;
@@ -582,15 +609,13 @@ async function playSongPractice(){
    const index=run.nextIndex,ev=events[index];
    const at=start+(run.cycle*totalBeats+ev.onset)*seconds;
    if(at>horizon)break;
-   if(ev.type==='chord')run.voices.push(...synthEvent(ev,at,seconds,ev.duration,voice));
-   else if(ev.type==='note'&&!(index>0&&events[index-1].tieToNext)){
-    let duration=ev.duration,j=index;
-    while(events[j]?.tieToNext&&events[j+1]){j++;duration+=events[j].duration}
-    run.voices.push(...synthEvent(ev,at,seconds,duration,voice));
-   }
+   const voice=ev.instrument==='ukulele'?recordedUkuleleVoice(ctx):
+    (midi,at,dur,vol)=>playBackingSample(ctx,ev.instrument,midi,at,dur,vol)??synth(midi,at,dur,vol);
+   if(!ev.continuation && ev.type!=='rest')run.voices.push(...synthEvent(ev,at,seconds,ev.tiedDuration,voice));
    run.timers.push(setTimeout(()=>{
     if(songPracticePlayback!==run)return;
-    $$('.song-score-preview .score-event,.repo-score-preview .score-event').forEach(el=>el.classList.toggle('playing',el.dataset.eventId===ev.id));
+    const track=document.querySelector('[data-score-part="'+ev.trackId+'"]');
+    track?.querySelectorAll('.score-event').forEach(el=>el.classList.toggle('playing',el.dataset.eventId===ev.id));
     const atBar=(state.songPracticeScope==='section'&&selection.section?selection.section.startBar-1:0)+ev.measureIndex+1;
     followSongPracticeScore(atBar,run);
     const current=$('#songPracticeStatus');
@@ -874,8 +899,13 @@ function handleClick(e){const node=e.target.closest('[data-prog-degree],[data-pr
   if(state.page==='notation')return;
   if(state.page==='songbook'){
    const selection=activeSongPractice();
-   const event=selection?.preview?findEvent(selection.preview,node.dataset.eventId)?.event:null;
-   if(event?.type&&event.type!=='rest'){const secs=60/practiceTempo(selection.score.tempo,state.songPracticeSpeed);previewRecordedUkulele(scoreEventPitches([event]),(voice,at)=>synthEvent(event,at,secs,event.duration,voice));const status=$('#songPracticeStatus');if(status)status.textContent=event.type==='chord'?`Preview: ${event.symbol} chord`:`Preview: ${event.spelling} (${midiName(event.midi)})`}
+   const found=selection?.parts.map(part=>({part,event:findEvent(state.songPracticeScope==='full'?part.score:sectionScore(part.score,selection.sections,selection.sectionIndex),node.dataset.eventId)?.event})).find(x=>x.event);
+   if(found?.event?.type&&found.event.type!=='rest'){
+    const {event,part}=found,secs=60/practiceTempo(selection.score.tempo,state.songPracticeSpeed);
+    if(part.instrument==='ukulele')previewRecordedUkulele(scoreEventPitches([event]),(voice,at)=>synthEvent(event,at,secs,event.duration,voice));
+    else previewRecordedBacking(part.instrument,scoreEventPitches([event]),(voice,at)=>synthEvent(event,at,secs,event.duration,voice));
+    const status=$('#songPracticeStatus');if(status)status.textContent=part.label+': '+(event.type==='chord'?event.symbol:midiName(event.midi));
+   }
    return;
   }
   const found=findEvent(state.score,node.dataset.eventId);
