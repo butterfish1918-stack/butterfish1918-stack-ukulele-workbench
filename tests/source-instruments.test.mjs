@@ -28,3 +28,13 @@ test('a supplied source remains explicitly unverified and does not alter origina
  assert.equal(result.instrumentParts.bass.verified,false);
  assert.equal(original.instrumentParts,undefined);
 });
+
+test('actual Songbook view exposes a personal score import workflow',async()=>{
+ const {readFileSync}=await import('node:fs');
+ const app=readFileSync(new URL('../src/app.js',import.meta.url),'utf8');
+ assert.match(app,/data-action="song-instrument-import"/);
+ assert.match(app,/id="songInstrumentFile"/);
+ assert.match(app,/function loadPersonalInstrumentPart\(/);
+ assert.match(app,/attachInstrumentPart\(source,instrument,score\)/);
+ assert.match(app,/state\.songbookView!=='mine'/);
+});
