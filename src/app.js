@@ -412,19 +412,19 @@ function activeSongPractice(){
   const song=songs().find(item=>item.id===state.songOpen);
   if(!song?.score)return null;
   const sections=songScoreSections(song.score);
-  return {score:song.score,preview:sectionScore(song.score,sections,state.songSectionIndex),label:song.title,section:sections[state.songSectionIndex],sections};
+  return {score:song.score,preview:sectionScore(song.score,sections,state.songSectionIndex),label:song.title,body:song.body||'',section:sections[state.songSectionIndex],sections};
  }
  if(state.songbookView==='repository'){
   const song=state.repositorySnapshot.songs[state.repoSelectedId];
   if(!song?.score)return null;
   const sections=Array.isArray(song.sections)&&song.sections.length?song.sections:songScoreSections(song.score);
-  return {score:song.score,preview:sectionScore(song.score,sections,state.repoSectionIndex),label:song.title,section:sections[state.repoSectionIndex],sections};
+  return {score:song.score,preview:sectionScore(song.score,sections,state.repoSectionIndex),label:song.title,body:song.body||'',section:sections[state.repoSectionIndex],sections};
  }
  const item=repertoireItems().find(item=>item.id===state.repertoireSelectedId);
  const song=item?availableArrangementForItem(item):null;
  if(!song?.score)return null;
  const sections=Array.isArray(song.sections)&&song.sections.length?song.sections:songScoreSections(song.score);
- return {score:song.score,preview:sectionScore(song.score,sections,state.repertoireSectionIndex),label:item.title,section:sections[state.repertoireSectionIndex],sections};
+ return {score:song.score,preview:sectionScore(song.score,sections,state.repertoireSectionIndex),label:item.title,body:song.body||'',section:sections[state.repertoireSectionIndex],sections};
 }
 function songPracticeGuide(preview,body){
  const guide=chordGuide(preview,18);
@@ -456,7 +456,7 @@ function songPracticeControls(preview,body=''){
  </div>
  <div class="song-practice-display">${tabbar([['notation','Notation'],['dual','Notation + tab'],['tab','Tab only']],state.display,'data-display')}</div>
  <p class="small-text" id="songPracticeStatus" role="status" aria-live="polite">${playing?'Playing reference audio…':'Ready. Tap any written note or chord to hear it individually.'}</p>
- ${guide.length?`<div class="song-chord-guide"><strong>Chord fingerings — ${h(TUNINGS[preview.tuning].names.join(' · '))} string order</strong><div class="repo-tags">${guide.map(chord=>`<span title="String frets in G C E A order"><b>${h(chord.symbol)}</b> &nbsp;${h(chord.frets)}</span>`).join('')}</div></div>`:''}
+ ${guide.length?`<div class="song-chord-guide"><strong>Chord fingerings — ${h(TUNINGS[preview.tuning].names.join(' · '))} string order</strong><p class="small-text">Tap a chord to hear its written ukulele fingering.</p><div class="repo-tags">${guide.map(chord=>`<button type="button" class="btn compact ghost" data-practice-chord="${h(chord.symbol)}" title="Listen to ${h(chord.symbol)} chord"><b>${h(chord.symbol)}</b> &nbsp;${h(chord.frets)}</button>`).join('')}</div></div>`:''}
  </div>`;
 }
 function stopSongPractice(){
@@ -779,8 +779,9 @@ function navigate(page){if(!pageNames[page])return;stopSongPractice();stopRhythm
 function nextMelodyPitch(pc){const matches=scalePositions(state.root,state.scale,state.tuning);const match=matches.find(x=>x.pc===pc && x.midi>=60)||matches.find(x=>x.pc===pc);return match?.midi??60}
 function choosePitch(midi){state.selectedMidi=midi;synth(midi);render()}
 function chooseChordSound(){const chord=harmonizedChords(state.root,state.scale,state.chordExtension)[state.chordDegree];if(!chord)return;const voices=chordVoicings(chord.pcs,state.tuning);const voice=voices[Math.min(state.chordIndex,voices.length-1)];if(voice){const midis=voice.midis.filter(x=>x!==null);const ctx=audio(),at=ctx.currentTime+.03;midis.forEach((m,i)=>synth(m,at+i*.025,.7,.075))}else toast('No matching chord voicing in this position range')}
-function handleClick(e){const node=e.target.closest('[data-prog-degree],[data-prog-move],[data-prog-stroke],[data-prog-duration],[data-prog-remove],[data-event-id],[data-score-position],[data-midi],[data-pc],[data-nav],[data-page],[data-action],[data-degree],[data-extension],[data-labels],[data-display],[data-answer],[data-rhythm-answer],[data-expression-answer],[data-key-answer],[data-sight-answer],[data-step],[data-techfocus],[data-techindex],[data-tech-display],[data-tech-note],[data-tech-rating],[data-repo],[data-repo-section],[data-repertoire-preview],[data-repertoire-section],[data-repertoire],[data-song],[data-song-section]');if(!node)return;
+function handleClick(e){const node=e.target.closest('[data-prog-degree],[data-prog-move],[data-prog-stroke],[data-prog-duration],[data-prog-remove],[data-event-id],[data-score-position],[data-midi],[data-pc],[data-nav],[data-page],[data-action],[data-degree],[data-extension],[data-labels],[data-display],[data-answer],[data-rhythm-answer],[data-expression-answer],[data-key-answer],[data-sight-answer],[data-step],[data-techfocus],[data-techindex],[data-tech-display],[data-tech-note],[data-tech-rating],[data-repo],[data-repo-section],[data-repertoire-preview],[data-repertoire-section],[data-repertoire],[data-song],[data-song-section],[data-practice-chord]');if(!node)return;
  if(node.dataset.page){navigate(node.dataset.page);return}if(node.dataset.nav){navigate(node.dataset.nav);return}
+ if(node.dataset.practiceChord){const selection=activeSongPractice();if(!selection)return;const chord=songPracticeGuide(selection.preview,selection.body).find(item=>item.symbol===node.dataset.practiceChord);if(!chord)return;const frets=chord.frets.split(' · '),tuning=TUNINGS[selection.score.tuning];const at=audio().currentTime+.02;let played=0;frets.forEach((fret,string)=>{if(/^\d+$/.test(fret)){synth(tuning.midi[string]+Number(fret),at+played*.032,.85,.12);played++}});const status=$('#songPracticeStatus');if(status)status.textContent=`Chord preview: ${chord.symbol} · ${chord.frets}`;return;}
  if(node.dataset.eventId){
   if(state.page==='progression')return;
   if(state.page==='technique'){const exercise=currentTechnique();if(!exercise.pattern)return;const {score}=techniqueScore(exercise.id,state.tuning);const found=findEvent(score,node.dataset.eventId);if(found){state.techEventId=found.event.id;if(found.event.type!=='rest')synthEvent(found.event,audio().currentTime+.012,60/(state.techTempo||currentTechnique().tempo));render()}return;}
