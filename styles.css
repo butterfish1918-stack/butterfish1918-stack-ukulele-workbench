@@ -445,3 +445,19 @@ input[type=range]{accent-color:var(--lime)}
 .ensemble-score-group .score-holder{margin-top:5px;margin-bottom:9px}
 .ensemble-group-current{border-color:#b9f700;box-shadow:0 0 0 1px rgba(185,247,0,.24)}
 @media(max-width:650px){.ensemble-score-group{padding:7px 4px}.ensemble-score{gap:10px}}
+
+/* Mobile rehearsal transport: always reachable above the bottom navigation. */
+.song-playback-dock{
+ position:fixed;z-index:80;
+ left:max(10px,env(safe-area-inset-left,10px));right:max(10px,env(safe-area-inset-right,10px));
+ bottom:calc(89px + env(safe-area-inset-bottom,0px));
+ border:1px solid #b9f700;box-shadow:0 5px 30px #0009;
+ background:#15221d;color:#eaf2e8;border-radius:9px;
+ display:flex;align-items:center;gap:9px;padding:9px 11px;
+ max-width:540px;margin:0 auto;
+}
+.song-playback-dock .song-dock-position{flex:1;min-width:0;max-width:190px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px}
+.song-playback-dock button{min-height:42px;padding:8px 14px;flex-shrink:0}
+.song-score-track .score-holder{touch-action:manipulation}
+.song-score-track .score-holder .score-event{touch-action:manipulation}
+@media(max-width:500px){.song-playback-dock{padding:7px 8px;gap:6px}.song-playback-dock button{padding:8px 10px}.song-playback-dock .song-dock-position{font-size:11px}}
