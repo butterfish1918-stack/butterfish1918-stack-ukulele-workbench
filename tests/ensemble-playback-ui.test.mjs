@@ -22,7 +22,7 @@ test('voice-specific beaming does not bridge rests and remains grouped within me
  assert.equal((html.match(/class="poly-voice-beam"/g)||[]).length,3);
  assert.match(html,/class="poly-voice-beam-16th"/);
  assert.match(html,/data-voice="counterpoint"/);
- assert.match(html,/1:.*2:/);
+ assert.match(html,/3:2/);
  assert.match(html,/data-measure="2"/);
  assert.match(html,/staccato|•/);
 });
