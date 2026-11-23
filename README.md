@@ -1,3 +1,34 @@
+# Ukulele Workbench 1.10.0 BETA — Extended rehearsal, import and learning foundations
+
+## Implemented and available in the existing interface
+
+- **A–B song practice:** Choose arbitrary start/end bars in the Songbook, loop a passage, gradually raise tempo at each repetition, bookmark current bar and resume later. A local song-practice history records durations and repetitions; the Practice Room shows song statistics and an adjustable daily-duration goal.
+- **Polyphonic guitar-to-ukulele source conversion:** An authorized guitar JSON source can contain one-note events or simultaneous 2–4-note chords. The converter finds distinct playable GCEA strings, retains rhythmic durations and reports any octave changes. Independent counterpoint across multiple guitar voices is not yet supported by the legacy ukulele score editor.
+- **Additional instrument playback:** Credited guitar, strings and synthesizer parts can have specifically labelled synthesized harmonic practice lines. Source-supplied flute and wordless vocal reference notes are supported without inventing missing commercial melodies. These are modeled WebAudio reference timbres, NOT recorded sample banks for the original performers.
+- **Multi-part MusicXML:** Score Studio imports a separate MusicXML score document with multiple parts and up to eight independent rhythmic voices per part; grouped SVG staves retain basic dynamics, tuplets, fingering and articulation symbols. A multi-part export is available, with unsupported overlaps rejected instead of silently flattened.
+- **Advanced theory and guided learning:** A chord-inversion/arpeggio and interval-listening activity is accessible from Fretboard & Theory. The Practice Room offers higher-level technique goals including campanella, chord melody, two-voice playing and phrasing, with review records. These are introductory drills and manual self-assessments, not a complete graded course.
+- **Score export and organisation:** Print / Save PDF uses the browser's print dialog and a clean A4 music-only layout. Songbook includes personal annotations and local playlists; ChordPro import preserves user-supplied text and chords; MusicXML export is available for supported personal scores.
+- **Experimental microphone comparison:** In Songbook, tap a note and start the private on-device YIN pitch estimator to compare heard frequency and cents against a single notated note. It does not upload/store recordings, calibrate actual phone latency or recognise full chords.
+- **Instrument configuration:** Four-string custom open pitches, a capo-aware Fretboard Explorer and left-handed mirrored fretboard are local preferences. These do not silently retune saved scores or imported ensembles.
+- **Physical Android acceptance checklist:** Practice Room lists 10 real-device tests; mark Pass/Fail *only after* using your phone. Browser API inspection is separate from physical-device testing.
+- **Encrypted private backups:** Practice Room can export and restore a user-managed portable AES-256-GCM / PBKDF2-encrypted backup for manual storage on a cloud drive. Your passphrase is not stored or sent. This is **not account-based automatic cloud syncing**.
+
+## Remaining limitations and unfinished work
+
+1. The 14 modern-song studies and generated backing parts are **not verified note-for-note commercial transcriptions**. The mandatory two-independent-source score verification rule remains unchanged, including source and redistribution rights; app-generated accompaniment must remain labelled as a reconstruction.
+2. Professional engraving still needs advanced beam/tie/slur placement, engraving collisions, multiple voices fully integrated into the editable legacy Songbook score, repeats/alternate endings, multi-staff spacing, and comprehensive dynamics/tuplet round-trip. The new multi-voice SVG document viewer is an honest preview, not a replacement for a professional score editor.
+3. Full imported multi-part scores are stored/viewed/exported independently; live multi-part playback and completely lossless MusicXML 4.0 roundtrip are not certified. ChordPro is a chord/lyric text interchange, not a staff transcription.
+4. Physical Android audio/microphone/gesture/tuner calibration and offline airplane-mode reload still **require the owner's actual phone**. Automated tests and simulated browser sessions cannot certify these.
+5. Automated private cloud syncing requires an approved account/provider and authenticated storage workflow; this release provides encrypted files for user-managed cloud backup only. Do not put personal OAuth tokens or credentials in a public Pages script.
+
+Project standing policy: docs/SCORE_VERIFICATION_POLICY.md; never mark unverified instrumental data as confirmed. Personal Songbook data and private microphone streams stay on the user's device.
+
+## Testing and deployment
+
+CI executes `npm test`, `npm run qa:library`, `npm run qa:arrangements`, and `npm run qa:sources`, then deploys a freshly cache-stamped service worker. Real-device acceptance results remain separate and user-recorded.
+
+---
+
 # Ukulele Workbench v1.9.1 — Actual historical lyrics added
 
 The **Scarborough Fair / Whittingham Fair — Complete Traditional Tune (1882)** arrangement now includes 12 public-domain, bar-anchored lyric lines from selected verses of the historical text in Bruce and Stokoe's *Northumbrian Minstrelsy* (1882), not the Simon & Garfunkel/Canticle recording. Three eight-bar traditional-verse repeats begin at bars 5, 13 and 21; four phrase cues are assigned to each repeat. Repeated refrains are editorial to support this three-verse arrangement; the phrase-to-bar alignment is pedagogical and not a verified syllable transcription.
