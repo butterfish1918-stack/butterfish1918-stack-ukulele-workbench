@@ -380,3 +380,6 @@ input[type=range]{accent-color:var(--lime)}
  .song-rehearsal-controls .control{min-width:125px;flex:1 1 45%}
  .song-practice-display .tabbar{max-width:100%;overflow-x:auto}
 }
+
+.song-chord-guide .repo-tags button{white-space:nowrap;text-transform:none;display:inline-flex;gap:5px;align-items:center}
+.song-chord-guide .repo-tags button:hover{border-color:var(--lime,#b9f700)}
