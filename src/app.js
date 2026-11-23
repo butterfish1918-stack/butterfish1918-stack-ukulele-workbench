@@ -457,7 +457,7 @@ function approvedRepertoireSongbook(){
  const activeSection=sections[Math.min(state.repertoireSectionIndex,Math.max(0,sections.length-1))];
  const previewScore=activeSection?{...arrangement.score,measures:arrangement.score.measures.slice(activeSection.startBar-1,activeSection.endBar)}:arrangement?.score;
  return `${hero('APPROVED PRACTICE SONGS','Your <em>repertoire.</em>','Select a song to see its playable ukulele chords, score, fingerings and section-by-section notation. Modern titles have accompaniment adaptations, not verified recordings or licensed transcriptions.',`${items.length} APPROVED SONGS · MUSICAL SCORES`)}
- <div class="workspace-grid"><section class="panel panel-pad"><div class="panel-title"><h2>Approved repertoire</h2><div class="right"><button type="button" class="btn compact" data-action="repertoire-sync" ${state.repoSyncing?'disabled':''}>${state.repoSyncing?'Loading scores…':'↻ Load / refresh scores'}</button><button type="button" class="btn gold compact" data-action="repertoire-import-all" ${state.repoSyncing?'disabled':''}>＋ Add all available scores</button></div></div>
+ <div class="workspace-grid"><section class="panel panel-pad"><div class="panel-title"><h2>Approved repertoire</h2><div class="right"><button type="button" class="btn compact" data-action="repertoire-sync" ${state.repoSyncing?'disabled':''}>${state.repoSyncing?'Loading scores…':'↻ Sync entire library'}</button><button type="button" class="btn gold compact" data-action="repertoire-import-all" ${state.repoSyncing?'disabled':''}>＋ Add all available scores</button></div></div>
  <p class="small-text">Choose <strong>View score</strong> to read an arrangement without copying it. Use <strong>Add to My Songbook</strong> to keep your own editable copy. No existing personal copies are overwritten. To read optional tablature, change the notation display setting.</p>
  ${state.repoError?`<p class="small-text" role="alert">${h(state.repoError)}</p>`:''}
  <div class="song-list">${items.map(item=>{
@@ -801,7 +801,7 @@ function handleClick(e){const node=e.target.closest('[data-prog-degree],[data-pr
  case 'play-rhythm':rhythmTimer?stopRhythm():startRhythm();render();break;
  case 'reset-pattern':state.rhythm=['D','','U','U','D','','U',''];store('rhythm',state.rhythm);render();break;
  case 'repo-view-mine':state.songbookView='mine';render();break;
-  case 'repo-view-repertoire':state.songbookView='repertoire';state.editing=false;render();if(location.protocol!=='file:'&&!state.repoSyncing&&repertoireItems().some(item=>!state.repositorySnapshot.songs[repertoireScoreId(item)]))syncLibrary();break;
+  case 'repo-view-repertoire':state.songbookView='repertoire';state.editing=false;render();break;
  case 'repertoire-sync':syncLibrary();break;
   case 'repertoire-import-all':addApprovedSongs();break;
  case 'repo-view-repository':state.songbookView='repository';state.editing=false;render();break;
