@@ -33,3 +33,18 @@ test('Songbook playback and displayed score use the same full-or-section selecti
  assert.match(src,/data-song-part-toggle/);
  assert.match(src,/sort\(\(x,y\)=>x\.onset-y\.onset/);
 });
+
+test('score playback can be paused without restarting, and mobile gestures ignore scrolling',()=>{
+ const app=readFileSync(new URL('../src/app.js',import.meta.url),'utf8');
+ assert.match(app,/songPlaybackDock\(\)/);
+ assert.match(app,/function toggleSongPracticePause\(/);
+ assert.match(app,/audioContext\.suspend\(\)/);
+ assert.match(app,/audioContext\.resume\(\)/);
+ assert.match(app,/function onSongScorePointerUp\(/);
+ assert.match(app,/Math\.hypot\(event\.clientX-started\.x,event\.clientY-started\.y\)>15/);
+ assert.match(app,/if\(run\.paused\)return/);
+ assert.match(app,/data-action="song-practice-stop"/);
+ assert.match(app,/updateSongPlayhead\(run,selection,score\)/);
+ assert.match(app,/run\.audioContext\.currentTime-run\.start/);
+ assert.match(app,/playDrumSample\(ctx,hit,at/);
+});
