@@ -10,19 +10,24 @@ export function validateScoreDocument(doc){
  if(typeof doc.title!=='string'||doc.title.length>120||!Number.isInteger(doc.tempo)||doc.tempo<30||doc.tempo>240)throw Error('Invalid score metadata');
  if(!/^([2-9]|1[0-2])\/(4|8)$/.test(doc.meter))throw Error('Unsupported score meter');
  const maxBars=doc.measures;
+ const [numerator,denominator]=doc.meter.split('/').map(Number);
+ const barBeats=numerator*4/denominator;
  if(!Number.isInteger(maxBars)||maxBars<1||maxBars>200)throw Error('Invalid bar count');
  const seen=new Set();
  for(const part of doc.parts){
   if(typeof part.id!=='string'||!part.id||seen.has(part.id)||typeof part.name!=='string'||part.name.length>80)throw Error('Invalid instrument part');
   seen.add(part.id);
   if(!Array.isArray(part.voices)||part.voices.length<1||part.voices.length>8)throw Error('Part requires one to eight voices');
+  const voiceIds=new Set();
   for(const voice of part.voices){
+   if(voiceIds.has(voice.id))throw Error('Duplicate voice ID in '+part.id);
+   voiceIds.add(voice.id);
    if(typeof voice.id!=='string'||!Array.isArray(voice.measures)||voice.measures.length!==maxBars)throw Error('Invalid rhythmic voice');
    for(const [i,bar] of voice.measures.entries()){
     if(!Array.isArray(bar.events)||bar.events.length>128)throw Error('Invalid measure '+(i+1));
     let end=0;
     for(const e of bar.events){
-     if(!Number.isFinite(e.onset)||e.onset<0||!Number.isFinite(e.duration)||e.duration<=0||e.duration>12||e.onset+e.duration>12)throw Error('Invalid note timing');
+     if(!Number.isFinite(e.onset)||e.onset<0||!Number.isFinite(e.duration)||e.duration<=0||e.duration>barBeats+1e-8||e.onset+e.duration>barBeats+1e-8)throw Error('Invalid note timing: measure overflow');
      if(e.type!=='rest'&&(!Number.isInteger(e.midi)||e.midi<20||e.midi>110))throw Error('Invalid pitch');
      if(e.type!=='note'&&e.type!=='rest')throw Error('Unsupported event type in voice');
      if(e.dynamics!==undefined&&!SUPPORTED_DYNAMICS.includes(e.dynamics))throw Error('Invalid dynamics');
@@ -30,6 +35,17 @@ export function validateScoreDocument(doc){
      if(e.finger!==undefined&&(!Number.isInteger(e.finger)||e.finger<0||e.finger>4))throw Error('Invalid finger number');
      if(e.tuplet&&(!Number.isInteger(e.tuplet.actual)||!Number.isInteger(e.tuplet.normal)||e.tuplet.actual<2||e.tuplet.normal<1||e.tuplet.actual>12))throw Error('Invalid tuplet ratio');
      end=Math.max(end,e.onset+e.duration);
+    }
+    // Consecutive voices may overlap one another, but a single rhythmic voice
+    // can only overlap notes at the SAME onset, i.e. a written chord. Fractional
+    // overlaps are invalid because they would imply a second hidden voice.
+    const ordered=[...bar.events].sort((a,b)=>a.onset-b.onset||b.duration-a.duration);
+    let previousOnset=-1,previousEnd=0,previousDuration=0;
+    for(const e of ordered){
+     if(e.onset<previousEnd-1e-8){
+      if(Math.abs(e.onset-previousOnset)>1e-8||Math.abs(e.duration-previousDuration)>1e-8||
+       e.type==='rest')throw Error('Overlapping events within one voice; split independent counterpoint into separate voices');
+     }else{previousOnset=e.onset;previousEnd=e.onset+e.duration;previousDuration=e.duration}
     }
    }
   }
