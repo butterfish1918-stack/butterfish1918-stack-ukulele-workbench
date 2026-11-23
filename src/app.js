@@ -9,6 +9,8 @@ import {validateScoreDocument,flattenDocumentEvents,planScoreSystems} from './po
 import {importMultiPartMusicXML,exportMultiPartMusicXML} from './musicxml-multipart.js';
 import {renderPolyphonicDocument} from './polyphonic-engraving.js';
 import {parseChordPro,exportChordPro} from './chordpro.js';
+import {MOBILE_QA_CASES,qaSummary,recordMobileQa} from './mobile-qa.js';
+import {encryptPortableBackup,decryptPortableBackup} from './encrypted-backup.js';
 import {parseBarLyricCues,lyricCuesToText,mergeReadingCues} from './song-lyrics.js';
 import {partVerificationStatus} from './score-verification.js';
 import {prepareUkuleleSamples,playUkuleleSample} from './ukulele-samples.js';
@@ -63,6 +65,7 @@ state.practicePreferences=validatedPracticePreferences(read('practicePreferences
 state.learningProgress=read('learningProgress',{});
 state.songPlaylists=read('songPlaylists',{});
 state.songAnnotations=read('songAnnotations',{});
+state.mobileQaResults=read('mobileQaResults',{});
 state.scoreDocument=read('scoreDocument',null);
 try{if(state.scoreDocument)validateScoreDocument(state.scoreDocument)}catch{state.scoreDocument=null}
 state.earSeed=Number(read('earSeed',0))||0;
@@ -484,7 +487,8 @@ function playTechnique(){
 
 function rhythm(){return `${hero('RHYTHM STUDIO','Feel the <em>pulse.</em>','Build a two-bar eighth-note strumming pattern, play it with sound, and connect rhythmic movement to steady musical time.','RHYTHM · 4/4')}
 <div class="workspace-grid"><section class="panel panel-pad"><div class="panel-title"><h2>Strumming pattern studio</h2><span class="sub-label">8 EIGHTH-NOTE SLOTS</span></div><p class="panel-desc">Tap each slot to cycle through a downstroke (↓), upstroke (↑), and rest (–). A full measure is eight eighth notes in 4/4.</p><div class="pattern-grid">${state.rhythm.map((v,i)=>`<button data-step="${i}" class="beat-cell ${i===state.rhythmStep?'active':''}" aria-label="Beat slot ${i+1}, ${v==='D'?'downstroke':v==='U'?'upstroke':'rest'}"><span class="beat-num">${Math.floor(i/2)+1}${i%2?'&':''}</span><span class="beat-dir">${v==='D'?'↓':v==='U'?'↑':'–'}</span></button>`).join('')}</div><div class="step-actions"><button class="btn gold" data-action="play-rhythm">${rhythmTimer?'■ Stop pattern':'▶ Play pattern'}</button><button class="btn" data-action="open-metronome">◷ Metronome</button><button class="btn ghost" data-action="reset-pattern">Reset</button></div><div class="score-info"><span>Tempo: ${state.tempo} BPM</span><span>Pattern stored on your device</span></div></section><section class="panel panel-pad"><div class="panel-title"><h2>Learn rhythm from notation</h2></div><div class="lesson-list"><div class="lesson"><div class="lesson-icon">♩</div><div><h3>Pulse and quarter notes</h3><p>Feel four even beats in a bar.</p></div><span class="status-tag">ACTIVE</span></div><div class="lesson"><div class="lesson-icon">♫</div><div><h3>Eighth-note subdivision</h3><p>Count 1 & 2 & 3 & 4 &.</p></div><span class="status-tag">ACTIVE</span></div><div class="lesson"><div class="lesson-icon">𝄽</div><div><h3>Rests & syncopation</h3><p>Read and tap short written phrases in Notation Academy.</p></div><span class="status-tag">ACTIVE</span></div></div><hr class="divider"><label class="control"><span>Adjust tempo (${state.tempo} BPM)</span><input id="rhythmTempo" type="range" min="40" max="200" step="2" value="${state.tempo}"></label><p class="small-text">The pattern sequencer uses pitched clicks as a placeholder for actual ukulele strum samples. The notation-based tap trainer is available under Notation Academy.</p></section></div>`}
-function exportBackup(){const data={format:'ukulele-workbench-backup',schemaVersion:2,exportedAt:new Date().toISOString(),scoreDraft:state.score,songs:songs(),progress:progress(),rhythm:state.rhythm,tuning:state.tuning,display:state.display,techniqueProgress:techniqueProgress(),rhythmLabProgress:rhythmLabProgress(),notationReadingProgress:readingProgress(),progressionDraft:state.progression,guitarAdaptations:state.songGuitarAdaptations,lyricCues:state.songLyricsById,practiceHistory:state.songPracticeHistory,practiceRanges:state.songPracticeRanges,songBookmarks:state.songBookmarks,practicePreferences:state.practicePreferences,songPlaylists:state.songPlaylists,songAnnotations:state.songAnnotations,learningProgress:state.learningProgress,scoreDocument:state.scoreDocument};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='ukulele-workbench-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),4000);toast('Backup exported')}
+function completeBackupData(){return {format:'ukulele-workbench-backup',schemaVersion:2,exportedAt:new Date().toISOString(),scoreDraft:state.score,songs:songs(),progress:progress(),rhythm:state.rhythm,tuning:state.tuning,display:state.display,techniqueProgress:techniqueProgress(),rhythmLabProgress:rhythmLabProgress(),notationReadingProgress:readingProgress(),progressionDraft:state.progression,guitarAdaptations:state.songGuitarAdaptations,lyricCues:state.songLyricsById,practiceHistory:state.songPracticeHistory,practiceRanges:state.songPracticeRanges,songBookmarks:state.songBookmarks,practicePreferences:state.practicePreferences,songPlaylists:state.songPlaylists,songAnnotations:state.songAnnotations,learningProgress:state.learningProgress,scoreDocument:state.scoreDocument,mobileQaResults:state.mobileQaResults};}
+function exportBackup(){const data=completeBackupData();const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='ukulele-workbench-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),4000);toast('Backup exported')}
 function songScoreSections(score){
  const result=[];
  score?.measures?.forEach((bar,i)=>{
@@ -1404,8 +1408,52 @@ function songPracticeOverview(){
 function practice(){const logs=progress(),minutes=logs.reduce((s,x)=>s+(x.minutes||0),0);return `${hero('PRACTICE ROOM','Make every note <em>count.</em>','Build a repeatable routine across reading, scales, technique and repertoire, and keep a simple local log of your sessions.','YOUR PERSONAL STUDIO')}
 <div class="stats"><div class="stat"><strong>${logs.length}</strong><span>Sessions logged</span></div><div class="stat"><strong>${minutes}</strong><span>Practice minutes</span></div><div class="stat"><strong>${new Set(logs.map(x=>x.date.slice(0,10))).size}</strong><span>Days practiced</span></div></div><div class="workspace-grid" style="margin-top:17px"><section class="panel panel-pad"><div class="panel-title"><h2>Suggested 20-minute session</h2></div><div class="lesson-list">${[['04','Tuning & warm-up','Open tuner and play slowly.'],['05','Sight-reading','Identify notes without tablature.'],['05','Fingering & technique','Work on one specific movement.'],['04','Repertoire','Loop a difficult passage.'],['02','Reflect','Save what improved and what was difficult.']].map(([num,title,desc])=>`<div class="lesson"><div class="lesson-icon">${num}</div><div><h3>${title}</h3><p>${desc}</p></div><span class="status-tag">MIN</span></div>`).join('')}</div><div class="step-actions"><button class="btn gold" data-action="log-practice">＋ Log a 20-minute session</button><button class="btn" data-nav="notation">𝄞 Read notes</button></div></section><section class="panel panel-pad"><div class="panel-title"><h2>Recent activity</h2></div>${logs.length?`<div class="lesson-list">${logs.slice().reverse().slice(0,8).map(x=>`<div class="lesson"><div class="lesson-icon">✓</div><div><h3>${x.minutes} minutes practiced</h3><p>${h(x.note||'General practice')}<br>${h(new Date(x.date).toLocaleDateString())}</p></div></div>`).join('')}</div>`:`<div class="empty-state"><div class="big-icon">◎</div><h3>Your practice starts here</h3><p>Log your first session after completing an exercise or working through a song.</p></div>`}<p class="hint-text">Practice history stays on this device and can be exported from the songbook's backup control.</p></section></div>${songPracticeOverview()}${learningReviewPanel()}${deviceQASection()}`}
 function deviceQASection(){
- return `<section class="panel panel-pad" style="margin-top:18px"><div class="panel-title"><h2>Device & data safety</h2><button class="btn compact gold" data-action="device-check">Run device checks</button></div><p class="small-text">Checks browser capabilities without accessing your microphone, uploading anything or inspecting your music. They do not replace a physical tuner test or an offline-reload test.</p>${deviceReport?`<div class="lesson-list">${deviceReport.map(row=>`<div class="lesson"><div class="lesson-icon">${row.status==='pass'?'✓':row.status==='available'?'?':row.status==='action'?'!':'i'}</div><div><h3>${h(row.label)}</h3><p>${h(row.detail)}</p></div><span class="status-tag">${row.status==='pass'?'CHECKED':row.status==='available'?'API ONLY':row.status==='action'?'TO TEST':'INFO'}</span></div>`).join('')}</div>`:'<p class="hint-text">Not yet checked in this session.</p>'}<p class="hint-text">Backups: Songbook → ↓ Backup. An imported backup is validated before anything is saved, and failed writes trigger rollback. Keep an exported copy outside the browser.</p></section>`;
+ const counts=qaSummary(state.mobileQaResults);
+ return `<section class="panel panel-pad" style="margin-top:18px"><div class="panel-title"><h2>Device & data safety</h2><button class="btn compact gold" data-action="device-check">Check browser APIs</button></div>
+ <p class="small-text">Browser checks inspect capabilities; they do not establish tuner precision or audio timing on your actual Android device.</p>
+ ${deviceReport?`<div class="lesson-list">${deviceReport.map(row=>`<div class="lesson"><div class="lesson-icon">${row.status==='pass'?'✓':row.status==='available'?'?':row.status==='action'?'!':'i'}</div><div><h3>${h(row.label)}</h3><p>${h(row.detail)}</p></div><span class="status-tag">${row.status==='pass'?'CHECKED':row.status==='available'?'API ONLY':row.status==='action'?'TO TEST':'INFO'}</span></div>`).join('')}</div>`:'<p class="hint-text">Browser capability checks have not been run in this session.</p>'}
+ <details class="song-organizer mobile-qa"><summary>Android acceptance checklist · ${counts.pass} passed, ${counts.fail} failed, ${counts.untested} untested</summary>
+ <p class="small-text">Mark a test only after physically checking it on the phone. These results stay on this device and are included in backups.</p>
+ <div class="lesson-list">${MOBILE_QA_CASES.map(item=>{
+  const current=state.mobileQaResults[item.id]?.status||'untested';
+  return `<div class="lesson mobile-qa-case"><div class="lesson-icon">${current==='pass'?'✓':current==='fail'?'!':'?'}</div>
+   <div><h3>${h(item.name)}</h3><p>${h(item.guide)}</p></div>
+   <div class="mobile-qa-actions"><button class="btn compact ${current==='pass'?'gold':'ghost'}" type="button" data-action="device-qa-pass" data-qa-id="${item.id}">Pass</button>
+    <button class="btn compact ${current==='fail'?'gold':'ghost'}" type="button" data-action="device-qa-fail" data-qa-id="${item.id}">Fail</button></div></div>`;
+ }).join('')}</div></details>
+ <details class="song-organizer"><summary>Encrypted private backup (for your own cloud storage)</summary>
+  <p class="small-text">This downloads an AES-256-GCM encrypted JSON file. You may upload that file to any cloud provider yourself. It does not connect a cloud account or synchronise automatically. Losing the passphrase makes recovery impossible.</p>
+  <label class="control">Encryption passphrase (at least 12 characters)<input type="password" id="secureBackupPassword" autocomplete="new-password" minlength="12"></label>
+  <div class="score-actions"><button class="btn compact" type="button" data-action="backup-encrypted-export">Download encrypted backup</button>
+  <button class="btn compact" type="button" data-action="backup-encrypted-import">Restore encrypted file</button>
+  <input id="encryptedBackupFile" type="file" accept=".json,application/json" hidden></div>
+ </details>
+ <p class="hint-text">Standard JSON backup: Songbook → Backup. A successful cache check is not an airplane-mode reload test. Keep a backup outside the browser.</p></section>`;
 }
+async function exportEncryptedBackup(){
+ try{
+  const password=$('#secureBackupPassword')?.value||'';
+  if(password.length<12)throw Error('Passphrase must be at least 12 characters');
+  const envelope=await encryptPortableBackup(completeBackupData(),password);
+  const blob=new Blob([JSON.stringify(envelope,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download='ukulele-workbench-encrypted-backup.json';a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),5000);
+  const field=$('#secureBackupPassword');if(field)field.value='';
+  toast('Encrypted private backup downloaded. Retain your passphrase securely.');
+ }catch(error){toast('Encrypted backup: '+error.message)}
+}
+async function restoreEncryptedBackup(file){
+ try{
+  if(file.size>8_000_000)throw Error('Encrypted backup exceeds 8 MB');
+  const password=$('#secureBackupPassword')?.value||'';
+  if(password.length<12)throw Error('Enter your original encryption passphrase');
+  const value=await decryptPortableBackup(JSON.parse(await file.text()),password);
+  const textContent=JSON.stringify(value);
+  const field=$('#secureBackupPassword');if(field)field.value='';
+  await importBackup({size:textContent.length,text:async()=>textContent});
+ }catch(error){toast('Encrypted restoration: '+error.message)}
+}
+
 function updateEngraving(){
  const host=$('#engravingHost');if(!host)return;
  if(!globalThis.VexFlow?.Renderer){host.textContent='Loading optional engraving renderer…';return;}
@@ -1690,6 +1738,14 @@ function handleClick(e){const node=e.target.closest('[data-prog-degree],[data-pr
  case 'delete-song':if(confirm('Delete this song sketch from local storage?')){store('songs',songs().filter(s=>s.id!==state.songOpen));state.songOpen=null;render();toast('Song deleted')}break;
  case 'export-backup':exportBackup();break;
  case 'import-backup':$('#backupFile')?.click();break;
+ case 'device-qa-pass':case 'device-qa-fail':{
+  try{const id=node.dataset.qaId,status=action==='device-qa-pass'?'pass':'fail';
+   state.mobileQaResults=recordMobileQa(state.mobileQaResults,id,status);
+   store('mobileQaResults',state.mobileQaResults);render()}
+  catch(error){toast(error.message)}
+ }break;
+ case 'backup-encrypted-export':exportEncryptedBackup();break;
+ case 'backup-encrypted-import':$('#encryptedBackupFile')?.click();break;
  case 'device-check':inspectDevice({browserLocation:window.location,environment:navigator,storage:window.localStorage,cacheStorage:window.caches,secureContext:window.isSecureContext}).then(result=>{deviceReport=result;if(state.page==='practice')render()}).catch(error=>toast(`Device check unavailable: ${error.message}`));break;
  case 'apply-custom-tuning':{
   try{const notes=parseCustomTuning($('#customTuningInput')?.value||'');
@@ -1755,7 +1811,7 @@ function handleChange(e){const el=e.target;
  if(el.id==='scoreDuration'){state.draftDuration=Number(el.value);return}
  if(el.id==='scorePitch'){state.draftMidi=Number(el.value);const entries=spellingsForMidi(state.draftMidi);state.draftSpelling=entries[0];const target=$('#scoreSpelling');if(target)target.innerHTML=entries.map(x=>`<option value="${h(x)}">${h(x.replace('#','♯').replace('b','♭'))}</option>`).join('');return}
  if(el.id==='scoreSpelling'){state.draftSpelling=el.value;return}
-if(['root','scale','tuning'].includes(el.id)){state[el.id]=el.value;if(el.id==='tuning')store('tuning',state.tuning);state.chordDegree=0;state.chordIndex=0;state.selectedMidi=melody()[0]?.midi??60;render()}if(el.id==='showHints'){state.showHints=el.checked;store('hints',el.checked);render()}if(el.id==='rhythmTempo'){state.tempo=Number(el.value);store('tempo',state.tempo);render()}if(el.id==='backupFile'&&el.files?.[0])importBackup(el.files[0]);if(el.id==='musicXmlFile'&&el.files?.[0])loadMusicXMLFile(el.files[0]);if(el.id==='guitarPartFile'&&el.files?.[0])loadGuitarPartFile(el.files[0]);if(el.id==='songGuitarSourceFile'&&el.files?.[0])loadSongGuitarPartFile(el.files[0]);if(el.id==='multiPartXmlFile'&&el.files?.[0])loadMultiPartXmlFile(el.files[0]);if(el.id==='chordProFile'&&el.files?.[0])loadChordProFile(el.files[0]);}
+if(['root','scale','tuning'].includes(el.id)){state[el.id]=el.value;if(el.id==='tuning')store('tuning',state.tuning);state.chordDegree=0;state.chordIndex=0;state.selectedMidi=melody()[0]?.midi??60;render()}if(el.id==='showHints'){state.showHints=el.checked;store('hints',el.checked);render()}if(el.id==='rhythmTempo'){state.tempo=Number(el.value);store('tempo',state.tempo);render()}if(el.id==='backupFile'&&el.files?.[0])importBackup(el.files[0]);if(el.id==='musicXmlFile'&&el.files?.[0])loadMusicXMLFile(el.files[0]);if(el.id==='guitarPartFile'&&el.files?.[0])loadGuitarPartFile(el.files[0]);if(el.id==='songGuitarSourceFile'&&el.files?.[0])loadSongGuitarPartFile(el.files[0]);if(el.id==='multiPartXmlFile'&&el.files?.[0])loadMultiPartXmlFile(el.files[0]);if(el.id==='chordProFile'&&el.files?.[0])loadChordProFile(el.files[0]);if(el.id==='encryptedBackupFile'&&el.files?.[0])restoreEncryptedBackup(el.files[0]);}
 async function loadChordProFile(file){
  try{
   if(file.size>150000)throw Error('ChordPro file too large');
@@ -1858,6 +1914,10 @@ async function importBackup(file){
   if(data.songPlaylists&&typeof data.songPlaylists==='object'){state.songPlaylists=data.songPlaylists;store('songPlaylists',state.songPlaylists)}
   if(data.songAnnotations&&typeof data.songAnnotations==='object'){state.songAnnotations=data.songAnnotations;store('songAnnotations',state.songAnnotations)}
   if(data.learningProgress&&typeof data.learningProgress==='object'){state.learningProgress=data.learningProgress;store('learningProgress',state.learningProgress)}
+  if(data.mobileQaResults&&typeof data.mobileQaResults==='object'&&!Array.isArray(data.mobileQaResults)){
+   const verified={};for(const [id,item] of Object.entries(data.mobileQaResults))verified[id]=recordMobileQa(verified,id,item?.status,item?.note||'');
+   state.mobileQaResults=verified;store('mobileQaResults',verified)
+  }
   if(data.scoreDocument){validateScoreDocument(data.scoreDocument);state.scoreDocument=data.scoreDocument;store('scoreDocument',state.scoreDocument)}
   if(data.progressionDraft)state.progression=structuredClone(data.progressionDraft);
   if(data.scoreDraft){
