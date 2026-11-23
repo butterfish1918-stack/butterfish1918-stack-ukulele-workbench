@@ -59,7 +59,8 @@ test('long scores use section navigation and updates do not hide newer catalog r
  const app=readFileSync(new URL('../src/app.js',import.meta.url),'utf8');
  assert.match(app,/data-repo-section/);
  assert.match(app,/data-song-section/);
- assert.match(app,/repositoryOrigin\.revision===state\.repositorySnapshot\.songs/);
+ assert.match(app,/repertoireCopyStatus/,'Approved Songs must check whether a newer arrangement is available');
+ assert.match(app,/song\.repositoryOrigin\?\.revision===source\.revision/,'the import must distinguish existing score revisions');
  assert.match(app,/songScoreSections/);
 });
 
