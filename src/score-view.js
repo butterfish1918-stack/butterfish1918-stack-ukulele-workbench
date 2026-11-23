@@ -156,14 +156,14 @@ export function scoreSystems(score,{maxSystemWidth=490,maxBarsPerSystem=3,showNa
  systems.push({start:from,end:score.measures.length});
  return systems;
 }
-export function renderScoreView(score,{mode='notation',selectedEventId=null,playingEventId=null,showNames=false,annotations=null,layout='strip',measureOffset=0,chordSymbols=null,showChordLabels=true}={}){
+export function renderScoreView(score,{mode='notation',selectedEventId=null,playingEventId=null,showNames=false,annotations=null,layout='strip',measureOffset=0,chordSymbols=null,showChordLabels=true,readingCues=null}={}){
  if(layout==='systems'&&score?.measures?.length){
   const desktop=typeof window!=='undefined'&&window.innerWidth>=820;
   const systems=scoreSystems(score,{maxSystemWidth:desktop?840:490,maxBarsPerSystem:desktop?4:2,showNames});
   return `<div class="score-systems" role="group" aria-label="Multi-line sheet music: ${systems.length} stave systems, ${score.measures.length} measures">${systems.map(({start,end})=>{
    const single={...score,measures:score.measures.slice(start,end)};
    const chords=Array.isArray(chordSymbols)?chordSymbols.slice(start,end):null;
-   return `<div class="score-system" data-first-measure="${measureOffset+start+1}" data-last-measure="${measureOffset+end}" role="group" aria-label="Measures ${measureOffset+start+1} to ${measureOffset+end}">${renderScoreView(single,{mode,selectedEventId,playingEventId,showNames,annotations,layout:'compact',measureOffset:measureOffset+start,chordSymbols:chords,showChordLabels})}</div>`;
+   return `<div class="score-system" data-first-measure="${measureOffset+start+1}" data-last-measure="${measureOffset+end}" role="group" aria-label="Measures ${measureOffset+start+1} to ${measureOffset+end}">${renderScoreView(single,{mode,selectedEventId,playingEventId,showNames,annotations,layout:'compact',measureOffset:measureOffset+start,chordSymbols:chords,showChordLabels,readingCues})}</div>`;
   }).join('')}</div>`;
  }
 
@@ -260,5 +260,14 @@ export function renderScoreView(score,{mode='notation',selectedEventId=null,play
   });
  }
  out+='</svg>';
+ if(layout==='compact'&&Array.isArray(readingCues)){
+  const first=measureOffset+1,last=measureOffset+score.measures.length;
+  const showing=readingCues.filter(cue=>cue&&Number.isInteger(cue.bar)&&cue.bar>=first&&cue.bar<=last&&typeof cue.text==='string');
+  if(showing.length){
+   out+=`<div class="score-reading-cues" aria-label="Lyric and song-section cues for measures ${first} to ${last}">${showing.map(cue=>
+    `<div class="score-reading-cue ${cue.kind==='section'?'cue-section':'cue-lyric'}" data-lyric-bar="${cue.bar}"><span class="cue-bar">Bar ${cue.bar}</span><span class="cue-text">${esc(cue.text)}</span>${cue.kind==='section'?'<span class="cue-kind">Section</span>':''}</div>`
+   ).join('')}</div>`;
+  }
+ }
  return out;
 }
