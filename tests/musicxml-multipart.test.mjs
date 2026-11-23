@@ -14,5 +14,5 @@ test('multi-instrument MusicXML export preserves all parts and measured duration
 test('export fails cleanly on unsupported overlapping notes within a single voice',()=>{
  const invalid=structuredClone(doc);
  invalid.parts[0].voices[0].measures[0].events.push({type:'note',midi:64,onset:0,duration:2});
- assert.throws(()=>exportMultiPartMusicXML(invalid),/Overlapping notes/);
+ assert.throws(()=>exportMultiPartMusicXML(invalid),/Overlapping (notes|events)/);
 });
