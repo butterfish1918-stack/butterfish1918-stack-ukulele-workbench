@@ -15,7 +15,7 @@ test('song-specific ensemble includes only the credited recording instruments',(
  assert.equal(solo[0].score,score);
  assert.match(guitar[1].source,/generated/);
  assert.equal(ensemble[3].score.clef,'percussion');
- assert.equal(Object.keys(ORIGINAL_INSTRUMENT_PROFILES).length,15);
+ assert.equal(Object.keys(ORIGINAL_INSTRUMENT_PROFILES).length,16); // 15 songs plus traditional-air arrangement alias
 });
 test('Blackbird never generates a phantom bass piano or drum kit, and traditional air has no band',()=>{
  const blackbird={...item,id:'blackbird',repertoireOrigin:undefined};
