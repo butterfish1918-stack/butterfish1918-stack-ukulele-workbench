@@ -464,7 +464,7 @@ function songLyricEditor(){
  const song=currentSongSource();
  if(!song?.score)return '';
  const source=songLyricText(song);
- const count=source?parseBarLyricCues(source,{measureCount:song.score.measures.length}).length:0;
+ let count=0;try{count=source?parseBarLyricCues(source,{measureCount:song.score.measures.length}).length:0}catch{/* A revised score may invalidate old local bar numbers; do not crash the score viewer. */}
  return `<div class="song-lyrics-tools">
   <button type="button" class="btn compact ghost" data-action="song-lyrics-edit">${state.songLyricEditorOpen?'Close lyric editor':count?'Edit lyric cues':'Add lyric cues'}</button>
   <span class="small-text">${count?count+' lyric cues saved privately':'No original lyrics stored — section names are shown instead'}</span>
