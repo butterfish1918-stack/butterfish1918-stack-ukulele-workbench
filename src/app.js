@@ -471,7 +471,7 @@ function renderSongArrangementSheets(arrangement,sections,index,containerClass){
  const staffOptions=part=>({
   mode:part.id==='ukulele'?state.display:'notation',
   showNames:state.songShowNoteNames&&part.id!=='drums',
-  showChordLabels:state.songShowChordNames,
+  showChordLabels:false, // Bar-level chord labels already supply this information; suppress overlapping event text.
   chordSymbols:state.songShowChordNames&&part.id==='ukulele'?barChords:null
  });
  if(state.songArrangementMode==='ensemble'){
