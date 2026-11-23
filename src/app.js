@@ -441,7 +441,7 @@ function songPracticeControls(preview){
  </div>
  <div class="song-practice-display">${tabbar([['notation','Notation'],['dual','Notation + tab'],['tab','Tab only']],state.display,'data-display')}</div>
  <p class="small-text" id="songPracticeStatus" role="status" aria-live="polite">${playing?'Playing reference audio…':'Ready. Tap any written note or chord to hear it individually.'}</p>
- ${guide.length?`<div class="song-chord-guide"><strong>Chord fingerings — G · C · E · A string order</strong><div class="repo-tags">${guide.map(chord=>`<span title="String frets in G C E A order"><b>${h(chord.symbol)}</b> &nbsp;${h(chord.frets)}</span>`).join('')}</div></div>`:''}
+ ${guide.length?`<div class="song-chord-guide"><strong>Chord fingerings — ${h(TUNINGS[preview.tuning].names.join(' · '))} string order</strong><div class="repo-tags">${guide.map(chord=>`<span title="String frets in G C E A order"><b>${h(chord.symbol)}</b> &nbsp;${h(chord.frets)}</span>`).join('')}</div></div>`:''}
  </div>`;
 }
 function stopSongPractice(){
@@ -580,7 +580,7 @@ function approvedRepertoireSongbook(){
  ${sections.length?`<p class="small-text">${arrangement.score.measures.length} measures total; choose a section to practise.</p><div class="repo-tags" role="group" aria-label="Choose musical section">${sections.map((section,index)=>`<button type="button" class="btn compact ${index===state.repertoireSectionIndex?'gold':'ghost'}" data-repertoire-section="${index}" aria-pressed="${index===state.repertoireSectionIndex}">${h(section.label)} (${section.startBar}–${section.endBar})</button>`).join('')}</div>`:''}
  <div class="score-holder score-editor-view repo-score-preview">${renderScoreView(previewScore,{mode:state.display})}</div>${songPracticeControls(previewScore)}
  <p class="small-text" style="white-space:pre-wrap">${h(arrangement.body||'')}</p><p class="small-text" style="white-space:pre-wrap">${h(arrangement.notes||'')}</p>
- <div class="score-actions"><button type="button" class="btn gold" data-repertoire="${h(selected.id)}" ${owned.has(selected.id)?'disabled':''}>${owned.has(repertoireScoreId(selected))?'Already in My Songbook':'＋ Add to My Songbook'}</button></div>`:
+ <div class="score-actions"><button type="button" class="btn gold" data-repertoire="${h(selected.id)}" ${owned.has(selected.id)?'disabled':''}>${owned.has(selected.id)?'Already in My Songbook':'＋ Add to My Songbook'}</button></div>`:
  `<p class="small-text">${state.repertoireLoadingId===selected?.id?'Loading this song’s musical score…':state.repoError?h(state.repoError):'Choose View score to fetch notation, chord progressions and fingerings for this song.'}</p>`}
  </section></div>`;
 }
