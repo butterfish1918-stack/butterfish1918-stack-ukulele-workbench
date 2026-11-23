@@ -757,6 +757,19 @@ function stopSongPractice(){
  const run=songPracticePlayback;
  if(!run)return;
  songPracticePlayback=null;
+ const songId=guitarOverrideKey(run.selection?.arrangement);
+ if(songId&&run.lastBar){
+  try{state.songBookmarks=saveSongBookmark(state.songBookmarks,songId,run.lastBar,run.selection.score.measures.length);store('songBookmarks',state.songBookmarks)}
+  catch(error){toast('Bookmark: '+error.message)}
+ }
+ if(songId&&run.audibleSeconds>=8){
+  try{
+   state.songPracticeHistory=practiceLog(state.songPracticeHistory,{songId,title:run.selection.label,
+    bars:{start:run.absoluteStartBar,end:run.absoluteStartBar+run.score.measures.length-1},
+    seconds:run.audibleSeconds,loops:run.cycle,speed:run.speed,confidence:3});
+   store('songPracticeHistory',state.songPracticeHistory);
+  }catch(error){toast('History: '+error.message)}
+ }
  if(run.interval)clearInterval(run.interval);
  for(const timer of run.timers)clearTimeout(timer);
  const now=run.audioContext.currentTime;
