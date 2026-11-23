@@ -1,3 +1,15 @@
+## 23 November 2026 — v1.11.1 Beta: score fidelity, guided learning and microphone reliability
+
+- Improved MusicXML multi-part import/export: written pitch spelling and enharmonic distinctions are retained alongside independent voices, simultaneous chord-note groups, basic dynamics, articulations, tuplets and finger numbers.
+- MusicXML explicitly rejects unsupported ties, transposition, complex repeat endings and harmonies instead of silently discarding musical information; complete MusicXML compatibility remains an open milestone.
+- Expanded imported polyphonic staff preview with corrected written notehead positions, ledger lines, solo eighth/sixteenth flags, more visible multi-voice offsets, open half-note heads, whole-note heads without stems, explicit accidentals, clefs and time signatures. Full collision avoidance and page engraving are still unfinished.
+- Added a structured non-gated guided learning pathway with timed exercises, practical steps, success checks and self-reported spaced reviews.
+- Local microphone note comparison now requires consecutive confident, stable monophonic pitch estimates before presenting a cents-based assessment; unstable input is reported as uncertain and neither saved nor uploaded.
+- 243 automated Node tests passed at commit b05a10859e55fb92e4205f27cc6db8d5585e20bb. Real Android hardware validation and source-backed verification of commercial-song transcriptions remain outstanding.
+- This changelog update starts a fresh Pages deployment after the previous workflow's redeploy encountered duplicate action artifacts.
+
+---
+
 # v1.6.0 Preview — Connected Song Repository
 
 - New separate repository tab in Songbook, two bundled original practice scores, search and difficulty filters, safe remote sync and independent personal copying.
