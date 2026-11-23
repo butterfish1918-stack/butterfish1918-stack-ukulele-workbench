@@ -2,7 +2,7 @@
  * ties/articulations, dynamics and tuplets when representable. Rejects unsupported
  * constructs instead of flattening polyphony into one misleading ukulele score.
  */
-import {validateScoreDocument} from './polyphonic-score.js';
+import {validateScoreDocument,writtenPitchForMidi} from './polyphonic-score.js';
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]));
 const child=(el,name)=>[...(el?.children||[])].find(e=>e.tagName===name)||null;
 const children=(el,name)=>[...(el?.children||[])].filter(e=>e.tagName===name);
@@ -18,6 +18,14 @@ export function importMultiPartMusicXML(xml,{DOMParserClass=globalThis.DOMParser
  if(root.tagName!=='score-partwise')throw Error('Only score-partwise MusicXML is supported');
  const list=child(root,'part-list');const names=new Map(children(list,'score-part').map(x=>[x.getAttribute('id'),val(x,'part-name','Part')]));
  const rawParts=children(root,'part');if(!rawParts.length||rawParts.length>16)throw Error('MusicXML must contain 1–16 parts');
+ const prohibited=['transpose','harmony','sound-deviation'];
+ for(const tag of prohibited)if(root.getElementsByTagName(tag).length)throw Error('Unsupported MusicXML element: '+tag);
+ for(const part of rawParts)for(const measure of children(part,'measure')){
+  for(const line of children(measure,'barline'))
+   if(line.getElementsByTagName('repeat').length||line.getElementsByTagName('ending').length)throw Error('Repeats and endings require expanded MusicXML measures');
+  for(const note of children(measure,'note'))
+   if(child(note,'tie')||child(child(note,'notations'),'tied'))throw Error('Tied notes require explicit supported conversion');
+ }
  const firstMeasures=children(rawParts[0],'measure');
  if(!firstMeasures.length||firstMeasures.length>200)throw Error('Invalid number of measures');
  let meter='4/4',tempo=96;const result=[];
@@ -61,8 +69,9 @@ export function importMultiPartMusicXML(xml,{DOMParserClass=globalThis.DOMParser
     if(!byVoice.has(voiceId))byVoice.set(voiceId,Array.from({length:measures.length},()=>({events:[]})));
     const rest=!!child(el,'rest'),pitch=child(el,'pitch');
     const step=val(pitch,'step','C'),alter=Number(val(pitch,'alter','0')),octave=Number(val(pitch,'octave','4'));
-    if(!rest&&(!Object.hasOwn(semitones,step)||!Number.isInteger(alter)||Math.abs(alter)>2||!Number.isInteger(octave)||octave<0||octave>8))throw Error('Invalid MusicXML pitch');
+    if(!rest&&(!pitch||!Object.hasOwn(semitones,step)||!Number.isInteger(alter)||Math.abs(alter)>2||!Number.isInteger(octave)||octave<0||octave>8))throw Error('Invalid MusicXML pitch');
     const midi=rest?null:(octave+1)*12+semitones[step]+alter;
+    const spelling=rest?null:step+(alter>0?'#'.repeat(alter):'b'.repeat(-alter));
     const notations=child(el,'notations'),art=child(notations,'articulations');
     const articulation=child(art,'staccato')?'staccato':child(art,'tenuto')?'tenuto':
       child(art,'accent')?'accent':child(art,'strong-accent')?'marcato':
@@ -71,7 +80,7 @@ export function importMultiPartMusicXML(xml,{DOMParserClass=globalThis.DOMParser
     const timeMod=child(el,'time-modification'),actual=Number(val(timeMod,'actual-notes','')),normal=Number(val(timeMod,'normal-notes',''));
     const tuplet=timeMod&&actual>=2&&normal>=1?{actual,normal}:undefined;
     byVoice.get(voiceId)[mi].events.push({type:rest?'rest':'note',onset,duration,
-     ...(rest?{}:{midi}),dynamics:voiceDynamics.get(voiceId)??dynamics,articulation,...(finger>=0&&finger<=4&&val(technical,'fingering')!==''?{finger}:{}),
+     ...(rest?{}:{midi,spelling}),dynamics:voiceDynamics.get(voiceId)??dynamics,articulation,...(finger>=0&&finger<=4&&val(technical,'fingering')!==''?{finger}:{}),
      ...(tuplet?{tuplet}:{})});
    }
   }
@@ -97,7 +106,11 @@ export function exportMultiPartMusicXML(doc){
   '<score-partwise version="4.0"><work><work-title>'+esc(doc.title)+'</work-title></work>'+
   '<movement-title>'+esc(doc.title)+'</movement-title><part-list>'+
   doc.parts.map(part=>'<score-part id="'+esc(part.id)+'"><part-name>'+esc(part.name)+'</part-name></score-part>').join('')+'</part-list>';
- const encodePitch=midi=>{
+ const encodePitch=(midi,spelling)=>{
+  if(spelling){
+   const {step,alter,octave}=writtenPitchForMidi(midi,spelling);
+   return '<pitch><step>'+step+'</step>'+(alter?'<alter>'+alter+'</alter>':'')+'<octave>'+octave+'</octave></pitch>';
+  }
   const pc=(midi%12+12)%12;
   const step=['C','C','D','D','E','F','F','G','G','A','A','B'][pc];
   const alt=[0,1,0,1,0,0,1,0,1,0,1,0][pc];
@@ -129,7 +142,7 @@ export function exportMultiPartMusicXML(doc){
        '/></dynamics></direction-type><voice>'+esc(voice.id)+'</voice></direction>';
       currentDynamics=ev.dynamics;
      }
-     const pitch=ev.type==='rest'?'<rest/>':encodePitch(ev.midi);
+     const pitch=ev.type==='rest'?'<rest/>':encodePitch(ev.midi,ev.spelling);
      const articulation=ev.articulation==='marcato'?'strong-accent':ev.articulation;
      let notation='';
      if(articulation==='fermata')notation+='<fermata/>';

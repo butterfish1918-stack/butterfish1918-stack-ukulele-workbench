@@ -3,6 +3,14 @@
  * Old single-voice ukulele scores remain compatible.
  */
 export const SCORE_DOCUMENT_SCHEMA=2;
+const WRITTEN_STEPS=Object.freeze({C:0,D:2,E:4,F:5,G:7,A:9,B:11});
+export function writtenPitchForMidi(midi,spelling){
+ if(typeof spelling!=='string'||!/^([A-G])([#]{1,2}|b{1,2})?$/.test(spelling))throw Error('Invalid written note spelling');
+ const accidental=[...spelling.slice(1)].reduce((n,c)=>n+(c==='#'?1:-1),0);
+ const octave=(midi-WRITTEN_STEPS[spelling[0]]-accidental)/12-1;
+ if(!Number.isInteger(octave)||octave<0||octave>8)throw Error('Written spelling does not match MIDI pitch');
+ return {step:spelling[0],alter:accidental,octave};
+}
 export const SUPPORTED_DYNAMICS=Object.freeze(['pp','p','mp','mf','f','ff']);
 export const SUPPORTED_ARTICULATIONS=Object.freeze(['none','staccato','tenuto','accent','marcato','fermata','trill']);
 export function validateScoreDocument(doc){
@@ -30,6 +38,7 @@ export function validateScoreDocument(doc){
      if(!Number.isFinite(e.onset)||e.onset<0||!Number.isFinite(e.duration)||e.duration<=0||e.duration>barBeats+1e-8||e.onset+e.duration>barBeats+1e-8)throw Error('Invalid note timing: measure overflow');
      if(e.type!=='rest'&&(!Number.isInteger(e.midi)||e.midi<20||e.midi>110))throw Error('Invalid pitch');
      if(e.type!=='note'&&e.type!=='rest')throw Error('Unsupported event type in voice');
+     if(e.spelling!==undefined){if(e.type!=='note')throw Error('Rest cannot have written pitch');writtenPitchForMidi(e.midi,e.spelling)}
      if(e.dynamics!==undefined&&!SUPPORTED_DYNAMICS.includes(e.dynamics))throw Error('Invalid dynamics');
      if(e.articulation!==undefined&&!SUPPORTED_ARTICULATIONS.includes(e.articulation))throw Error('Invalid articulation');
      if(e.finger!==undefined&&(!Number.isInteger(e.finger)||e.finger<0||e.finger>4))throw Error('Invalid finger number');

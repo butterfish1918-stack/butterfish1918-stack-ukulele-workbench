@@ -10,3 +10,16 @@ test('engraving shows concurrent voices with distinct marks and instruments',()=
  assert.match(html,/3:2/);assert.match(html,/>p<\/text>/);assert.match(html,/>2<\/text>/);
  assert.match(html,/measure="1"/);
 });
+
+test('written ledger lines, opposing voices, open half notes and solo flags are engraved',()=>{
+ const variant=structuredClone(doc);
+ variant.parts[0].voices[0].measures[0].events=[
+  {type:'note',midi:60,spelling:'C',onset:0,duration:.5},
+  {type:'note',midi:61,spelling:'Db',onset:.5,duration:2}
+ ];
+ const html=renderPolyphonicDocument(variant);
+ assert.match(html,/class="poly-ledger"/);
+ assert.match(html,/class="poly-voice-flag"/);
+ assert.match(html,/fill="none" stroke="#36473b" stroke-width="1.5"/);
+ assert.match(html,/data-voice="2"/);
+});

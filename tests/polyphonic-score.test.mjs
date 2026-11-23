@@ -30,3 +30,9 @@ test('simultaneous chord tones are valid in one voice while separate voices over
  sample.parts[0].voices[0].measures[0].events.push({...original,midi:67});
  assert.equal(validateScoreDocument(sample),true);
 });
+
+test('enharmonic labels must agree with sounding MIDI',()=>{
+ const clone=structuredClone(doc);
+ clone.parts[0].voices[0].measures[0].events[0].spelling='Db';
+ assert.throws(()=>validateScoreDocument(clone),/Written spelling/);
+});

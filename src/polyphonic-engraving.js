@@ -4,6 +4,14 @@
  */
 import {validateScoreDocument,planScoreSystems} from './polyphonic-score.js';
 import {midiName,staffYForSpelling} from './music.js';
+const displayName=e=>e.spelling||midiName(e.midi).replace(/-?\d+$/,'');
+const writtenY=(e,top)=>top+44+(staffYForSpelling(e.midi,displayName(e),102)-102)*11/12;
+function ledgerMarks(x,y,staffTop){
+ let out='';
+ for(let line=staffTop-11;line>=y-1;line-=11)out+='<line class="poly-ledger" x1="'+(x-12)+'" x2="'+(x+12)+'" y1="'+line+'" y2="'+line+'" stroke="#36473b"/>';
+ for(let line=staffTop+55;line<=y+1;line+=11)out+='<line class="poly-ledger" x1="'+(x-12)+'" x2="'+(x+12)+'" y1="'+line+'" y2="'+line+'" stroke="#36473b"/>';
+ return out;
+}
 const esc=s=>String(s??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[ch]));
 export function renderPolyphonicDocument(doc,{pageWidth=760}={}){
  validateScoreDocument(doc);
@@ -24,10 +32,10 @@ export function renderPolyphonicDocument(doc,{pageWidth=760}={}){
     for(const [voiceIndex,voice]of part.voices.entries()){
      const events=voice.measures[bar-1].events;
      for(const e of events){
-      const ex=x+14+e.onset/cap*124+(voiceIndex%2?5:-5),rest=e.type==='rest';
-      const name=rest?'':midiName(e.midi),pitch=name.replace(/-?\d+$/,''),ey=rest?y+22:y+staffYForSpelling(e.midi,pitch,102)-54;
+      const ex=x+23+e.onset/cap*116+(voiceIndex%2?10:-10),rest=e.type==='rest';
+      const name=rest?'':midiName(e.midi),ey=rest?y+22:writtenY(e,y);
       svg+=`<g class="poly-voice-event" data-voice="${esc(voice.id)}" data-measure="${bar}" aria-label="${rest?'Rest':esc(name)} in voice ${esc(voice.id)} at beat ${e.onset}">
-       ${rest?`<rect x="${ex-6}" y="${ey-3}" width="12" height="5" fill="#36473b"/>`:`<ellipse cx="${ex}" cy="${ey}" rx="7" ry="5" fill="#36473b" transform="rotate(-18 ${ex} ${ey})"/><line x1="${ex+(voiceIndex%2?-7:7)}" y1="${ey}" x2="${ex+(voiceIndex%2?-7:7)}" y2="${ey+(voiceIndex%2?29:-30)}" stroke="#36473b" stroke-width="1.5"/>`}
+       ${rest?`<rect x="${ex-6}" y="${ey-3}" width="12" height="5" fill="#36473b"/>`:`${ledgerMarks(ex,ey,y)}<ellipse cx="${ex}" cy="${ey}" rx="7" ry="5" fill="${e.duration>=2?'none':'#36473b'}" stroke="#36473b" stroke-width="1.5" transform="rotate(-18 ${ex} ${ey})"/><line x1="${ex+(voiceIndex%2?-7:7)}" y1="${ey}" x2="${ex+(voiceIndex%2?-7:7)}" y2="${ey+(voiceIndex%2?29:-30)}" stroke="#36473b" stroke-width="1.5"/>`}
        ${e.articulation&&e.articulation!=='none'?`<text x="${ex}" y="${ey-13}" font-size="10" text-anchor="middle">${e.articulation==='staccato'?'•':e.articulation==='accent'?'>':esc(e.articulation)}</text>`:''}
        ${e.finger!==undefined?`<text x="${ex+13}" y="${ey+2}" font-size="9">${e.finger}</text>`:''}
        ${e.tuplet?`<text x="${ex}" y="${ey-19}" font-size="10" fill="#425743"> ${e.tuplet.actual}:${e.tuplet.normal}</text>`:''}
@@ -38,12 +46,20 @@ export function renderPolyphonicDocument(doc,{pageWidth=760}={}){
      // rests, gaps, bar lines or competing voices.
      let group=[];
      const drawBeam=()=>{
-      if(group.length<2){group=[];return}
+      if(group.length<2){
+       if(group.length===1){
+        const note=group[0],up=voiceIndex%2?1:-1;
+        const nx=x+23+note.onset/cap*116+(voiceIndex%2?10:-10)+(voiceIndex%2?-7:7);
+        const ny=writtenY(note,y)+up*30;
+        svg+='<path class="poly-voice-flag" d="M'+nx+' '+ny+' q'+(up===-1?18:-18)+' '+(up===-1?3:-3)+' '+(up===-1?14:-14)+' '+(up===-1?19:-19)+'" fill="none" stroke="#36473b" stroke-width="2"/>';
+        if(note.duration<=.25)svg+='<path class="poly-voice-flag-16th" d="M'+nx+' '+(ny+up*8)+' q'+(up===-1?16:-16)+' '+(up===-1?3:-3)+' '+(up===-1?13:-13)+' '+(up===-1?18:-18)+'" fill="none" stroke="#36473b" stroke-width="2"/>';
+       }
+       group=[];return
+      }
       const stemDir=voiceIndex%2?1:-1;
       const endpoints=group.map(note=>{
-       const pitch=midiName(note.midi).replace(/-?\\d+$/,'');
-       const noteY=y+staffYForSpelling(note.midi,pitch,102)-54;
-       return {x:x+14+note.onset/cap*124+(voiceIndex%2?5:-5)+(voiceIndex%2?-7:7),y:noteY+stemDir*30};
+       const noteY=writtenY(note,y);
+       return {x:x+23+note.onset/cap*116+(voiceIndex%2?10:-10)+(voiceIndex%2?-7:7),y:noteY+stemDir*30};
       });
       const first=endpoints[0],last=endpoints.at(-1);
       svg+=`<line class="poly-voice-beam" data-voice="${esc(voice.id)}" x1="${first.x}" y1="${first.y}" x2="${last.x}" y2="${last.y}" stroke="#36473b" stroke-width="4"/>`;
