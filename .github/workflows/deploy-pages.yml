@@ -43,6 +43,7 @@ jobs:
           cp index.html styles.css sw.js manifest.webmanifest _site/
           cp -R src assets library _site/
           node scripts/fetch-ukulele-samples.mjs
+          node scripts/fetch-ensemble-samples.mjs
           touch _site/.nojekyll
           node scripts/stamp-pages-cache.mjs
           test -s _site/index.html
