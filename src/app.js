@@ -2,7 +2,7 @@ import {ROOTS,SCALES,TUNINGS,PITCH_CLASSES,mod,spelledScale,midiName,midiFreq,fr
 import {createScore,validateScore,appendEvent,insertEvent,appendMeasure,findEvent,removeEvent,replaceEvent,assignPosition,changeTuning,timeline,measureBeats,remainingBeats,preferredPosition,DURATIONS,METERS,KEY_SIGNATURES,QUARTER_LABELS,spellingsForMidi,setTieToNext,canTieNext,setKeySignature,CHORD_SHAPES,ARTICULATIONS,STROKES,setArticulation,setSlurToNext,setStroke} from './score.js';
 import {renderScoreView,scoreSystems} from './score-view.js';
 import {prepareUkuleleSamples,playUkuleleSample} from './ukulele-samples.js';
-import {prepareBackingSamples,playBackingSample} from './instrument-samples.js';
+import {prepareBackingSamples,playBackingSample,playDrumSample} from './instrument-samples.js';
 import {SONG_ARRANGEMENT_MODES,arrangementModeTracks,chartChordsPerBar} from './arrangement-modes.js';
 import {engravingPlan,loadVexFlow,renderEngravedScore} from './engraving.js';
 import {estimateFundamental} from './tuner-dsp.js';
@@ -585,6 +585,15 @@ async function previewRecordedBacking(instrument,midis,callback){
   callback((midi,at,dur,vol)=>playBackingSample(ctx,instrument,midi,at,dur,vol)??synth(midi,at,dur,vol),ctx.currentTime+.03);
  }catch(error){state.songSampleFallback=true;callback(synth,ctx.currentTime+.03)}
 }
+async function previewDrumEvent(event){
+ const hits=event.drumHits||[];
+ if(!hits.length)return;
+ const ctx=audio(),style=event.drumStyle==='electronic'?'electronic':'acoustic';
+ try{await prepareBackingSamples(ctx,[{instrument:'drums',hits:hits.map(hit=>style+'-'+hit)}])}
+ catch(error){toast('Drum sample unavailable: '+error.message)}
+ const at=ctx.currentTime+.03;
+ hits.forEach(hit=>playDrumSample(ctx,hit,at,.12,style));
+}
 async function playSongPractice(){
  if(songPracticePlayback||state.songSampleLoading){stopSongPractice();if(state.page==='songbook')render();return}
  const selection=activeSongPractice();
@@ -615,7 +624,9 @@ async function playSongPractice(){
  try{
   const results=await Promise.all([
    working.some(part=>part.instrument==='ukulele')?prepareUkuleleSamples(ctx,scoreEventPitches(working.filter(part=>part.instrument==='ukulele').flatMap(part=>part.events))):Promise.resolve({errors:[]}),
-   prepareBackingSamples(ctx,working.filter(part=>part.instrument!=='ukulele').map(part=>({instrument:part.instrument,midis:scoreEventPitches(part.events)})))
+   prepareBackingSamples(ctx,working.filter(part=>part.instrument!=='ukulele').map(part=>part.instrument==='drums'?
+    {instrument:'drums',hits:[...new Set(part.events.flatMap(event=>(event.drumHits||[]).map(hit=>(event.drumStyle==='electronic'?'electronic':'acoustic')+'-'+hit)))]}:
+    {instrument:part.instrument,midis:scoreEventPitches(part.events)}))
   ]);
   if(loadId!==songSampleLoadToken)return;
   state.songSampleFallback=results.some(result=>result.errors?.length);
@@ -651,7 +662,12 @@ async function playSongPractice(){
    if(at>horizon)break;
    const voice=ev.instrument==='ukulele'?recordedUkuleleVoice(ctx):
     (midi,at,dur,vol)=>playBackingSample(ctx,ev.instrument,midi,at,dur,vol)??synth(midi,at,dur,vol);
-   if(!ev.continuation && ev.type!=='rest')run.voices.push(...synthEvent(ev,at,seconds,ev.tiedDuration,voice));
+   if(ev.instrument==='drums'&&ev.drumHits?.length){
+    for(const hit of ev.drumHits){
+     const drum=playDrumSample(ctx,hit,at,hit==='hat'?.055:.13,ev.drumStyle==='electronic'?'electronic':'acoustic');
+     if(drum)run.voices.push(drum);
+    }
+   }else if(!ev.continuation && ev.type!=='rest')run.voices.push(...synthEvent(ev,at,seconds,ev.tiedDuration,voice));
    run.timers.push(setTimeout(()=>{
     if(songPracticePlayback!==run)return;
     $$('[data-score-part="'+ev.trackId+'"] .score-event').forEach(el=>el.classList.toggle('playing',el.dataset.eventId===ev.id));
@@ -942,6 +958,7 @@ function handleClick(e){const node=e.target.closest('[data-prog-degree],[data-pr
    if(found?.event?.type&&found.event.type!=='rest'){
     const {event,part}=found,secs=60/practiceTempo(selection.score.tempo,state.songPracticeSpeed);
     if(part.instrument==='ukulele')previewRecordedUkulele(scoreEventPitches([event]),(voice,at)=>synthEvent(event,at,secs,event.duration,voice));
+    else if(part.instrument==='drums')previewDrumEvent(event);
     else previewRecordedBacking(part.instrument,scoreEventPitches([event]),(voice,at)=>synthEvent(event,at,secs,event.duration,voice));
     const status=$('#songPracticeStatus');if(status)status.textContent=part.label+': '+(event.type==='chord'?event.symbol:midiName(event.midi));
    }
