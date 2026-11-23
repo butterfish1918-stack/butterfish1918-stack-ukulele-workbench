@@ -38,7 +38,7 @@ export async function prepareBackingSamples(ctx,requests,{fetcher=fetch,base='./
   if(bank.has(key))return;
   if(!pending.has(key)){
    const promise=(async()=>{
-    const path=sample.instrument+'/'+encodeURIComponent(sample.name)+(sample.instrument==='drums'?'.m4a':'.flac');
+    const path=sample.instrument+'/'+encodeURIComponent(sample.name)+(sample.instrument==='drums'?(sample.name.startsWith('electronic-')?'.mp3':'.m4a'):'.flac');
     const response=await fetcher(new URL(path,new URL(base,document.baseURI)).href,{credentials:'same-origin'});
     if(!response.ok)throw Error('Missing '+path+': '+response.status);
     const decoded=await ctx.decodeAudioData(await response.arrayBuffer());
