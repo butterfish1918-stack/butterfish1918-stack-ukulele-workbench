@@ -16,7 +16,7 @@ test('full 76-bar score remains visible, correctly numbered and fully annotated'
 });
 test('bass notes use permitted low register and displayed bass clef',()=>{
  const score=createScore({title:'Bass demonstration',sample:false});
- score.clef='bass8vb';appendEvent(score,{type:'note',midi:31,duration:4});
+ score.clef='bass8vb';score.measures[0].events=[{id:'bass-G1',type:'note',midi:31,spelling:'G',duration:4}];
  assert.equal(validateScore(score),true);
  const svg=renderScoreView(score,{mode:'notation',layout:'systems'});
  assert.match(svg,/𝄢/);
