@@ -22,7 +22,8 @@ export function renderPolyphonicDocument(doc,{pageWidth=760}={}){
     const x=75+(bar-startBar)*barWidth;
     svg+=`<line x1="${x}" y1="${y}" x2="${x}" y2="${y+44}" stroke="#36473b"/><text x="${x+5}" y="${y-9}" font-size="10" fill="#56675a">${bar}</text>`;
     for(const [voiceIndex,voice]of part.voices.entries()){
-     for(const e of voice.measures[bar-1].events){
+     const events=voice.measures[bar-1].events;
+     for(const e of events){
       const ex=x+14+e.onset/cap*124+(voiceIndex%2?5:-5),rest=e.type==='rest';
       const name=rest?'':midiName(e.midi),pitch=name.replace(/-?\d+$/,''),ey=rest?y+22:y+staffYForSpelling(e.midi,pitch,102)-54;
       svg+=`<g class="poly-voice-event" data-voice="${esc(voice.id)}" data-measure="${bar}" aria-label="${rest?'Rest':esc(name)} in voice ${esc(voice.id)} at beat ${e.onset}">
@@ -33,6 +34,30 @@ export function renderPolyphonicDocument(doc,{pageWidth=760}={}){
        ${e.dynamics&&e.dynamics!=='mf'?`<text x="${ex}" y="${y+66}" font-style="italic" text-anchor="middle" font-size="10">${esc(e.dynamics)}</text>`:''}
        </g>`;
      }
+     // Beam consecutive notes from the same independent voice; never bridge
+     // rests, gaps, bar lines or competing voices.
+     let group=[];
+     const drawBeam=()=>{
+      if(group.length<2){group=[];return}
+      const stemDir=voiceIndex%2?1:-1;
+      const endpoints=group.map(note=>{
+       const pitch=midiName(note.midi).replace(/-?\\d+$/,'');
+       const noteY=y+staffYForSpelling(note.midi,pitch,102)-54;
+       return {x:x+14+note.onset/cap*124+(voiceIndex%2?5:-5)+(voiceIndex%2?-7:7),y:noteY+stemDir*30};
+      });
+      const first=endpoints[0],last=endpoints.at(-1);
+      svg+=`<line class="poly-voice-beam" data-voice="${esc(voice.id)}" x1="${first.x}" y1="${first.y}" x2="${last.x}" y2="${last.y}" stroke="#36473b" stroke-width="4"/>`;
+      if(group.every(note=>note.duration<=.25)){
+       svg+=`<line class="poly-voice-beam-16th" x1="${first.x}" y1="${first.y+stemDir*8}" x2="${last.x}" y2="${last.y+stemDir*8}" stroke="#36473b" stroke-width="3"/>`;
+      }
+      group=[];
+     };
+     for(const note of [...events].sort((a,b)=>a.onset-b.onset)){
+      const last=group.at(-1);
+      if(note.type==='note'&&note.duration<=.5&&(!last||Math.abs(last.onset+last.duration-note.onset)<.00001)){group.push(note)}
+      else{drawBeam();if(note.type==='note'&&note.duration<=.5)group=[note]}
+     }
+     drawBeam();
     }
    }
    svg+=`<line x1="${width-5}" y1="${y}" x2="${width-5}" y2="${y+44}" stroke="#36473b"/>`;
