@@ -34,6 +34,7 @@ jobs:
           npm test
           npm run qa:library
           npm run qa:arrangements
+          npm run qa:sources
 
       - name: Assemble a lean static site
         shell: bash
