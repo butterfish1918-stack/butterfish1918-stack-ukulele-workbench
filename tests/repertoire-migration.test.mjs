@@ -45,3 +45,31 @@ test('keeps user-written chord sketches and follows preferred historical arrange
  assert.equal(out.songs[0].repositoryOrigin.id,'scarborough-fair-traditional-1882');
  assert.equal(out.songs[0].bpm,88);
 });
+
+import {downloadSingleApprovedArrangement,validateSnapshot} from '../src/song-library.js';
+
+test('loads only one approved score and validates its complete miniature snapshot',async()=>{
+ const base='https://example.test/ukulele/';
+ const meta={id:'blackbird',revision:2,title:'Blackbird — Ukulele Accompaniment',artist:'The Beatles',difficulty:'advanced',tags:['notation'],file:'songs/blackbird.json'};
+ const catalog={format:'ukulele-workbench-catalog',schemaVersion:1,name:'Test Repertoire',entries:[meta],repertoire:[{id:'blackbird',title:'Blackbird',artist:'The Beatles',practiceFocus:'Two-voice fingerstyle'}]};
+ const arrangement={format:'ukulele-workbench-arrangement',schemaVersion:1,id:'blackbird',revision:2,title:meta.title,artist:meta.artist,difficulty:'advanced',tags:meta.tags,key:'C',bpm:86,tuning:'highG',description:'Practice adaptation',body:'[C] [F]',notes:'Fingerstyle.',score:{schema:1,key:'C',tempo:86,tuning:'highG',measures:[{events:[{type:'note'}]}]}};
+ const requests=[];
+ const fetcher=async url=>{
+  requests.push(url);
+  const payload=url===base+'library/catalog.json'?catalog:url===base+'library/songs/blackbird.json'?arrangement:null;
+  return {ok:!!payload,status:payload?200:404,headers:{get:()=>null},text:async()=>JSON.stringify(payload)};
+ };
+ const result=await downloadSingleApprovedArrangement({source:'./library/catalog.json',base,repertoireId:'blackbird',fetcher,validateScore:()=>true});
+ assert.deepEqual(requests,[base+'library/catalog.json',base+'library/songs/blackbird.json']);
+ assert.equal(result.catalog.entries.length,1);
+ assert.deepEqual(Object.keys(result.songs),['blackbird']);
+ assert.equal(validateSnapshot(result,()=>true),true);
+});
+test('never downloads unpublished songs from the catalog',async()=>{
+ const base='https://example.test/ukulele/';
+ const catalog={format:'ukulele-workbench-catalog',schemaVersion:1,name:'Test Repertoire',entries:[],repertoire:[{id:'blackbird',title:'Blackbird',artist:'The Beatles',practiceFocus:'Fingerstyle'}]};
+ const requests=[];
+ const fetcher=async url=>{requests.push(url);return {ok:true,headers:{get:()=>null},text:async()=>JSON.stringify(catalog)}};
+ await assert.rejects(()=>downloadSingleApprovedArrangement({source:'./library/catalog.json',base,repertoireId:'blackbird',fetcher,validateScore:()=>true}),/does not have a published practice arrangement/);
+ assert.equal(requests.length,1);
+});
