@@ -112,7 +112,8 @@ export function exportMultiPartMusicXML(doc){
    let previousCursor=0;
    const voices=part.voices.map((voice,index)=>{
     let cursor=0,lastStart=-1,lastDuration=-1,lastType='';
-    let currentDynamics='mf';
+    // Declare the first dynamic in each measure, including a return to mf.
+    let currentDynamics=null;
     const events=[...voice.measures[mi].events].sort((a,b)=>a.onset-b.onset||b.duration-a.duration||((a.midi??0)-(b.midi??0)));
     const notes=events.map(ev=>{
      const start=Math.round(ev.onset*divisions),dur=Math.round(ev.duration*divisions);
