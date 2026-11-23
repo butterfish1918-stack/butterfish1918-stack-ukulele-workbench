@@ -469,3 +469,51 @@ input[type=range]{accent-color:var(--lime)}
 .composed-score .score-note-label,.composed-score .score-tab-note-label{pointer-events:none;paint-order:stroke fill;stroke:#eee8db;stroke-width:3px;stroke-linejoin:round}
 .composed-score .score-chord-symbol{pointer-events:none;paint-order:stroke fill;stroke:#eee8db;stroke-width:2px}
 @media(max-width:650px){.song-reading-options{gap:6px}.song-reading-options .btn{flex:1 1 42%;font-size:12px;padding:8px 7px}}
+
+/* v1.8.9: compact sight-reading pages with uncluttered staff lines.
+ * Keep the ukulele in view with at least the following measures visible.
+ * Individual backing staves are opt-in, independent of the audio mix.
+ */
+.song-staff-visibility{
+ margin:10px 0 7px;padding:10px 0 8px;border-top:1px solid #566459;
+}
+.song-staff-visibility strong{font-size:12px;letter-spacing:.04em}
+.song-staff-visibility p{margin:5px 0 8px}
+.song-staff-toggle-list{display:flex;gap:6px;flex-wrap:wrap}
+.song-staff-toggle-list .btn{min-height:36px;font-size:12px}
+.song-staff-toggle-list button:disabled{opacity:.82;cursor:default}
+.ensemble-score{gap:7px!important;max-width:780px;margin:0 auto}
+.ensemble-score-group{
+ padding:5px 5px!important;
+ border:1px solid #485d4e;
+ border-radius:4px;
+ scroll-margin-block-start:112px!important;
+}
+.ensemble-score-group .song-score-track{margin:0!important}
+.ensemble-score-group .song-score-track+.song-score-track{margin-top:7px!important;border-top:1px solid #46534a;padding-top:6px}
+.ensemble-score-group .song-track-title{
+ font-size:11px;line-height:1.2;min-height:0;
+ gap:4px;margin:0 0 3px!important;
+}
+.ensemble-score-group .song-track-title span{font-size:10px}
+.ensemble-score-group .score-holder,
+.ensemble-score-group .repo-score-preview,
+.ensemble-score-group .song-score-preview{
+ margin:0!important;padding:0!important;
+ border:0!important;max-height:none!important;
+ overflow:visible!important;box-shadow:none!important;
+ background:transparent!important;
+}
+.ensemble-score-group svg.composed-score{
+ display:block;width:100%!important;max-width:100%!important;
+ min-width:0!important;height:auto!important;margin:0!important;
+}
+.song-score-track .score-systems{gap:4px!important}
+.song-score-track .score-system{padding:0 0 4px!important}
+.song-score-track .score-holder:has(.score-systems){padding:3px 2px!important}
+.song-staff-visibility .btn[aria-pressed=true]{border-color:var(--lime,#b9f700)}
+@media(max-width:650px){
+ .ensemble-score-group{padding:3px 3px!important}
+ .ensemble-score-group .song-track-title{font-size:11px}
+ .song-staff-toggle-list .btn{flex:1 1 36%;padding:7px}
+}
