@@ -757,6 +757,15 @@ function scoreEventNodeIndex(run){
  run.domIndex=index;
  run.highlighted=new Map();
 }
+function highlightSongReadingCues(absoluteBar){
+ const nodes=$('.score-reading-cue[data-lyric-bar]');
+ const candidates=new Map();
+ for(const node of nodes){
+  const bar=Number(node.dataset.lyricBar),kind=node.classList.contains('cue-section')?'section':'lyric';
+  if(bar<=absoluteBar&&(!candidates.has(kind)||candidates.get(kind).bar<=bar))candidates.set(kind,{bar,node});
+ }
+ for(const node of nodes)node.classList.toggle('active-reading-cue', [...candidates.values()].some(x=>x.node===node));
+}
 function updateSongPlayhead(run,selection,score){
  if(songPracticePlayback!==run||run.paused)return;
  const elapsed=run.audioContext.currentTime-run.start;
@@ -776,6 +785,7 @@ function updateSongPlayhead(run,selection,score){
   run.highlighted.set(part.id,current);
  }
  if(run.lastBar!==atBar){
+  highlightSongReadingCues(atBar);
   run.lastBar=atBar;
   const status=$('#songPracticeStatus');
   if(status)status.textContent=`Playing bar ${atBar} / ${selection.score.measures.length} · ${Math.round(practiceTempo(score.tempo,state.songPracticeSpeed))} BPM`;
