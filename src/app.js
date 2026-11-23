@@ -487,6 +487,8 @@ function songArrangementSwitch(){
  const source=activeSongPractice(),hasGuitar=!!source?.verifiedGuitar;
  const availableBacking=source?.parts.filter(part=>part.id!=='ukulele').map(part=>part.label.split(' · ')[0])||[];
  const profile=originalInstrumentProfile(currentSongSource());
+ const statuses=(source?.parts||[]).map(part=>({part,check:partVerificationStatus(source.arrangement,part)}));
+ const confirmedCount=statuses.filter(s=>s.check.status==='confirmed').length;
  const credited=profile.parts.map(x=>({bass:'bass',piano:'piano',drums:profile.percussion==='electronic'?'electronic percussion':'drum kit'}[x]||x));
  const sourceDetails=hasGuitar?
   `<p class="small-text"><strong>Imported guitar source:</strong> ${source.sourceGuitar.sourceNotes} notes adapted, ${source.sourceGuitar.octaveShiftedNotes} octave changes. Original rhythmic positions retained. This is the supplied part, not an independently authenticated transcription.</p>`:
@@ -497,6 +499,10 @@ function songArrangementSwitch(){
  <p class="small-text">${h(selected.description)}. ${availableBacking.length?'Available additional practice staves: '+h(availableBacking.join(', '))+'. These are reconstructed accompaniments, not original transcriptions.':'This recording has no additional sampled instrumental staves available in the current score.'}</p>
  <p class="small-text"><strong>Recording instrumentation:</strong> ${h([...credited,...profile.other].join(', ')||'Only the supplied acoustic/ukulele study is documented')}. ${profile.source?`<a href="${h(profile.source)}" target="_blank" rel="noopener noreferrer">Personnel/source reference</a>`:''}</p>
  ${profile.other.length?'<p class="small-text">Other recorded instruments listed above do not yet have independent playable notation in this app.</p>':''}
+ <details class="song-source-verification"><summary>Instrument score verification · ${confirmedCount}/${statuses.length} independently confirmed</summary>
+  <p class="small-text">Hard rule: check actual notes, timing and playable range against at least two independent, instrument-specific sources (e.g. MuseScore and Ultimate Guitar/Songsterr), record the exact editions and rights before describing a part as confirmed.</p>
+  <div class="song-source-rows">${statuses.map(({part,check})=>`<div class="song-source-row"><strong>${h(part.label.split(' · ')[0])}</strong><span>${h(check.label)}</span>${check.status==='confirmed'?(check.sources||[]).map(src=>`<a href="${h(src.url)}" target="_blank" rel="noopener noreferrer">${h(src.edition)}</a>`).join(' '):''}</div>`).join('')}</div>
+ </details>
  ${state.songArrangementMode==='guitar-uke'?`${sourceDetails}<div class="score-actions"><button type="button" class="btn compact" data-action="song-guitar-import">↑ Import authorized six-string guitar notes (JSON)</button><button type="button" class="btn compact ghost" data-action="song-guitar-template">↓ Source template</button></div><input type="file" id="songGuitarSourceFile" accept=".json,application/json" hidden>`:''}
  </div>`;
 }
