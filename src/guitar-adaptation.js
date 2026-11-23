@@ -6,6 +6,7 @@
  * the existing ukulele score model are rejected, not silently discarded.
  */
 import {TUNINGS,optionsForMidi,midiName,notePc} from './music.js';
+import {adaptSimultaneousGuitarNotes} from './guitar-polyphony.js';
 import {DURATIONS,KEY_SIGNATURES,measureBeats,validateScore} from './score.js';
 
 export const GUITAR_SOURCE_FORMAT='ukulele-workbench-guitar-source';
@@ -93,7 +94,19 @@ export function adaptGuitarPart(source){
     if('string' in item||'fret' in item||'notes' in item)throw Error('Rest has unexpected pitches');
     output.push({id,type:'rest',duration:item.duration});continue;
    }
-   if(item.type!=='note'||'notes' in item)throw Error('Only one guitar note at a time is supported; split simultaneous voices into separate parts');
+   if(item.type==='chord'){
+    if(!Array.isArray(item.notes)||item.notes.length<2||item.notes.length>4)throw Error('Provide two to four simultaneous source pitches; no voices are discarded');
+    const chordNotes=item.notes.map((note,k)=>{
+     if(!isRecord(note)||!Number.isInteger(note.string)||note.string<0||note.string>5||!Number.isInteger(note.fret)||note.fret<0||note.fret>24)throw Error('Invalid guitar chord string/fret in bar '+(bar+1));
+     const midi=tuning[note.string]+note.fret;
+     const spelling=note.spelling??midiName(midi).replace(/-?\d+$/,'');
+     if(!/^[A-G][#b]{0,2}$/.test(spelling)||notePc(spelling)!==midi%12)throw Error('Invalid chord note spelling in bar '+(bar+1));
+     return {midi,spelling,sourceString:note.string,sourceFret:note.fret};
+    });
+    output.push({id,type:'chord',sourceChord:chordNotes,symbol:String(item.symbol||'Guitar voicing').slice(0,40),stroke:'none',duration:item.duration});
+    continue;
+   }
+   if(item.type!=='note'||'notes' in item)throw Error('Expected a single guitar note or explicit simultaneous chord');
    if(!Number.isInteger(item.string)||item.string<0||item.string>5||!Number.isInteger(item.fret)||item.fret<0||item.fret>24)
     throw Error('Invalid guitar string or fret in bar '+(bar+1));
    const midi=tuning[item.string]+item.fret;
@@ -113,6 +126,13 @@ export function adaptGuitarPart(source){
  const measures=measureSlots.map(measure=>({...measure,
   events:measure.events.map(ev=>{
    if(ev.type==='rest')return ev;
+   if(ev.type==='chord'){
+    const adapted=adaptSimultaneousGuitarNotes(ev.sourceChord);
+    transposed+=adapted.octaveShiftedNotes;
+    for(const item of adapted.mapping)mapping.push({bar:measureSlots.indexOf(measure)+1,...item});
+    const {sourceChord,...plain}=ev;
+    return {...plain,voicing:'custom',notes:adapted.notes};
+   }
    const src=allNotes[ev.sourceIndex],mapped=matches[ev.sourceIndex];
    const {sourceIndex,...part}=ev;
    if(mapped.octaveShift)transposed++;
@@ -124,10 +144,10 @@ export function adaptGuitarPart(source){
  const score={schema:1,id:'adapted-guitar-source',title:source.title+' — High-G Guitar Part Adaptation',
    tuning:'highG',meter:source.meter,key:source.key,tempo:source.tempo,measures};
  validateScore(score);
- if(transposed)warnings.push(transposed+' of '+allNotes.length+' sounding notes shifted by octaves to fit high-G GCEA.');
+ if(transposed)warnings.push(transposed+' of '+mapping.length+' sounding notes shifted by octaves to fit high-G GCEA.');
  return {
-  score,sourceNotes:allNotes.length,octaveShiftedNotes:transposed,
-  mapping,warnings,method:'Source-led monophonic guitar adaptation; exact pitch classes and timings retained, octave changes explicitly reported.'
+  score,sourceNotes:mapping.length,octaveShiftedNotes:transposed,
+  mapping,warnings,method:'Source-led monophonic notes and simultaneous 2–4-voice guitar voicings; exact pitch classes and rhythmic positions retained, with octave shifts reported.'
  };
 }
 export function exampleGuitarSource(){
