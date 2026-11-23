@@ -74,7 +74,7 @@ function restoreScoreHistory(direction){
 }
 
 function toast(msg){const el=$('#toast');el.textContent=msg;el.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove('show'),2400)}
-function audio(){if(!ac){ac=new (window.AudioContext||window.webkitAudioContext)()}if(ac.state==='suspended')ac.resume().catch(()=>{});return ac}
+function audio(){if(!ac){ac=new (window.AudioContext||window.webkitAudioContext)()}if(ac.state==='suspended'&&!songPracticePlayback?.paused)ac.resume().catch(()=>{});return ac}
 function synth(midi,at=0,dur=.32,volume=.12){const ctx=audio();const time=at||ctx.currentTime+.012;const o=ctx.createOscillator();const g=ctx.createGain();o.type='triangle';o.frequency.setValueAtTime(midiFreq(midi,state.a4),time);g.gain.setValueAtTime(.0001,time);g.gain.exponentialRampToValueAtTime(Math.max(volume,.001),time+.012);g.gain.exponentialRampToValueAtTime(.0001,time+dur);o.connect(g).connect(ctx.destination);o.start(time);o.stop(time+dur+.015);return o}
 /** Plays a notated event, including simultaneous chord tones with a small strum offset.
  * Staccato/tenuto/accents are simplified reference playback, not human interpretation.
@@ -672,29 +672,44 @@ async function previewDrumEvent(event){
  const at=ctx.currentTime+.03;
  hits.forEach(hit=>playDrumSample(ctx,hit,at,.12,style));
 }
+/** Maintain a score-event DOM index, rebuilt only when the score view changes. */
+function scoreEventNodeIndex(run){
+ if(run.domIndex)return;
+ const index=new Map();
+ $$('.song-score-track .score-event[data-event-id]').forEach(node=>{
+  const part=node.closest('[data-score-part]')?.dataset.scorePart;
+  if(!part)return;
+  const key=part+'|'+node.dataset.eventId;
+  if(!index.has(key))index.set(key,[]);
+  index.get(key).push(node);
+ });
+ run.domIndex=index;
+ run.highlighted=new Map();
+}
 function updateSongPlayhead(run,selection,score){
  if(songPracticePlayback!==run||run.paused)return;
  const elapsed=run.audioContext.currentTime-run.start;
  if(elapsed<0)return;
- const rawBeat=Math.max(0,elapsed/run.seconds),beat=state.songPracticeLoop?(rawBeat%run.totalBeats):Math.min(rawBeat,run.totalBeats-.00001);
+ const rawBeat=Math.max(0,elapsed/run.seconds),beat=state.songPracticeLoop?rawBeat%run.totalBeats:Math.min(rawBeat,run.totalBeats-.00001);
  const cap=measureBeats(score.meter);
  const localBar=Math.max(1,Math.min(score.measures.length,Math.floor(beat/cap)+1));
  const atBar=(state.songPracticeScope==='section'&&selection.section?selection.section.startBar-1:0)+localBar;
  followSongPracticeScore(atBar,run);
- // Visual state derives from AudioContext.currentTime, not wall-clock timers:
- // suspension freezes the position and prevents a paused score from scrolling.
- const current=new Map();
- for(const ev of run.events){
-  if(ev.onset<=beat && beat<ev.onset+ev.duration)
-   current.set(ev.trackId,ev.id);
+ scoreEventNodeIndex(run);
+ const active=activeTrackEvents(run.byTrack,beat);
+ for(const part of selection.parts){
+  const current=active.get(part.id)||null,previous=run.highlighted.get(part.id)||null;
+  if(current===previous)continue;
+  if(previous)for(const node of run.domIndex.get(part.id+'|'+previous)||[])node.classList.remove('playing');
+  if(current)for(const node of run.domIndex.get(part.id+'|'+current)||[])node.classList.add('playing');
+  run.highlighted.set(part.id,current);
  }
- for(const track of selection.parts){
-  const id=current.get(track.id);
-  $$('[data-score-part="'+track.id+'"] .score-event').forEach(node=>node.classList.toggle('playing',!!id&&node.dataset.eventId===id));
+ if(run.lastBar!==atBar){
+  run.lastBar=atBar;
+  const status=$('#songPracticeStatus');
+  if(status)status.textContent=`Playing bar ${atBar} / ${selection.score.measures.length} · ${Math.round(practiceTempo(score.tempo,state.songPracticeSpeed))} BPM`;
+  syncSongPlaybackControls();
  }
- const status=$('#songPracticeStatus');
- if(status)status.textContent=`Playing bar ${atBar} / ${selection.score.measures.length} · ${Math.round(practiceTempo(score.tempo,state.songPracticeSpeed))} BPM`;
- if(run.lastBar!==atBar){run.lastBar=atBar;syncSongPlaybackControls()}
 }
 async function playSongPractice(){
  if(songPracticePlayback){toggleSongPracticePause();return}
@@ -1032,7 +1047,7 @@ function updateEngraving(){
  catch(error){host.textContent=`Engraved preview unavailable: ${error.message}. The editable score below is unaffected.`}
 }
 function filterRepositoryRows(){if(state.page!=='songbook'||state.songbookView!=='repository')return;const query=state.repoQuery.toLowerCase().trim();for(const row of $$('[data-repo-row]'))row.hidden=!!((query&&!row.dataset.search.includes(query))||(state.repoDifficulty!=='all'&&row.dataset.difficulty!==state.repoDifficulty));}
-function render(){const pages={explorer,progression:progressionBuilder,notation,technique,rhythm,songbook,practice,score:scoreStudio};$('#pageContent').dataset.mode=state.page;$('#pageContent').innerHTML=pages[state.page]()+songPlaybackDock();$('#currentPage').textContent=pageNames[state.page];$$('[data-page]').forEach(btn=>btn.classList.toggle('active',btn.dataset.page===state.page));if(state.page==='score'&&engravedPreviewEnabled)updateEngraving();filterRepositoryRows()}
+function render(){const pages={explorer,progression:progressionBuilder,notation,technique,rhythm,songbook,practice,score:scoreStudio};$('#pageContent').dataset.mode=state.page;$('#pageContent').innerHTML=pages[state.page]()+songPlaybackDock();if(songPracticePlayback){songPracticePlayback.domIndex=null;songPracticePlayback.highlighted=new Map();}$('#currentPage').textContent=pageNames[state.page];$$('[data-page]').forEach(btn=>btn.classList.toggle('active',btn.dataset.page===state.page));if(state.page==='score'&&engravedPreviewEnabled)updateEngraving();filterRepositoryRows()}
 function navigate(page){if(!pageNames[page])return;stopSongPractice();stopRhythm();if(state.page==='notation'&&page!=='notation')stopRhythmLab();if(state.page==='progression'&&page!=='progression')stopProgression();if(state.page==='score' && page!=='score')stopScorePlayback();if(state.page==='technique'&&page!=='technique')stopTechniquePlayback();state.page=page;render();window.scrollTo({top:0,behavior:'smooth'});$('#mainContent').focus({preventScroll:true})}
 function nextMelodyPitch(pc){const matches=scalePositions(state.root,state.scale,state.tuning);const match=matches.find(x=>x.pc===pc && x.midi>=60)||matches.find(x=>x.pc===pc);return match?.midi??60}
 function choosePitch(midi){state.selectedMidi=midi;synth(midi);render()}
