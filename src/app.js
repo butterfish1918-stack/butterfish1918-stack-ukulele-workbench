@@ -18,6 +18,7 @@ import {SONG_ARRANGEMENT_MODES,arrangementModeTracks,chartChordsPerBar} from './
 import {originalInstrumentProfile} from './song-instrumentation.js';
 import {engravingPlan,loadVexFlow,renderEngravedScore} from './engraving.js';
 import {estimateFundamental} from './tuner-dsp.js';
+import {pitchPracticeFeedback,onsetPracticeFeedback} from './microphone-feedback.js';
 import {prepareBackupRestore,commitBackupRestore} from './storage-safety.js';
 import {inspectDevice} from './device-qa.js';
 import {BUNDLED_LIBRARY} from './library-seed.js';
@@ -74,6 +75,8 @@ state.songArrangementMode=['guitar-uke','ensemble','solo'].includes(read('songAr
 state.songPartEnabled=read('songPartEnabled',{ukulele:true,bass:true,piano:true});
 state.songGuitarAdaptations=read('songGuitarAdaptations',{});
 let songPracticePlayback=null;
+let songMicSession=null;
+state.songMicTargetMidi=null;
 let songSampleLoadToken=0;
 state.songSampleLoading=false;
 state.songSampleFallback=false;
@@ -706,6 +709,56 @@ function songOrganizationControls(){
   <p class="small-text">Playlists: ${collections.length?collections.map(h).join(' · '):'none'}</p>
  </details>`;
 }
+function stopSongMicrophone(){
+ const session=songMicSession;if(!session)return;
+ songMicSession=null;
+ cancelAnimationFrame(session.frame||0);
+ try{session.source.disconnect()}catch{}
+ try{session.analyser.disconnect()}catch{}
+ for(const track of session.stream.getTracks())track.stop();
+ session.context.close().catch(()=>{});
+ const button=$('[data-action="song-microphone"]');if(button)button.textContent='Start microphone note check';
+}
+async function toggleSongMicrophone(){
+ if(songMicSession){stopSongMicrophone();render();return}
+ const selection=activeSongPractice();if(!selection)return;
+ if(!navigator.mediaDevices?.getUserMedia){toast('Microphone API unavailable');return}
+ const target=state.songMicTargetMidi??timeline(selection.score).find(ev=>ev.type==='note')?.midi;
+ if(!Number.isInteger(target)){toast('Select a single written note to compare first');return}
+ stopSongPractice();stopTuner();
+ let stream,ctx;
+ try{
+  stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});
+  ctx=new (window.AudioContext||window.webkitAudioContext)();
+  const source=ctx.createMediaStreamSource(stream),analyser=ctx.createAnalyser();analyser.fftSize=4096;source.connect(analyser);
+  const samples=new Float32Array(analyser.fftSize);
+  const session={stream,context:ctx,source,analyser,samples,frame:0,target};
+  songMicSession=session;render();
+  const frame=()=>{
+   if(songMicSession!==session)return;
+   analyser.getFloatTimeDomainData(samples);
+   const detected=estimateFundamental(samples,ctx.sampleRate,{minHz:75,maxHz:1100});
+   const result=pitchPracticeFeedback(target,detected?.hz);
+   const label=$('#songMicrophoneStatus');
+   if(label)label.textContent=result.detected?
+    `Target ${midiName(target)} · heard ${detected.hz.toFixed(1)} Hz · ${result.cents>0?'+':''}${result.cents} cents · ${result.direction}`:
+    `Listening for ${midiName(target)} · play one clear note (no recording saved)`;
+   session.frame=requestAnimationFrame(frame);
+  };session.frame=requestAnimationFrame(frame);
+ }catch(error){
+  for(const track of stream?.getTracks?.()||[])track.stop();await ctx?.close?.().catch(()=>{});
+  songMicSession=null;toast('Microphone note check: '+error.message);
+ }
+}
+function songMicrophoneControls(){
+ const score=activeSongPractice()?.score;
+ if(!score)return '';
+ return `<div class="song-microphone-check"><strong>Experimental on-device note check</strong>
+ <p class="small-text">Tap an individual written note, then play it on your ukulele. The phone estimates pitch in cents. It does not grade chords or record/transmit audio; timing remains uncalibrated.</p>
+ <button class="btn compact ${songMicSession?'gold':'ghost'}" type="button" data-action="song-microphone">${songMicSession?'Stop microphone':'Start microphone note check'}</button>
+ <span id="songMicrophoneStatus" class="small-text">${songMicSession?'Listening for '+midiName(songMicSession.target):'Microphone off'}</span>
+ </div>`;
+}
 function songPracticeControls(preview,body=''){
  if(!preview)return '';
  const guide=songPracticeGuide(preview,body);
@@ -738,6 +791,7 @@ function songPracticeControls(preview,body=''){
  <p class="small-text" id="songPracticeStatus" role="status" aria-live="polite">${paused?'Paused — single tap the score to resume.':playing?'Playing sampled ensemble…':state.songSampleLoading?'Loading recordings…':state.songSampleFallback?'Some notes unavailable; a backup sound is being used.':'Ready. Tap written notes and chords to hear the recorded ukulele.'}</p>
  ${guide.length?`<div class="song-chord-guide"><strong>Chord fingerings — ${h(TUNINGS[preview.tuning].names.join(' · '))} string order</strong><p class="small-text">Tap a chord to hear its written ukulele fingering.</p><div class="repo-tags">${guide.map(chord=>`<button type="button" class="btn compact ghost" data-practice-chord="${h(chord.symbol)}" title="Listen to ${h(chord.symbol)} chord"><b>${h(chord.symbol)}</b> &nbsp;${h(chord.frets)}</button>`).join('')}</div></div>`:''}
  ${songOrganizationControls()}
+ ${songMicrophoneControls()}
  </div>`;
 }
 
@@ -1343,7 +1397,7 @@ function updateEngraving(){
 }
 function filterRepositoryRows(){if(state.page!=='songbook'||state.songbookView!=='repository')return;const query=state.repoQuery.toLowerCase().trim();for(const row of $$('[data-repo-row]'))row.hidden=!!((query&&!row.dataset.search.includes(query))||(state.repoDifficulty!=='all'&&row.dataset.difficulty!==state.repoDifficulty));}
 function render(){const pages={explorer,progression:progressionBuilder,notation,technique,rhythm,songbook,practice,score:scoreStudio};$('#pageContent').dataset.mode=state.page;$('#pageContent').innerHTML=pages[state.page]()+songPlaybackDock();if(songPracticePlayback){songPracticePlayback.domIndex=null;songPracticePlayback.highlighted=new Map();}$('#currentPage').textContent=pageNames[state.page];$$('[data-page]').forEach(btn=>btn.classList.toggle('active',btn.dataset.page===state.page));if(state.page==='score'&&engravedPreviewEnabled)updateEngraving();filterRepositoryRows()}
-function navigate(page){if(!pageNames[page])return;stopSongPractice();stopRhythm();if(state.page==='notation'&&page!=='notation')stopRhythmLab();if(state.page==='progression'&&page!=='progression')stopProgression();if(state.page==='score' && page!=='score')stopScorePlayback();if(state.page==='technique'&&page!=='technique')stopTechniquePlayback();state.page=page;render();window.scrollTo({top:0,behavior:'smooth'});$('#mainContent').focus({preventScroll:true})}
+function navigate(page){if(!pageNames[page])return;stopSongMicrophone();stopSongPractice();stopRhythm();if(state.page==='notation'&&page!=='notation')stopRhythmLab();if(state.page==='progression'&&page!=='progression')stopProgression();if(state.page==='score' && page!=='score')stopScorePlayback();if(state.page==='technique'&&page!=='technique')stopTechniquePlayback();state.page=page;render();window.scrollTo({top:0,behavior:'smooth'});$('#mainContent').focus({preventScroll:true})}
 function nextMelodyPitch(pc){const matches=scalePositions(state.root,state.scale,state.tuning);const match=matches.find(x=>x.pc===pc && x.midi>=60)||matches.find(x=>x.pc===pc);return match?.midi??60}
 function choosePitch(midi){state.selectedMidi=midi;synth(midi);render()}
 function chooseChordSound(){const chord=harmonizedChords(state.root,state.scale,state.chordExtension)[state.chordDegree];if(!chord)return;const voices=chordVoicings(chord.pcs,state.tuning);const voice=voices[Math.min(state.chordIndex,voices.length-1)];if(voice){const midis=voice.midis.filter(x=>x!==null);const ctx=audio(),at=ctx.currentTime+.03;midis.forEach((m,i)=>synth(m,at+i*.025,.7,.075))}else toast('No matching chord voicing in this position range')}
@@ -1376,6 +1430,7 @@ function handleClick(e){const node=e.target.closest('[data-prog-degree],[data-pr
    const found=selection?.parts.map(part=>({part,event:findEvent(state.songPracticeScope!=='section'?part.score:sectionScore(part.score,selection.sections,selection.sectionIndex),node.dataset.eventId)?.event})).find(x=>x.event);
    if(found?.event?.type&&found.event.type!=='rest'){
     const {event,part}=found,secs=60/practiceTempo(selection.score.tempo,state.songPracticeSpeed);
+    if(event.type==='note'&&part.id==='ukulele'){state.songMicTargetMidi=event.midi;if(songMicSession)songMicSession.target=event.midi}
     if(part.instrument==='ukulele')previewRecordedUkulele(scoreEventPitches([event]),(voice,at)=>synthEvent(event,at,secs,event.duration,voice));
     else if(part.instrument==='drums')previewDrumEvent(event);
     else if(MODELLED_INSTRUMENTS.includes(part.instrument)){const at=audio().currentTime+.03;synthEvent(event,at,secs,event.duration,(midi,time,duration,volume)=>playModelledInstrument(audio(),part.instrument,midi,time,duration,volume)??synth(midi,time,duration,volume))}
@@ -1552,6 +1607,7 @@ function handleClick(e){const node=e.target.closest('[data-prog-degree],[data-pr
   if(!store('songLyricsById',next))break;
   state.songLyricsById=next;state.songLyricEditorOpen=false;render();toast('Local lyric cues cleared');
  }break;
+ case 'song-microphone':toggleSongMicrophone();break;
  case 'song-print':printCurrentSongScore();break;
  case 'song-save-annotations':{
   const song=currentSongSource();if(!song)return;
@@ -1790,5 +1846,5 @@ function init(){newQuestion();state.selectedMidi=melody()[0]?.midi??60;render();
    if(e.key.toLowerCase()==='y'){e.preventDefault();restoreScoreHistory('redo');return}
  }
  if(e.code==='Space'&&state.page==='notation'&&rhythmLabPlayback&&!e.repeat&&!e.target.closest('input,textarea,select,[contenteditable="true"]')&&(!e.target.closest('button')||e.target.closest('[data-action="rhythm-lab-tap"]'))){e.preventDefault();tapRhythmLab();return}
- if((e.key==='Enter'||e.key===' ')&&e.target.closest('.score-event,[data-score-position],.score-note,.fret-cell')){e.preventDefault();e.target.closest('.score-event,[data-score-position],.score-note,.fret-cell').dispatchEvent(new MouseEvent('click',{bubbles:true}))}});$('#toolDialog').addEventListener('click',e=>{if(e.target.matches('[data-dialog-close]')||e.target===$('#toolDialog'))closeDialog()});$('#toolDialog').addEventListener('close',()=>{stopTuner();stopMetronome()});window.addEventListener('beforeunload',()=>{stopSongPractice();stopTuner();stopMetronome();stopRhythm();stopScorePlayback();stopTechniquePlayback();stopProgression();stopRhythmLab()});if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});}
+ if((e.key==='Enter'||e.key===' ')&&e.target.closest('.score-event,[data-score-position],.score-note,.fret-cell')){e.preventDefault();e.target.closest('.score-event,[data-score-position],.score-note,.fret-cell').dispatchEvent(new MouseEvent('click',{bubbles:true}))}});$('#toolDialog').addEventListener('click',e=>{if(e.target.matches('[data-dialog-close]')||e.target===$('#toolDialog'))closeDialog()});$('#toolDialog').addEventListener('close',()=>{stopTuner();stopMetronome()});window.addEventListener('beforeunload',()=>{stopSongMicrophone();stopSongPractice();stopTuner();stopMetronome();stopRhythm();stopScorePlayback();stopTechniquePlayback();stopProgression();stopRhythmLab()});if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});}
 init();
