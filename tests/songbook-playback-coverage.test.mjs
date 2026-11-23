@@ -24,8 +24,8 @@ test('bass notes use permitted low register and displayed bass clef',()=>{
 });
 test('Songbook playback and displayed score use the same full-or-section selection',()=>{
  const src=readFileSync(new URL('../src/app.js',import.meta.url),'utf8');
- assert.match(src,/const songPreviewScore=state\.songPracticeScope==='full'\?current\?\.score/);
- assert.match(src,/const previewScore=state\.songPracticeScope==='full'\?arrangement\?\.score/);
+ assert.match(src,/const songPreviewScore=state\.songPracticeScope!=='section'\?current\?\.score/);
+ assert.match(src,/const previewScore=state\.songPracticeScope!=='section'\?arrangement\?\.score/);
  assert.match(src,/followSongPracticeScore\(atBar,run\)/);
  assert.match(src,/data-first-measure/);
  assert.match(src,/songArrangementSwitch\(\)/);
@@ -45,6 +45,6 @@ test('score playback can be paused without restarting, and mobile gestures ignor
  assert.match(app,/songPracticePlayback!==run\|\|run\.paused/);
  assert.match(app,/data-action="song-practice-stop"/);
  assert.match(app,/updateSongPlayhead\(run,selection,score\)/);
- assert.match(app,/run\.audioContext\.currentTime-run\.start/);
+ assert.match(app,/run\.audioContext\.currentTime-run\.cycleStart/);
  assert.match(app,/playDrumSample\(ctx,hit,at/);
 });
