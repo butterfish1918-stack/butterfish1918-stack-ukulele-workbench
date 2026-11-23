@@ -6,6 +6,7 @@ import {parseBarLyricCues,lyricCuesToText,mergeReadingCues} from './song-lyrics.
 import {partVerificationStatus} from './score-verification.js';
 import {prepareUkuleleSamples,playUkuleleSample} from './ukulele-samples.js';
 import {prepareBackingSamples,playBackingSample,playDrumSample} from './instrument-samples.js';
+import {playModelledInstrument,MODELLED_INSTRUMENTS} from './instrument-voices.js';
 import {compilePracticeTimeline,activeTrackEvents,sampleRequestsForWindow,shouldSkipLateEvent} from './song-playback.js';
 import {SONG_ARRANGEMENT_MODES,arrangementModeTracks,chartChordsPerBar} from './arrangement-modes.js';
 import {originalInstrumentProfile} from './song-instrumentation.js';
@@ -948,7 +949,7 @@ async function playSongPractice(){
      }
     }else if(!ev.continuation && ev.type!=='rest'){
      const boost=ev.instrument==='bass'?1.85:ev.instrument==='piano'?1.3:1.25;
-     const voice=ev.instrument==='ukulele'?
+     const voice=MODELLED_INSTRUMENTS.includes(ev.instrument)?(midi,time,duration,volume)=>playModelledInstrument(ctx,ev.instrument,midi,time,duration,volume*.9)??synth(midi,time,duration,volume):ev.instrument==='ukulele'?
       (midi,time,duration,volume)=>playUkuleleSample(ctx,midi,time,duration,volume*boost)??synth(midi,time,duration,volume):
       (midi,time,duration,volume)=>playBackingSample(ctx,ev.instrument,midi,time,duration,Math.min(.27,volume*boost))??synth(midi,time,duration,volume);
      run.voices.push(...synthEvent(ev,at,run.seconds,ev.tiedDuration,voice));
@@ -1270,7 +1271,7 @@ function handleClick(e){const node=e.target.closest('[data-prog-degree],[data-pr
   if(songPracticePlayback)updateSongPlayhead(songPracticePlayback,songPracticePlayback.selection,songPracticePlayback.score);
   return;
  }
- if(node.dataset.songVisiblePart){const id=node.dataset.songVisiblePart;if(!['bass','piano','drums'].includes(id))return;state.songVisibleParts={...state.songVisibleParts,[id]:state.songVisibleParts[id]!==true};if(songPracticePlayback){songPracticePlayback.followedBar=null;songPracticePlayback.followedGroup=null;}render();if(songPracticePlayback)updateSongPlayhead(songPracticePlayback,songPracticePlayback.selection,songPracticePlayback.score);return}
+ if(node.dataset.songVisiblePart){const id=node.dataset.songVisiblePart;if(!['bass','piano','drums','guitar','strings','synthesizer','flute','vocals'].includes(id))return;state.songVisibleParts={...state.songVisibleParts,[id]:state.songVisibleParts[id]!==true};if(songPracticePlayback){songPracticePlayback.followedBar=null;songPracticePlayback.followedGroup=null;}render();if(songPracticePlayback)updateSongPlayhead(songPracticePlayback,songPracticePlayback.selection,songPracticePlayback.score);return}
  if(node.dataset.songArrangement){stopSongPractice();state.songVisibleParts={ukulele:true};state.songArrangementMode=node.dataset.songArrangement;store('songArrangementMode',state.songArrangementMode);render();return}
  if(node.dataset.songPartToggle){stopSongPractice();const part=node.dataset.songPartToggle;state.songPartEnabled={...state.songPartEnabled,[part]:state.songPartEnabled[part]===false};store('songPartEnabled',state.songPartEnabled);render();return}
  if(node.dataset.practiceChord){const selection=activeSongPractice();if(!selection)return;const chord=songPracticeGuide(selection.preview,selection.body).find(item=>item.symbol===node.dataset.practiceChord);if(!chord)return;const frets=chord.frets.split(' · '),tuning=TUNINGS[selection.score.tuning],midis=frets.map((fret,string)=>/^\d+$/.test(fret)?tuning.midi[string]+Number(fret):null).filter(Number.isFinite);
@@ -1288,6 +1289,7 @@ function handleClick(e){const node=e.target.closest('[data-prog-degree],[data-pr
     const {event,part}=found,secs=60/practiceTempo(selection.score.tempo,state.songPracticeSpeed);
     if(part.instrument==='ukulele')previewRecordedUkulele(scoreEventPitches([event]),(voice,at)=>synthEvent(event,at,secs,event.duration,voice));
     else if(part.instrument==='drums')previewDrumEvent(event);
+    else if(MODELLED_INSTRUMENTS.includes(part.instrument)){const at=audio().currentTime+.03;synthEvent(event,at,secs,event.duration,(midi,time,duration,volume)=>playModelledInstrument(audio(),part.instrument,midi,time,duration,volume)??synth(midi,time,duration,volume))}
     else previewRecordedBacking(part.instrument,scoreEventPitches([event]),(voice,at)=>synthEvent(event,at,secs,event.duration,voice));
     const status=$('#songPracticeStatus');if(status)status.textContent=part.label+': '+(event.type==='chord'?event.symbol:midiName(event.midi));
    }
