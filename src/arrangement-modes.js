@@ -5,10 +5,11 @@
 import {notePc,midiName} from './music.js';
 import {measureBeats,validateScore} from './score.js';
 import {chartChordSequence,chordPitchClasses} from './song-practice.js';
+import {availableSongParts,originalInstrumentProfile} from './song-instrumentation.js';
 
 export const SONG_ARRANGEMENT_MODES=Object.freeze([
  {id:'guitar-uke',label:'Guitar → ukulele',description:'Playable ukulele adaptation with optional instrumental backing; source guitar notes are not yet verified'},
- {id:'ensemble',label:'Full ensemble',description:'Separate ukulele, bass and electric-piano practice parts, reconstructed from available harmony'},
+ {id:'ensemble',label:'Full ensemble',description:'Ukulele and only source-confirmed bass, piano or drums; additional available parts are reconstructed practice arrangements'},
  {id:'solo',label:'Solo ukulele',description:'Only the available ukulele melody, chords and fingering; no other instruments'}
 ]);
 export function chartChordsPerBar(arrangement){
@@ -33,20 +34,38 @@ export function chartChordsPerBar(arrangement){
  return harmonies;
 }
 function scorePart(source,title,instrument){
- return {...source,id:source.id+'-'+instrument,title:title.slice(0,120),clef:instrument==='bass'?'bass8vb':'treble',measures:[]};
+ return {...source,id:source.id+'-'+instrument,title:title.slice(0,120),clef:instrument==='bass'?'bass8vb':instrument==='drums'?'percussion':'treble',measures:[]};
 }
 function noteAt(midi,duration,id){
  return {id,type:'note',midi,spelling:midiName(midi).replace(/-?\d+$/,''),duration};
+}
+function drumStudyMeasure(score,index,kind='acoustic'){
+ const beats=measureBeats(score.meter);
+ const subdivisions=Math.round(beats*2);
+ const isCompound=score.meter==='6/8';
+ const events=Array.from({length:subdivisions},(_,step)=>{
+  const t=step*.5;
+  const kick=step===0||(!isCompound&&step===4);
+  const snare=isCompound?step===3:step===2||step===6;
+  const hits=[...(kick?['kick']:[]),...(snare?['snare']:[]),'hat'];
+  const midi=snare?38:kick?36:42;
+  return {...noteAt(midi,.5,'practice-drum-'+index+'-'+step),drumHits:hits,drumStyle:kind};
+ });
+ return {events,...(score.measures[index].section?{section:score.measures[index].section}:{})};
 }
 export function buildPracticeParts(arrangement){
  const score=arrangement?.score;
  if(!score)throw Error('A published ukulele score is required');
  validateScore(score);
+ const known=availableSongParts(arrangement);
+ const profile=originalInstrumentProfile(arrangement);
  const chords=chartChordsPerBar(arrangement);
  const bass=scorePart(score,score.title+' — Bass practice line','bass');
  const keys=scorePart(score,score.title+' — Keyboard practice harmony','piano');
+ const drums=scorePart(score,score.title+' — Drum study groove','drums');
  const cap=measureBeats(score.meter);
  for(let i=0;i<score.measures.length;i++){
+  if(known.includes('drums'))drums.measures.push(drumStudyMeasure(score,i,profile.percussion||'acoustic'));
   const pcs=chordPitchClasses(chords[i]||'');
   const root=pcs?.[0]??null;
   // A bar without known harmony remains silent, rather than inventing notes.
@@ -63,12 +82,11 @@ export function buildPracticeParts(arrangement){
   const notes=cap===4?[0,1,2,1]:cap===3?[0,1,2]:[0];
   keys.measures.push({events:notes.map((n,j)=>noteAt(roots[n%roots.length],cap/notes.length,'practice-keys-'+i+'-'+j)),section:score.measures[i].section});
  }
- validateScore(bass);validateScore(keys);
- return [
-  {id:'ukulele',label:'Ukulele · study arrangement',instrument:'ukulele',score,source:'published practice score'},
-  {id:'bass',label:'Electric bass · reconstructed',instrument:'bass',score:bass,source:'generated harmonic accompaniment'},
-  {id:'piano',label:'Electric piano · reconstructed',instrument:'piano',score:keys,source:'generated harmonic accompaniment'}
- ];
+ const parts=[{id:'ukulele',label:'Ukulele · study arrangement',instrument:'ukulele',score,source:'published practice score'}];
+ if(known.includes('bass')){validateScore(bass);parts.push({id:'bass',label:'Bass · rehearsal line',instrument:'bass',score:bass,source:'generated accompaniment · not a transcription'})}
+ if(known.includes('piano')){validateScore(keys);parts.push({id:'piano',label:'Piano · rehearsal harmony',instrument:'piano',score:keys,source:'generated accompaniment · not a transcription'})}
+ if(known.includes('drums')){validateScore(drums);parts.push({id:'drums',label:(profile.percussion==='electronic'?'Electronic drums':'Drum kit')+' · rehearsal groove',instrument:'drums',score:drums,source:'generated drum practice pattern · not the original beat'})}
+ return parts;
 }
 export function arrangementModeTracks(arrangement,mode){
  const all=buildPracticeParts(arrangement);
