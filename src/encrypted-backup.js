@@ -2,7 +2,7 @@
  * chosen by the user. This is not automatic sync and never sends data online.
  * PBKDF2 + AES-GCM; passphrase is never stored in localStorage.
  */
-const b64=bytes=>btoa(String.fromCharCode(...new Uint8Array(bytes)));
+const b64=bytes=>{const data=new Uint8Array(bytes);let binary='';for(let i=0;i<data.length;i+=16384)binary+=String.fromCharCode(...data.subarray(i,i+16384));return btoa(binary)};
 const from64=str=>Uint8Array.from(atob(str),c=>c.charCodeAt(0));
 export async function encryptPortableBackup(object,password,api=globalThis.crypto){
  if(typeof password!=='string'||password.length<12)throw Error('Use an encryption passphrase of at least 12 characters');
