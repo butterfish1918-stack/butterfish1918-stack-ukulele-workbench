@@ -6,6 +6,7 @@ import {arpeggioDegrees,chordInversions,harmonicFunctions,basicChordSubstitution
 import {LEARNING_UNITS,learningReview,recordLearningReview} from './learning-path.js';
 import {addSongToPlaylist,annotateSong,printableSongFilename} from './song-organizer.js';
 import {validateScoreDocument,flattenDocumentEvents,planScoreSystems} from './polyphonic-score.js';
+import {ensemblePlaybackPlan} from './ensemble-playback.js';
 import {importMultiPartMusicXML,exportMultiPartMusicXML} from './musicxml-multipart.js';
 import {renderPolyphonicDocument} from './polyphonic-engraving.js';
 import {parseChordPro,exportChordPro} from './chordpro.js';
@@ -85,6 +86,8 @@ state.songArrangementMode=['guitar-uke','ensemble','solo'].includes(read('songAr
 state.songPartEnabled=read('songPartEnabled',{ukulele:true,bass:true,piano:true});
 state.songGuitarAdaptations=read('songGuitarAdaptations',{});
 let songPracticePlayback=null;
+let importedEnsembleRun=null;
+state.importedEnsembleMuted={};
 let songMicSession=null;
 state.songMicTargetMidi=null;
 let songSampleLoadToken=0;
@@ -1300,13 +1303,16 @@ function importedScoreDocumentPanel(){
   <p class="small-text">Import an authorized MusicXML partwise file with separate instruments and rhythmic voices. Complex notation is preserved in a separate document rather than flattened into one misleading ukulele line. The original single-voice Score Studio remains editable separately.</p>
   <div class="score-actions">
    <button class="btn compact" type="button" data-action="score-import-multipart">Import multi-part MusicXML</button>
+   ${doc?`<button class="btn compact gold" type="button" data-action="score-play-multipart">${importedEnsembleRun?'■ Stop ensemble':'▶ Play ensemble'}</button>`:''}
    ${doc?'<button class="btn compact" type="button" data-action="score-export-multipart">Export multi-part MusicXML</button>':''}
   </div>
   <input type="file" id="multiPartXmlFile" accept=".xml,.musicxml,text/xml,application/xml" hidden>
   ${doc?`<h3>${h(doc.title)}</h3><p>${doc.parts.length} instrumental parts · ${doc.measures} measures · ${doc.tempo} BPM · ${h(doc.meter)}. These parts have not been independently source-verified.</p>
    <div class="lesson-list">${doc.parts.map(part=>`<div class="lesson"><div class="lesson-icon">𝄞</div><div><h3>${h(part.name)}</h3>
     <p>${part.voices.length} independent rhythmic voice(s) · ${part.voices.reduce((n,voice)=>n+voice.measures.reduce((m,bar)=>m+bar.events.length,0),0)} events</p></div></div>`).join('')}</div>
-   <p class="small-text">Independent voices, dynamic symbols and fingerings are shown in a compact preview. Full publishing-grade engraving and ensemble performance controls still require further work.</p>
+   <p class="small-text">Imported individual parts and overlapping voices play at their original onsets with dynamics and note lengths. Ukulele, bass and piano use recorded sample banks where available; other supported sounds use clearly identified generated reference tones, not original recordings.</p>
+   <div class="repo-tags" role="group" aria-label="Mute imported instrumental parts">${doc.parts.map(part=>`<button type="button" class="btn compact ${state.importedEnsembleMuted[part.id]?'ghost':'gold'}" data-imported-track="${h(part.id)}" aria-pressed="${!state.importedEnsembleMuted[part.id]}">${h(part.name)}: ${state.importedEnsembleMuted[part.id]?'muted':'on'}</button>`).join('')}</div>
+   <p class="small-text" id="importedEnsembleStatus" role="status">${importedEnsembleRun?'Playing imported ensemble':'Ready to hear the imported score'}</p>
    ${renderPolyphonicDocument(doc)}`:''}
  </section>`;
 }
@@ -1353,6 +1359,85 @@ function scoreStudio(){
  </section></div>
  <div class="studio-transport" aria-label="Score playback and session telemetry"><div class="studio-transport-label">TRANSPORT <b>// REHEARSAL</b></div><div class="studio-transport-controls"><button class="transport-play" id="scorePlaybackToggle" data-action="score-play">${scorePlayback?'■ STOP':'▶ PLAY'}</button><button class="transport-utility" data-action="score-undo" ${canUndo(scoreHistory)?'':'disabled'}>↶ UNDO</button><button class="transport-utility" data-action="score-redo" ${canRedo(scoreHistory)?'':'disabled'}>↷ REDO</button><button class="transport-utility transport-save" data-action="score-save-song">▤ SAVE</button><div class="studio-bpm"><small>BPM</small><strong>${score.tempo}</strong></div></div><div class="studio-telemetry" aria-label="Selected note and score progress"><div class="studio-telemetry-pitch"><small>REFERENCE PITCH</small><strong>${h(refPitch)}</strong><span>${h(refHz)}</span></div><div class="studio-telemetry-progress"><small>BAR ${String(barNumber).padStart(2,'0')} / ${String(score.measures.length).padStart(2,'0')}</small><div class="studio-progress-track"><i style="width:${barRatio}%"></i></div></div></div></div>
  <div class="workspace-grid studio-secondary" style="margin-top:16px"><section class="panel panel-pad"><div class="panel-title"><h2>Keep this arrangement</h2></div><p class="panel-desc">Your working score autosaves locally. Save a snapshot into the Songbook to practise or edit it later, then export a JSON backup to protect against browser-data deletion.</p><div class="score-actions"><button class="btn gold" data-action="score-save-song">▤ Save in Songbook</button><button class="btn" data-nav="songbook">Open Songbook →</button></div><p class="small-text" style="margin-top:10px">Source-based guitar adaptation imports a six-string JSON part with explicitly timed single notes and rewrites it for high-G ukulele; octave shifts are reported. It does not guess guitar riffs from chords, or silently discard simultaneous notes. MusicXML export creates standard single-part score notation, chords and fret indications for supported events. Import accepts only one treble-clef rhythmic voice in 4/4, 3/4 or 6/8, with supported notes, rests and chord voicings. Complex scores, tuplets, transposing instruments, multiple voices and compressed MXL are intentionally rejected. Use JSON Backup to preserve the entire app library.</p></section><section class="panel panel-pad"><h2>What this editor does not claim yet</h2><p class="small-text">This stage supports a single rhythmic voice (including four-note chord stacks), simple meters and bar-aware accidentals. Short notes are beamed by beat; dotted durations, simple ties and major key signatures are supported. Independent polyphonic voices, transposition, broad MusicXML interoperability and professional engraving remain planned. Undo/Redo tracks edits during the current session only. The display shows <strong>sounding pitch</strong>; high-G octave conventions will be a separate setting.</p></section></div>${importedScoreDocumentPanel()}`;
+}
+function stopImportedEnsemble(){
+ const run=importedEnsembleRun;
+ if(!run)return;
+ importedEnsembleRun=null;
+ if(run.interval)clearInterval(run.interval);
+ const now=run.ctx.currentTime;
+ for(const voice of run.voices)try{voice.stop(now+.01)}catch{}
+ const button=document.querySelector('[data-action="score-play-multipart"]');
+ if(button)button.textContent='▶ Play ensemble';
+ const status=$('#importedEnsembleStatus');
+ if(status)status.textContent='Ensemble stopped';
+ $$('.poly-voice-event.playing').forEach(el=>el.classList.remove('playing'));
+}
+async function toggleImportedEnsemble(){
+ if(importedEnsembleRun){stopImportedEnsemble();return}
+ const doc=state.scoreDocument;
+ if(!doc){toast('Import a multi-part score first');return}
+ let plan;
+ try{plan=ensemblePlaybackPlan(doc)}catch(error){toast('Ensemble: '+error.message);return}
+ const audible=plan.events.filter(ev=>ev.instrument!=='unsupported'&&!state.importedEnsembleMuted[ev.partId]);
+ if(!audible.length){toast('No supported, unmuted instrumental notes in this score');return}
+ const ctx=audio();
+ try{if(ctx.state==='suspended')await ctx.resume()}catch(error){toast('Audio permission: '+error.message);return}
+ const firstBeats=plan.beatsPerBar*4;
+ const first=audible.filter(ev=>ev.onset<firstBeats);
+ try{
+  await Promise.all([
+   prepareUkuleleSamples(ctx,[...new Set(first.filter(ev=>ev.instrument==='ukulele').map(ev=>ev.midi))]),
+   prepareBackingSamples(ctx,['bass','piano'].map(instrument=>({instrument,midis:[...new Set(first.filter(ev=>ev.instrument===instrument).map(ev=>ev.midi))]})))
+  ]);
+ }catch(error){toast('Some ensemble samples unavailable; fallback sound enabled')}
+ const start=ctx.currentTime+.18,seconds=60/doc.tempo;
+ const run={ctx,start,seconds,events:audible,next:0,voices:[],interval:null,lastBar:0};
+ importedEnsembleRun=run;
+ render();
+ const schedule=()=>{
+  if(importedEnsembleRun!==run)return;
+  const now=ctx.currentTime;
+  let guard=160;
+  while(guard-->0&&run.next<run.events.length){
+   const ev=run.events[run.next],at=start+ev.onset*seconds;
+   if(at>now+.24)break;
+   run.next++;
+   if(at<now-.25)continue;
+   const time=Math.max(at,now+.008),length=ev.duration*seconds,level=.09*ev.velocity;
+   let voice=null;
+   try{
+    if(ev.instrument==='drums'){
+     const hit=ev.midi===36||ev.midi===35?'kick':ev.midi===38||ev.midi===40?'snare':'hat';
+     voice=playDrumSample(ctx,hit,time,level);
+    }else if(ev.instrument==='ukulele')voice=playUkuleleSample(ctx,ev.midi,time,length,level);
+    else if(['bass','piano'].includes(ev.instrument))voice=playBackingSample(ctx,ev.instrument,ev.midi,time,length,level);
+    else voice=playModelledInstrument(ctx,ev.instrument,ev.midi,time,length,level);
+    if(!voice&&ev.instrument!=='drums')voice=synth(ev.midi,time,length,level);
+    if(voice)run.voices.push(voice);
+   }catch(error){toast(ev.instrument+': '+error.message)}
+  }
+  const elapsed=Math.max(0,(now-start)/seconds);
+  const bar=plan.startBar+Math.min(plan.endBar-plan.startBar,Math.floor(elapsed/plan.beatsPerBar));
+  if(run.lastBar!==bar){
+   run.lastBar=bar;
+   const status=$('#importedEnsembleStatus');
+   if(status)status.textContent='Playing measure '+bar+' of '+plan.endBar+' · '+doc.tempo+' BPM';
+   $$('.poly-voice-event').forEach(node=>node.classList.toggle('playing',Number(node.dataset.measure)===bar));
+  }
+  if(run.next>=audible.length&&now>start+plan.totalBeats*seconds+.15){stopImportedEnsemble();toast('Imported score playback complete')}
+ };
+ run.interval=setInterval(schedule,65);
+ schedule();
+ // Prepare later recorded samples in modest chunks without blocking the music.
+ void (async()=>{for(let startBar=5;startBar<=doc.measures;startBar+=8){
+  if(importedEnsembleRun!==run)return;
+  const notes=audible.filter(ev=>ev.measure>=startBar&&ev.measure<startBar+8);
+  try{await Promise.all([
+   prepareUkuleleSamples(ctx,[...new Set(notes.filter(ev=>ev.instrument==='ukulele').map(ev=>ev.midi))]),
+   prepareBackingSamples(ctx,['bass','piano'].map(instrument=>({instrument,midis:[...new Set(notes.filter(ev=>ev.instrument===instrument).map(ev=>ev.midi))]})))
+  ])}catch{}
+ }})().catch(()=>{});
 }
 function stopScorePlayback(){
  if(!scorePlayback)return;
@@ -1462,11 +1547,11 @@ function updateEngraving(){
 }
 function filterRepositoryRows(){if(state.page!=='songbook'||state.songbookView!=='repository')return;const query=state.repoQuery.toLowerCase().trim();for(const row of $$('[data-repo-row]'))row.hidden=!!((query&&!row.dataset.search.includes(query))||(state.repoDifficulty!=='all'&&row.dataset.difficulty!==state.repoDifficulty));}
 function render(){const pages={explorer,progression:progressionBuilder,notation,technique,rhythm,songbook,practice,score:scoreStudio};$('#pageContent').dataset.mode=state.page;$('#pageContent').innerHTML=pages[state.page]()+songPlaybackDock();if(songPracticePlayback){songPracticePlayback.domIndex=null;songPracticePlayback.highlighted=new Map();}$('#currentPage').textContent=pageNames[state.page];$$('[data-page]').forEach(btn=>btn.classList.toggle('active',btn.dataset.page===state.page));if(state.page==='score'&&engravedPreviewEnabled)updateEngraving();filterRepositoryRows()}
-function navigate(page){if(!pageNames[page])return;stopSongMicrophone();stopSongPractice();stopRhythm();if(state.page==='notation'&&page!=='notation')stopRhythmLab();if(state.page==='progression'&&page!=='progression')stopProgression();if(state.page==='score' && page!=='score')stopScorePlayback();if(state.page==='technique'&&page!=='technique')stopTechniquePlayback();state.page=page;render();window.scrollTo({top:0,behavior:'smooth'});$('#mainContent').focus({preventScroll:true})}
+function navigate(page){if(!pageNames[page])return;stopSongMicrophone();stopSongPractice();stopRhythm();if(state.page==='notation'&&page!=='notation')stopRhythmLab();if(state.page==='progression'&&page!=='progression')stopProgression();if(state.page==='score' && page!=='score'){stopScorePlayback();stopImportedEnsemble();}if(state.page==='technique'&&page!=='technique')stopTechniquePlayback();state.page=page;render();window.scrollTo({top:0,behavior:'smooth'});$('#mainContent').focus({preventScroll:true})}
 function nextMelodyPitch(pc){const matches=scalePositions(state.root,state.scale,state.tuning);const match=matches.find(x=>x.pc===pc && x.midi>=60)||matches.find(x=>x.pc===pc);return match?.midi??60}
 function choosePitch(midi){state.selectedMidi=midi;synth(midi);render()}
 function chooseChordSound(){const chord=harmonizedChords(state.root,state.scale,state.chordExtension)[state.chordDegree];if(!chord)return;const voices=chordVoicings(chord.pcs,state.tuning);const voice=voices[Math.min(state.chordIndex,voices.length-1)];if(voice){const midis=voice.midis.filter(x=>x!==null);const ctx=audio(),at=ctx.currentTime+.03;midis.forEach((m,i)=>synth(m,at+i*.025,.7,.075))}else toast('No matching chord voicing in this position range')}
-function handleClick(e){const node=e.target.closest('[data-prog-degree],[data-prog-move],[data-prog-stroke],[data-prog-duration],[data-prog-remove],[data-event-id],[data-score-position],[data-midi],[data-pc],[data-nav],[data-page],[data-action],[data-degree],[data-extension],[data-labels],[data-display],[data-answer],[data-rhythm-answer],[data-expression-answer],[data-key-answer],[data-sight-answer],[data-step],[data-techfocus],[data-techindex],[data-tech-display],[data-tech-note],[data-tech-rating],[data-repo],[data-repo-section],[data-repertoire-preview],[data-repertoire-section],[data-repertoire],[data-song],[data-song-section],[data-practice-chord],[data-song-arrangement],[data-song-part-toggle],[data-song-toggle-chords],[data-song-toggle-notes],[data-song-toggle-lyrics],[data-song-visible-part]');if(!node)return;
+function handleClick(e){const node=e.target.closest('[data-prog-degree],[data-prog-move],[data-prog-stroke],[data-prog-duration],[data-prog-remove],[data-event-id],[data-score-position],[data-midi],[data-pc],[data-nav],[data-page],[data-action],[data-degree],[data-extension],[data-labels],[data-display],[data-answer],[data-rhythm-answer],[data-expression-answer],[data-key-answer],[data-sight-answer],[data-step],[data-techfocus],[data-techindex],[data-tech-display],[data-tech-note],[data-tech-rating],[data-repo],[data-repo-section],[data-repertoire-preview],[data-repertoire-section],[data-repertoire],[data-song],[data-song-section],[data-practice-chord],[data-song-arrangement],[data-song-part-toggle],[data-song-toggle-chords],[data-song-toggle-notes],[data-song-toggle-lyrics],[data-song-visible-part],[data-imported-track]');if(!node)return;
  if(node.dataset.page){navigate(node.dataset.page);return}if(node.dataset.nav){navigate(node.dataset.nav);return}
  if(node.hasAttribute('data-song-toggle-chords')){state.songShowChordNames=!state.songShowChordNames;store('songShowChordNames',state.songShowChordNames);if(songPracticePlayback){songPracticePlayback.followedBar=null;songPracticePlayback.followedGroup=null;}render();if(songPracticePlayback)updateSongPlayhead(songPracticePlayback,songPracticePlayback.selection,songPracticePlayback.score);return}
  if(node.hasAttribute('data-song-toggle-notes')){state.songShowNoteNames=!state.songShowNoteNames;store('songShowNoteNames',state.songShowNoteNames);if(songPracticePlayback){songPracticePlayback.followedBar=null;songPracticePlayback.followedGroup=null;}render();if(songPracticePlayback)updateSongPlayhead(songPracticePlayback,songPracticePlayback.selection,songPracticePlayback.score);return}
@@ -1478,6 +1563,13 @@ function handleClick(e){const node=e.target.closest('[data-prog-degree],[data-pr
   render();
   if(songPracticePlayback)updateSongPlayhead(songPracticePlayback,songPracticePlayback.selection,songPracticePlayback.score);
   return;
+ }
+ if(node.dataset.importedTrack){
+  const id=node.dataset.importedTrack;
+  if(!state.scoreDocument?.parts.some(part=>part.id===id))return;
+  stopImportedEnsemble();
+  state.importedEnsembleMuted={...state.importedEnsembleMuted,[id]:!state.importedEnsembleMuted[id]};
+  render();return;
  }
  if(node.dataset.songVisiblePart){const id=node.dataset.songVisiblePart;if(!['bass','piano','drums','guitar','strings','synthesizer','flute','vocals'].includes(id))return;state.songVisibleParts={...state.songVisibleParts,[id]:state.songVisibleParts[id]!==true};if(songPracticePlayback){songPracticePlayback.followedBar=null;songPracticePlayback.followedGroup=null;}render();if(songPracticePlayback)updateSongPlayhead(songPracticePlayback,songPracticePlayback.selection,songPracticePlayback.score);return}
  if(node.dataset.songArrangement){stopSongPractice();state.songVisibleParts={ukulele:true};state.songArrangementMode=node.dataset.songArrangement;store('songArrangementMode',state.songArrangementMode);render();return}
@@ -1623,6 +1715,7 @@ function handleClick(e){const node=e.target.closest('[data-prog-degree],[data-pr
  case 'score-import-xml':$('#musicXmlFile')?.click();break;
  case 'score-import-guitar':$('#guitarPartFile')?.click();break;
  case 'score-import-multipart':$('#multiPartXmlFile')?.click();break;
+ case 'score-play-multipart':toggleImportedEnsemble();break;
  case 'score-export-multipart':{
   try{if(!state.scoreDocument)throw Error('Import a multi-part score first');const xml=exportMultiPartMusicXML(state.scoreDocument);
    const blob=new Blob([xml],{type:'application/vnd.recordare.musicxml+xml'}),url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download=printableSongFilename(state.scoreDocument.title)+'-ensemble.musicxml';link.click();setTimeout(()=>URL.revokeObjectURL(url),5000);toast('Multi-part MusicXML exported')}
@@ -1831,7 +1924,7 @@ async function loadMultiPartXmlFile(file){
   const doc=importMultiPartMusicXML(await file.text());
   if(!confirm(`Import ${doc.parts.length} instrumental parts and ${doc.measures} bars into your separate multi-part library? The existing editable ukulele score is not replaced.`))return;
   if(!store('scoreDocument',doc))throw Error('Browser storage is full; export a backup');
-  state.scoreDocument=doc;render();toast('Multi-part MusicXML imported with independent voices');
+  stopImportedEnsemble();state.scoreDocument=doc;state.importedEnsembleMuted={};render();toast('Multi-part MusicXML imported with independent voices');
  }catch(error){toast('Multi-part import: '+error.message)}
 }
 async function loadGuitarPartFile(file){
