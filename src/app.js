@@ -7,6 +7,7 @@ import {LEARNING_UNITS,learningReview,recordLearningReview} from './learning-pat
 import {addSongToPlaylist,annotateSong,printableSongFilename} from './song-organizer.js';
 import {validateScoreDocument,flattenDocumentEvents,planScoreSystems} from './polyphonic-score.js';
 import {ensemblePlaybackPlan} from './ensemble-playback.js';
+import {attachInstrumentPart,SOURCE_INSTRUMENT_IDS} from './source-instruments.js';
 import {importMultiPartMusicXML,exportMultiPartMusicXML} from './musicxml-multipart.js';
 import {renderPolyphonicDocument} from './polyphonic-engraving.js';
 import {parseChordPro,exportChordPro} from './chordpro.js';
@@ -584,6 +585,12 @@ function songArrangementSwitch(){
   <div class="song-source-rows">${statuses.map(({part,check})=>`<div class="song-source-row"><strong>${h(part.label.split(' · ')[0])}</strong><span>${h(check.label)}</span>${check.status==='confirmed'?(check.sources||[]).map(src=>`<a href="${h(src.url)}" target="_blank" rel="noopener noreferrer">${h(src.edition)}</a>`).join(' '):''}</div>`).join('')}</div>
  </details>
  ${state.songArrangementMode==='guitar-uke'?`${sourceDetails}<div class="score-actions"><button type="button" class="btn compact" data-action="song-guitar-import">↑ Import authorized six-string guitar notes (JSON)</button><button type="button" class="btn compact ghost" data-action="song-guitar-template">↓ Source template</button></div><input type="file" id="songGuitarSourceFile" accept=".json,application/json" hidden>`:''}
+ ${state.songbookView==='mine'&&currentSongSource()?.score?`<div class="song-instrument-source-import">
+   <strong>Attach your own authorized instrument part</strong>
+   <p class="small-text">Import a single-instrument score with matching tempo, meter and bar count. Your source replaces the generated study line only in this personal song; it is not automatically verified.</p>
+   <div class="score-actions"><label for="songInstrumentKind">Instrument</label><select id="songInstrumentKind">${SOURCE_INSTRUMENT_IDS.map(id=>`<option value="${id}">${id}</option>`).join('')}</select><button class="btn compact" type="button" data-action="song-instrument-import">↑ Import part MusicXML / JSON</button></div>
+   <input id="songInstrumentFile" type="file" accept=".json,.musicxml,.xml,application/json,text/xml" hidden>
+   </div>`:''}
  </div>`;
 }
 function renderSongArrangementSheets(arrangement,sections,index,containerClass){
@@ -1728,6 +1735,7 @@ function handleClick(e){const node=e.target.closest('[data-prog-degree],[data-pr
   catch(error){toast('Multi-part export: '+error.message)}
  }break;
  case 'song-guitar-import':$('#songGuitarSourceFile')?.click();break;
+ case 'song-instrument-import':$('#songInstrumentFile')?.click();break;
  case 'song-guitar-template':downloadSongGuitarTemplate();break;
  case 'score-guitar-template':{
   const blob=new Blob([JSON.stringify(exampleGuitarSource(),null,2)],{type:'application/json'});
@@ -1911,7 +1919,7 @@ function handleChange(e){const el=e.target;
  if(el.id==='scoreDuration'){state.draftDuration=Number(el.value);return}
  if(el.id==='scorePitch'){state.draftMidi=Number(el.value);const entries=spellingsForMidi(state.draftMidi);state.draftSpelling=entries[0];const target=$('#scoreSpelling');if(target)target.innerHTML=entries.map(x=>`<option value="${h(x)}">${h(x.replace('#','♯').replace('b','♭'))}</option>`).join('');return}
  if(el.id==='scoreSpelling'){state.draftSpelling=el.value;return}
-if(['root','scale','tuning'].includes(el.id)){state[el.id]=el.value;if(el.id==='tuning')store('tuning',state.tuning);state.chordDegree=0;state.chordIndex=0;state.selectedMidi=melody()[0]?.midi??60;render()}if(el.id==='showHints'){state.showHints=el.checked;store('hints',el.checked);render()}if(el.id==='rhythmTempo'){state.tempo=Number(el.value);store('tempo',state.tempo);render()}if(el.id==='backupFile'&&el.files?.[0])importBackup(el.files[0]);if(el.id==='musicXmlFile'&&el.files?.[0])loadMusicXMLFile(el.files[0]);if(el.id==='guitarPartFile'&&el.files?.[0])loadGuitarPartFile(el.files[0]);if(el.id==='songGuitarSourceFile'&&el.files?.[0])loadSongGuitarPartFile(el.files[0]);if(el.id==='multiPartXmlFile'&&el.files?.[0])loadMultiPartXmlFile(el.files[0]);if(el.id==='chordProFile'&&el.files?.[0])loadChordProFile(el.files[0]);if(el.id==='encryptedBackupFile'&&el.files?.[0])restoreEncryptedBackup(el.files[0]);}
+if(['root','scale','tuning'].includes(el.id)){state[el.id]=el.value;if(el.id==='tuning')store('tuning',state.tuning);state.chordDegree=0;state.chordIndex=0;state.selectedMidi=melody()[0]?.midi??60;render()}if(el.id==='showHints'){state.showHints=el.checked;store('hints',el.checked);render()}if(el.id==='rhythmTempo'){state.tempo=Number(el.value);store('tempo',state.tempo);render()}if(el.id==='backupFile'&&el.files?.[0])importBackup(el.files[0]);if(el.id==='musicXmlFile'&&el.files?.[0])loadMusicXMLFile(el.files[0]);if(el.id==='guitarPartFile'&&el.files?.[0])loadGuitarPartFile(el.files[0]);if(el.id==='songGuitarSourceFile'&&el.files?.[0])loadSongGuitarPartFile(el.files[0]);if(el.id==='multiPartXmlFile'&&el.files?.[0])loadMultiPartXmlFile(el.files[0]);if(el.id==='songInstrumentFile'&&el.files?.[0])loadPersonalInstrumentPart(el.files[0]);if(el.id==='chordProFile'&&el.files?.[0])loadChordProFile(el.files[0]);if(el.id==='encryptedBackupFile'&&el.files?.[0])restoreEncryptedBackup(el.files[0]);}
 async function loadChordProFile(file){
  try{
   if(file.size>150000)throw Error('ChordPro file too large');
@@ -1924,6 +1932,27 @@ async function loadChordProFile(file){
   state.songOpen=id;state.songbookView='mine';state.editing=false;render();
   toast('ChordPro imported locally — no original instrumental notation inferred');
  }catch(error){toast('ChordPro import: '+error.message)}
+}
+async function loadPersonalInstrumentPart(file){
+ try{
+  if(state.songbookView!=='mine')throw Error('Copy the song into My Songbook first');
+  const source=currentSongSource(),instrument=$('#songInstrumentKind')?.value;
+  if(!source?.score)throw Error('Select a personal song that has a score');
+  if(!SOURCE_INSTRUMENT_IDS.includes(instrument))throw Error('Choose a supported instrument');
+  if(file.size>2_000_000)throw Error('Instrument file exceeds 2 MB');
+  const raw=await file.text();
+  const candidate=/\.xml$|\.musicxml$/i.test(file.name)||raw.trimStart().startsWith('<?xml')?
+   importMusicXML(raw,{tuning:'highG'}):JSON.parse(raw);
+  const score=candidate?.score??candidate;
+  const updated=attachInstrumentPart(source,instrument,score);
+  if(source.instrumentParts?.[instrument]&&!confirm('Replace the existing '+instrument+' score in this personal song?'))return;
+  if(!confirm('Attach the '+instrument+' score to '+source.title+'? This file will remain local, and must not be labelled as independently verified.'))return;
+  const entries=songs().map(x=>x.id===source.id?updated:x);
+  if(!store('songs',entries))throw Error('Unable to save to browser storage');
+  stopSongPractice();
+  state.songArrangementMode='ensemble';state.songVisibleParts={ukulele:true,[instrument]:true};
+  render();toast('Authorized '+instrument+' part attached to your personal song');
+ }catch(error){toast('Instrument import: '+error.message)}
 }
 async function loadMultiPartXmlFile(file){
  try{
