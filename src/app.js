@@ -1,6 +1,8 @@
 import {ROOTS,SCALES,TUNINGS,PITCH_CLASSES,mod,spelledScale,midiName,midiFreq,freqMidi,fretboard,optionsForMidi,scalePositions,harmonizedChords,chordVoicings,scaleMelody,staffYForSpelling} from './music.js';
 import {createScore,validateScore,appendEvent,insertEvent,appendMeasure,findEvent,removeEvent,replaceEvent,assignPosition,changeTuning,timeline,measureBeats,remainingBeats,preferredPosition,DURATIONS,METERS,KEY_SIGNATURES,QUARTER_LABELS,spellingsForMidi,setTieToNext,canTieNext,setKeySignature,CHORD_SHAPES,ARTICULATIONS,STROKES,setArticulation,setSlurToNext,setStroke} from './score.js';
 import {renderScoreView,scoreSystems} from './score-view.js';
+import {parseBarLyricCues,lyricCuesToText,mergeReadingCues} from './song-lyrics.js';
+import {partVerificationStatus} from './score-verification.js';
 import {prepareUkuleleSamples,playUkuleleSample} from './ukulele-samples.js';
 import {prepareBackingSamples,playBackingSample,playDrumSample} from './instrument-samples.js';
 import {compilePracticeTimeline,activeTrackEvents,sampleRequestsForWindow,shouldSkipLateEvent} from './song-playback.js';
@@ -43,6 +45,9 @@ state.songPracticeScope='full';
 state.songVisibleParts={ukulele:true};
 state.songShowChordNames=read('songShowChordNames',true)!==false;
 state.songShowNoteNames=!!read('songShowNoteNames',false);
+state.songShowLyrics=!!read('songShowLyrics',false);
+state.songLyricsById=read('songLyricsById',{});
+state.songLyricEditorOpen=false;
 state.songArrangementMode=['guitar-uke','ensemble','solo'].includes(read('songArrangementMode','solo'))?read('songArrangementMode','solo'):'solo';
 state.songPartEnabled=read('songPartEnabled',{ukulele:true,bass:true,piano:true});
 state.songGuitarAdaptations=read('songGuitarAdaptations',{});
@@ -438,6 +443,39 @@ function effectiveSongArrangement(song){
   return {arrangement:{...song,score:source.score},verifiedGuitar:true,source};
  }catch{return {arrangement:song,verifiedGuitar:false,source:null}}
 }
+function lyricKey(song){return guitarOverrideKey(song)}
+function songLyricText(song){
+ const key=lyricKey(song);
+ return key&&typeof state.songLyricsById[key]==='string'?state.songLyricsById[key]:'';
+}
+function readingCuesForSong(song,sections){
+ if(!state.songShowLyrics||!song?.score)return null;
+ let lyrics=[];
+ const raw=songLyricText(song);
+ if(raw){
+  try{lyrics=parseBarLyricCues(raw,{measureCount:song.score.measures.length})}
+  catch(error){lyrics=[]}
+ }else if(Array.isArray(song.lyricCues)){
+  lyrics=song.lyricCues.filter(cue=>cue?.kind==='lyric'&&typeof cue.text==='string');
+ }
+ return mergeReadingCues(lyrics,sections,song.score.measures.length);
+}
+function songLyricEditor(){
+ const song=currentSongSource();
+ if(!song?.score)return '';
+ const source=songLyricText(song);
+ const count=source?parseBarLyricCues(source,{measureCount:song.score.measures.length}).length:0;
+ return `<div class="song-lyrics-tools">
+  <button type="button" class="btn compact ghost" data-action="song-lyrics-edit">${state.songLyricEditorOpen?'Close lyric editor':count?'Edit lyric cues':'Add lyric cues'}</button>
+  <span class="small-text">${count?count+' lyric cues saved privately':'No original lyrics stored — section names are shown instead'}</span>
+  ${state.songLyricEditorOpen?`<div class="song-lyrics-editor">
+   <label for="songLyricsInput">Your authorized lyrics, aligned to score measures</label>
+   <p class="small-text">Enter one phrase per measure: <code>[9] Your lyric phrase</code>. You can also use <code>[9-12] Your phrase</code>. These cues stay in your browser; importing online lyrics automatically is not supported.</p>
+   <textarea id="songLyricsInput" rows="7" spellcheck="true" placeholder="[1] Opening phrase&#10;[9] First verse begins">${h(source)}</textarea>
+   <div class="score-actions"><button type="button" class="btn gold compact" data-action="song-lyrics-save">Save lyric cues</button><button type="button" class="btn compact ghost" data-action="song-lyrics-cancel">Cancel</button>${count?'<button type="button" class="btn compact ghost" data-action="song-lyrics-clear">Clear local lyric cues</button>':''}</div>
+  </div>`:''}
+ </div>`;
+}
 function preparedSongSelection(song,label,sections,index){
  const chosen=effectiveSongArrangement(song),active=chosen.arrangement;
  const preview=state.songPracticeScope==='full'?active.score:sectionScore(active.score,sections,index);
@@ -466,6 +504,7 @@ function renderSongArrangementSheets(arrangement,sections,index,containerClass){
  const tracks=arrangementModeTracks(effectiveSongArrangement(arrangement).arrangement,state.songArrangementMode);
  const visible=tracks.filter(track=>track.id==='ukulele'||(state.songArrangementMode==='ensemble'&&state.songVisibleParts[track.id]===true));
  const barChords=chartChordsPerBar(arrangement);
+ const readingCues=readingCuesForSong(arrangement,sections);
  const offset=state.songPracticeScope==='full'?0:(sections[index]?.startBar??1)-1;
  const shown=visible.map(track=>({...track,shown:state.songPracticeScope==='full'?track.score:sectionScore(track.score,sections,index)}));
  const staffOptions=part=>({
@@ -484,7 +523,7 @@ function renderSongArrangementSheets(arrangement,sections,index,containerClass){
       const options=staffOptions(part);
       return `<div class="song-score-track" data-score-part="${part.id}">
         <div class="song-track-title"><strong>${part.id==='ukulele'?'Ukulele':h(part.label.split(' · ')[0])}</strong>${systemIndex===0?'<span>'+h(part.source)+'</span>':''}</div>
-        <div class="score-holder score-editor-view ${containerClass}">${renderScoreView(localScore,{...options,layout:'compact',measureOffset:offset+start,chordSymbols:options.chordSymbols?.slice(offset+start,offset+end)??null})}</div>
+        <div class="score-holder score-editor-view ${containerClass}">${renderScoreView(localScore,{...options,layout:'compact',measureOffset:offset+start,chordSymbols:options.chordSymbols?.slice(offset+start,offset+end)??null,readingCues:part.id==='ukulele'?readingCues:null})}</div>
       </div>`;
     }).join('')}
    </section>`
@@ -494,7 +533,7 @@ function renderSongArrangementSheets(arrangement,sections,index,containerClass){
   const options=staffOptions(part);
   return `<div class="song-score-track" data-score-part="${part.id}">
     <div class="song-track-title"><strong>Ukulele</strong><span>${h(part.source)}</span></div>
-    <div class="score-holder score-editor-view ${containerClass}">${renderScoreView(part.shown,{...options,layout:'systems',measureOffset:offset,chordSymbols:options.chordSymbols?.slice(offset,offset+part.shown.measures.length)??null})}</div>
+    <div class="score-holder score-editor-view ${containerClass}">${renderScoreView(part.shown,{...options,layout:'systems',measureOffset:offset,chordSymbols:options.chordSymbols?.slice(offset,offset+part.shown.measures.length)??null,readingCues:part.id==='ukulele'?readingCues:null})}</div>
   </div>`;
  }).join('');
 }
@@ -553,7 +592,9 @@ function songPracticeControls(preview,body=''){
   <strong>Score labels</strong>
   <button type="button" class="btn compact ${state.songShowChordNames?'gold':'ghost'}" data-song-toggle-chords aria-pressed="${state.songShowChordNames}">${state.songShowChordNames?'✓ ':''}Show chord names</button>
   <button type="button" class="btn compact ${state.songShowNoteNames?'gold':'ghost'}" data-song-toggle-notes aria-pressed="${state.songShowNoteNames}">${state.songShowNoteNames?'✓ ':''}Show note names (staff + tab)</button>
+  <button type="button" class="btn compact ${state.songShowLyrics?'gold':'ghost'}" data-song-toggle-lyrics aria-pressed="${state.songShowLyrics}">${state.songShowLyrics?'✓ ':''}Show lyrics / sections</button>
  </div>
+ ${state.songShowLyrics?songLyricEditor():''}
  ${state.songArrangementMode==='ensemble'&&parts.length>1?`<div class="song-staff-visibility" role="group" aria-label="Select visible instrument staves">
   <strong>Display notation for</strong><p class="small-text">Only ukulele is shown by default. Showing another staff does not change what you hear.</p>
   <div class="song-staff-toggle-list"><button class="btn compact gold" type="button" disabled aria-pressed="true">Ukulele · always visible</button>
@@ -1096,10 +1137,19 @@ function navigate(page){if(!pageNames[page])return;stopSongPractice();stopRhythm
 function nextMelodyPitch(pc){const matches=scalePositions(state.root,state.scale,state.tuning);const match=matches.find(x=>x.pc===pc && x.midi>=60)||matches.find(x=>x.pc===pc);return match?.midi??60}
 function choosePitch(midi){state.selectedMidi=midi;synth(midi);render()}
 function chooseChordSound(){const chord=harmonizedChords(state.root,state.scale,state.chordExtension)[state.chordDegree];if(!chord)return;const voices=chordVoicings(chord.pcs,state.tuning);const voice=voices[Math.min(state.chordIndex,voices.length-1)];if(voice){const midis=voice.midis.filter(x=>x!==null);const ctx=audio(),at=ctx.currentTime+.03;midis.forEach((m,i)=>synth(m,at+i*.025,.7,.075))}else toast('No matching chord voicing in this position range')}
-function handleClick(e){const node=e.target.closest('[data-prog-degree],[data-prog-move],[data-prog-stroke],[data-prog-duration],[data-prog-remove],[data-event-id],[data-score-position],[data-midi],[data-pc],[data-nav],[data-page],[data-action],[data-degree],[data-extension],[data-labels],[data-display],[data-answer],[data-rhythm-answer],[data-expression-answer],[data-key-answer],[data-sight-answer],[data-step],[data-techfocus],[data-techindex],[data-tech-display],[data-tech-note],[data-tech-rating],[data-repo],[data-repo-section],[data-repertoire-preview],[data-repertoire-section],[data-repertoire],[data-song],[data-song-section],[data-practice-chord],[data-song-arrangement],[data-song-part-toggle],[data-song-toggle-chords],[data-song-toggle-notes],[data-song-visible-part]');if(!node)return;
+function handleClick(e){const node=e.target.closest('[data-prog-degree],[data-prog-move],[data-prog-stroke],[data-prog-duration],[data-prog-remove],[data-event-id],[data-score-position],[data-midi],[data-pc],[data-nav],[data-page],[data-action],[data-degree],[data-extension],[data-labels],[data-display],[data-answer],[data-rhythm-answer],[data-expression-answer],[data-key-answer],[data-sight-answer],[data-step],[data-techfocus],[data-techindex],[data-tech-display],[data-tech-note],[data-tech-rating],[data-repo],[data-repo-section],[data-repertoire-preview],[data-repertoire-section],[data-repertoire],[data-song],[data-song-section],[data-practice-chord],[data-song-arrangement],[data-song-part-toggle],[data-song-toggle-chords],[data-song-toggle-notes],[data-song-toggle-lyrics],[data-song-visible-part]');if(!node)return;
  if(node.dataset.page){navigate(node.dataset.page);return}if(node.dataset.nav){navigate(node.dataset.nav);return}
  if(node.hasAttribute('data-song-toggle-chords')){state.songShowChordNames=!state.songShowChordNames;store('songShowChordNames',state.songShowChordNames);if(songPracticePlayback){songPracticePlayback.followedBar=null;songPracticePlayback.followedGroup=null;}render();if(songPracticePlayback)updateSongPlayhead(songPracticePlayback,songPracticePlayback.selection,songPracticePlayback.score);return}
  if(node.hasAttribute('data-song-toggle-notes')){state.songShowNoteNames=!state.songShowNoteNames;store('songShowNoteNames',state.songShowNoteNames);if(songPracticePlayback){songPracticePlayback.followedBar=null;songPracticePlayback.followedGroup=null;}render();if(songPracticePlayback)updateSongPlayhead(songPracticePlayback,songPracticePlayback.selection,songPracticePlayback.score);return}
+ if(node.hasAttribute('data-song-toggle-lyrics')){
+  state.songShowLyrics=!state.songShowLyrics;
+  store('songShowLyrics',state.songShowLyrics);
+  state.songLyricEditorOpen=false;
+  if(songPracticePlayback){songPracticePlayback.followedBar=null;songPracticePlayback.followedGroup=null}
+  render();
+  if(songPracticePlayback)updateSongPlayhead(songPracticePlayback,songPracticePlayback.selection,songPracticePlayback.score);
+  return;
+ }
  if(node.dataset.songVisiblePart){const id=node.dataset.songVisiblePart;if(!['bass','piano','drums'].includes(id))return;state.songVisibleParts={...state.songVisibleParts,[id]:state.songVisibleParts[id]!==true};if(songPracticePlayback){songPracticePlayback.followedBar=null;songPracticePlayback.followedGroup=null;}render();if(songPracticePlayback)updateSongPlayhead(songPracticePlayback,songPracticePlayback.selection,songPracticePlayback.score);return}
  if(node.dataset.songArrangement){stopSongPractice();state.songVisibleParts={ukulele:true};state.songArrangementMode=node.dataset.songArrangement;store('songArrangementMode',state.songArrangementMode);render();return}
  if(node.dataset.songPartToggle){stopSongPractice();const part=node.dataset.songPartToggle;state.songPartEnabled={...state.songPartEnabled,[part]:state.songPartEnabled[part]===false};store('songPartEnabled',state.songPartEnabled);render();return}
@@ -1263,6 +1313,28 @@ function handleClick(e){const node=e.target.closest('[data-prog-degree],[data-pr
  case 'open-metronome':openMetronome();break;
  case 'play-rhythm':rhythmTimer?stopRhythm():startRhythm();render();break;
  case 'reset-pattern':state.rhythm=['D','','U','U','D','','U',''];store('rhythm',state.rhythm);render();break;
+ case 'song-lyrics-edit':state.songLyricEditorOpen=!state.songLyricEditorOpen;render();break;
+ case 'song-lyrics-cancel':state.songLyricEditorOpen=false;render();break;
+ case 'song-lyrics-save':{
+  const song=currentSongSource(),raw=$('#songLyricsInput')?.value??'';
+  if(!song?.score)return;
+  try{
+   const cues=parseBarLyricCues(raw,{measureCount:song.score.measures.length});
+   const next={...state.songLyricsById,[lyricKey(song)]:lyricCuesToText(cues)};
+   if(!store('songLyricsById',next))return;
+   state.songLyricsById=next;state.songLyricEditorOpen=false;
+   if(songPracticePlayback){songPracticePlayback.followedBar=null;songPracticePlayback.followedGroup=null}
+   render();
+   toast(cues.length+' measure-aligned lyric cues saved in this browser');
+  }catch(error){toast('Lyric cue: '+error.message)}
+ }break;
+ case 'song-lyrics-clear':{
+  const song=currentSongSource();
+  if(!song||!confirm('Clear the locally saved lyric cues for this song? This does not affect its musical score.'))break;
+  const next={...state.songLyricsById};delete next[lyricKey(song)];
+  if(!store('songLyricsById',next))break;
+  state.songLyricsById=next;state.songLyricEditorOpen=false;render();toast('Local lyric cues cleared');
+ }break;
  case 'song-practice-play':playSongPractice();break;
  case 'song-practice-stop':stopSongPractice();render();break;
  case 'song-practice-loop':state.songPracticeLoop=!state.songPracticeLoop;store('songPracticeLoop',state.songPracticeLoop);render();break;
