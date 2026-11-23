@@ -1,3 +1,23 @@
+# Ukulele Workbench v1.9.0 — Measure-aligned lyrics and strict instrument-source verification
+
+## Optional lyrics and reading markers
+
+The **Show lyrics / sections** button operates independently of chords, note names, and the Notation / Notation + Tab / Tab Only display. Text appears beneath the appropriate music system, aligned to numbered measures, never atop notes, stems, chord symbols or fret numbers. When no authorized lyric text exists, the arrangement's authentic section names appear as *Section* navigation cues; they are never passed off as original lyrics.
+
+Use **Add lyric cues** in any selected song to enter text you are authorized to use. Each line begins with a measure number, e.g. '[9] First lyric phrase' or '[9-12] Longer phrase'. The app refuses invalid or out-of-range bar references; cue text is HTML-escaped and stored only in the current browser's personal local storage. The current lyric/section cue is highlighted as playback progresses. **Export Backup** includes the private lyric cue map; **Restore Backup** validates it before restoring.
+
+This version does not bulk-import copyrighted song lyrics from the web. Public visibility of lyrics is not a licence to reproduce them.
+
+## Mandatory instrument-specific score source verification
+
+The detailed project-wide hard rule is in **docs/SCORE_VERIFICATION_POLICY.md**. All past and future song/track records are presumed **pending** until pitch, rhythm, instrument identity, performance edition, register/fingering and bar alignment have been compared with at least two independent, actually reviewed instrument-specific transcriptions, such as named editions on MuseScore, Ultimate Guitar, Songsterr or publisher-supplied sheet music.
+
+The user's Songbook now includes an expandable **Instrument score verification** panel listing each instrument's true status. The pipeline uses **src/score-verification.js** and **npm run qa:sources** to prohibit publishing a claim of verification that lacks checked source editions, review metadata and reuse rights. Machine-generated backing parts remain labelled as reconstructions; existing scores are not silently promoted to verified originals.
+
+Note: this policy does **not** mean the existing modern-song parts have already been verified. Their underlying accompaniment arrangements remain unconfirmed until source checks are completed. Never reproduce unlicensed third-party tabs or scores.
+
+---
+
 # Ukulele Workbench v1.8.9 — Compact mobile notation and look-ahead
 
 Mobile score presentation was redesigned after inspection of the user's Android screenshot. The former ensemble stacked large white panels for every track, repeating long arrangement headings and allowing chord symbols and tempo labels to collide with music. This version:
