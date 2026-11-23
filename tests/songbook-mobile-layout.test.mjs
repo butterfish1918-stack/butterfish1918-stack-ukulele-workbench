@@ -14,7 +14,7 @@ test('mobile double-staff music has short systems without redundant long title h
  assert.doesNotMatch(html,/104 BPM<\/text>/);
  assert.match(html,/class="score-chord-symbol"/);
  assert.match(html,/OPTIONAL TAB/);
- assert.match(html,/y="146"/);
+ assert.match(html,/y1="146"/);
 });
 test('chord names remain optional and are not duplicated over the staff',()=>{
  const score=createScore({title:'Chord study',sample:false});
