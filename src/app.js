@@ -45,7 +45,7 @@ state.songPracticeScope='full';
 state.songVisibleParts={ukulele:true};
 state.songShowChordNames=read('songShowChordNames',true)!==false;
 state.songShowNoteNames=!!read('songShowNoteNames',false);
-state.songShowLyrics=!!read('songShowLyrics',false);
+state.songShowLyrics=read('songShowLyrics',true)!==false;
 state.songLyricsById=read('songLyricsById',{});
 state.songLyricEditorOpen=false;
 state.songArrangementMode=['guitar-uke','ensemble','solo'].includes(read('songArrangementMode','solo'))?read('songArrangementMode','solo'):'solo';
@@ -464,13 +464,16 @@ function songLyricEditor(){
  const song=currentSongSource();
  if(!song?.score)return '';
  const source=songLyricText(song);
- let count=0;try{count=source?parseBarLyricCues(source,{measureCount:song.score.measures.length}).length:0}catch{/* A revised score may invalidate old local bar numbers; do not crash the score viewer. */}
+ const builtIn=Array.isArray(song.lyricCues)?song.lyricCues.filter(x=>x?.kind==='lyric'):[];
+ const sourceAttribution=song.lyricSource;
+ let count=0;try{count=source?parseBarLyricCues(source,{measureCount:song.score.measures.length}).length:0}catch{/* Older saved bar anchors cannot disable the score. */}
  return `<div class="song-lyrics-tools">
   <button type="button" class="btn compact ghost" data-action="song-lyrics-edit">${state.songLyricEditorOpen?'Close lyric editor':count?'Edit lyric cues':'Add lyric cues'}</button>
-  <span class="small-text">${count?count+' lyric cues saved privately':'No original lyrics stored — section names are shown instead'}</span>
+  <span class="small-text">${count?count+' lyric cues saved privately':builtIn.length?builtIn.length+' historical public-domain lyric cues included':'No published lyrics included — section names are shown instead'}</span>
+  ${sourceAttribution?.url?`<p class="small-text song-lyric-credit">Historical words: ${h(sourceAttribution.sourceTitle||'traditional text')}, ${h(sourceAttribution.published||'')}. ${h(sourceAttribution.alignment||'')} <a href="${h(sourceAttribution.url)}" target="_blank" rel="noopener noreferrer">Text source</a></p>`:''}
   ${state.songLyricEditorOpen?`<div class="song-lyrics-editor">
    <label for="songLyricsInput">Your authorized lyrics, aligned to score measures</label>
-   <p class="small-text">Enter one phrase per measure: <code>[9] Your lyric phrase</code>. You can also use <code>[9-12] Your phrase</code>. These cues stay in your browser; importing online lyrics automatically is not supported.</p>
+   <p class="small-text">Enter one phrase per measure: <code>[9] Your lyric phrase</code>, or <code>[9-12] Your phrase</code>. ${builtIn.length?'This song already contains historical lyrics. Your own cues replace their display but do not change the published original. ':''}Your cues stay in your browser; third-party lyrics cannot be copied automatically.</p>
    <textarea id="songLyricsInput" rows="7" spellcheck="true" placeholder="[1] Opening phrase&#10;[9] First verse begins">${h(source)}</textarea>
    <div class="score-actions"><button type="button" class="btn gold compact" data-action="song-lyrics-save">Save lyric cues</button><button type="button" class="btn compact ghost" data-action="song-lyrics-cancel">Cancel</button>${count?'<button type="button" class="btn compact ghost" data-action="song-lyrics-clear">Clear local lyric cues</button>':''}</div>
   </div>`:''}
@@ -928,11 +931,25 @@ function repositorySongbook(){
 }
 function repertoireItems(){return state.repositorySnapshot.catalog.repertoire??BUNDLED_LIBRARY.catalog.repertoire??[];}
 function repertoireScoreId(item){return item.preferredArrangementId||item.id;}
-function snapshotForRepertoireItem(item){return state.repositorySnapshot.songs[repertoireScoreId(item)]?state.repositorySnapshot:state.repertoirePreviewSnapshots[item.id]??null;}
+// Keep legacy browser caches readable while retrieving newly published lyric editions.
+const REQUIRED_LYRIC_EDITIONS=Object.freeze({'scarborough-fair-traditional-1882':2});
+function requiresFreshLyricEdition(item){
+ const arrangementId=repertoireScoreId(item),minimum=REQUIRED_LYRIC_EDITIONS[arrangementId]||0;
+ const available=availableArrangementForItem(item);
+ return minimum>0&&(!available||available.revision<minimum);
+}
+function snapshotForRepertoireItem(item){
+ const id=repertoireScoreId(item);
+ const cached=state.repositorySnapshot.songs[id]?state.repositorySnapshot:null;
+ const recent=state.repertoirePreviewSnapshots[item.id]??null;
+ if(recent?.songs[id] && (!cached||recent.songs[id].revision>cached.songs[id].revision))return recent;
+ return cached;
+}
 function availableArrangementForItem(item){return snapshotForRepertoireItem(item)?.songs[repertoireScoreId(item)]??null;}
+
 async function ensureApprovedArrangement(item){
  const existing=snapshotForRepertoireItem(item);
- if(existing)return existing;
+ if(existing&&!requiresFreshLyricEdition(item))return existing;
  if(location.protocol==='file:')throw Error('Open the hosted HTTPS app to download practice scores. The standalone file preview cannot sync.');
  const result=await downloadSingleApprovedArrangement({source:state.repositorySource,base:location.href,repertoireId:item.id,validateScore});
  state.repertoirePreviewSnapshots[item.id]=result;
@@ -940,7 +957,7 @@ async function ensureApprovedArrangement(item){
 }
 async function selectRepertoireSong(item){
  state.repertoireSelectedId=item.id;state.repertoireSectionIndex=0;state.repoError=null;
- if(availableArrangementForItem(item)){render();return}
+ if(availableArrangementForItem(item)&&!requiresFreshLyricEdition(item)){render();return}
  state.repertoireLoadingId=item.id;render();
  try{await ensureApprovedArrangement(item)}catch(error){state.repoError=error.message;toast('Could not load this song score')}
  finally{state.repertoireLoadingId=null;if(state.page==='songbook')render()}
