@@ -61,3 +61,19 @@ export function chordPitchClasses(symbol){
  const chord={'':[0,4,7],m:[0,3,7],'7':[0,4,7,10],m7:[0,3,7,10],maj7:[0,4,7,11],sus2:[0,2,7],sus4:[0,5,7]}[suffix];
  return chord?chord.map(n=>(root+n)%12):null;
 }
+
+/** Conventional, low-position GCEA voicings for chords commonly used in repertoire.
+ * The array is G-C-E-A order. Other symbols use calculated fretboard options.
+ */
+export const COMMON_HIGH_G_CHORDS=Object.freeze({
+ C:[0,0,0,3],G:[0,2,3,2],F:[2,0,1,0],
+ A:[2,1,0,0],Am:[2,0,0,0],A7:[0,1,0,0],
+ D:[2,2,2,0],Dm:[2,2,1,0],D7:[2,2,2,3],
+ Em:[0,4,3,2],Em7:[0,2,0,2],E7:[1,2,0,2],
+ Bb:[3,2,1,1],Bm:[4,2,2,2],B:[4,3,2,2],
+ Dsus2:[2,2,0,0],Dsus4:[0,2,3,0],
+ Gm:[0,2,3,1],Bbmaj7:[2,2,1,1],
+ 'C#m':[1,1,0,4],'F#m':[2,1,2,0],
+ Fm:[1,0,1,3],Esus2:[4,4,2,2],
+ C7:[0,0,0,1]
+});
