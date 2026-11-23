@@ -29,7 +29,7 @@ test('rendering escapes HTML pasted into lyric cues instead of running it',()=>{
 });
 test('Songbook has a persistent independent lyric toggle, editable locally and backed up',()=>{
  const src=readFileSync(new URL('../src/app.js',import.meta.url),'utf8');
- assert.match(src,/state\.songShowLyrics=!!read\('songShowLyrics'/);
+ assert.match(src,/state\.songShowLyrics=read\('songShowLyrics',true\)!==false/);
  assert.match(src,/data-song-toggle-lyrics/);
  assert.match(src,/data-action="song-lyrics-save"/);
  assert.match(src,/data-action="song-lyrics-clear"/);
