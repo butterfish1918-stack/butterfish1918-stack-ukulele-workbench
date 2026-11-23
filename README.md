@@ -1,3 +1,28 @@
+# Ukulele Workbench v1.8.6 Preview — Score Follow & Arrangement Modes
+
+## Playback and notation
+- **Whole arrangement** renders and plays the same full score: selecting a song section renders and plays only that section. The score no longer ends early while audio keeps going.
+- **Auto-follow** highlights current notes and moves the page to the next stave group when the music advances. For ensemble view the score groups all instruments by the same bar range.
+- The play/loop/speed controls appear above the score, not after an entire lengthy composition.
+- Ukulele notation shows harmonic chord names directly above the bars; ledger lines, bass clef and octave-transposing bass notation are supported.
+
+## Three selectable score modes
+1. **Guitar → ukulele:** The default song-structured accompaniment remains a playable, range-limited ukulele practice adaptation; it is NOT a verified original guitar transcription. Use **Import authorized six-string guitar notes (JSON)** to load a source-led monophonic transcription with octave changes reported. This requires matching bar count, tempo and meter. Polyphonic original guitar chords are not yet supported by the source adapter.
+2. **Full ensemble:** Three separately notated and individually mutably audible tracks, grouped by the same musical systems: ukulele study score, electric bass (FreePats recorded bass samples) and FM electric piano (FreePats recorded piano samples). Bass and keyboard parts are original **harmonic practice reconstructions** generated from available chord charts, not extracted original instrumental recordings. Live track mute controls allow isolated listening.
+3. **Solo ukulele:** The published score is played only on ukulele samples; the known chart harmonies are printed above its notation. This does not reconstruct melodic voices absent from the licensed source material, and cannot be assumed to reproduce every note from the artist's recording.
+
+## CC0 sources
+- Ukulele: FreePats Ukulele, tenor ukulele plucks by Mateusz Dąbrowski, pinned commit `86d345f6f7b79a106ace98eca0da19b087786dba`.
+- Electric bass: FreePats Electric Bass YR recordings by Andrea Biasior, pinned `8dcb7ea9116f417273ef8c030d15e7b3aa654301`.
+- Electric piano: FreePats FM Piano 2, pinned `2e1241f5db3ff6b938b1645a2f2f82f7e510c708`.
+
+The build downloads these 13+12+6 recorded FLACs and publishes them as first-party assets. A fallback oscillator may sound if a sample is unavailable. All compositions preserve the user's local Songbook entries; optional imported source-based guitar parts are held in local storage and included in user-exported backups.
+
+## Validation
+`npm test`, `npm run qa:library`, `npm run qa:arrangements` run as GitHub Pages deployment gates. Mobile audio playback, automatic scrolling, and first-load sample decoding additionally require browser verification.
+
+---
+
 # Ukulele Workbench v1.8.5 Preview — Printed Staffs and Recorded Ukulele
 
 **Sheet music:** Songbook and Score Studio now use multiple staff systems rather than a single endless horizontal score. Dense measures occupy their own line; shorter bars share a system. Scores preserve measure numbers and support notation, ukulele tab or both.
