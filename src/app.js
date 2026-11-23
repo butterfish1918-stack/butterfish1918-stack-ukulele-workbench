@@ -624,19 +624,27 @@ function onSongScoreDoubleClick(event){
  }
 }
 function followSongPracticeScore(absoluteBar,run,{force=false}={}){
- if(!run || songPracticePlayback!==run || !Number.isInteger(absoluteBar) || absoluteBar<1)return;
+ if(!run||songPracticePlayback!==run||!Number.isInteger(absoluteBar)||absoluteBar<1)return;
  if(run.followedBar===absoluteBar&&!force)return;
  run.followedBar=absoluteBar;
  const grouped=$$('.ensemble-score-group[data-first-measure]');
  const systems=grouped.length?grouped:$$('.song-score-preview .score-system[data-first-measure],.repo-score-preview .score-system[data-first-measure]');
- const system=systems.find(el=>Number(el.dataset.firstMeasure)<=absoluteBar&&Number(el.dataset.lastMeasure)>=absoluteBar);
- if(!system)return;
- systems.forEach(el=>el.classList.toggle(grouped.length?'ensemble-group-current':'score-system-current',el===system));
- if(run.followedGroup===system&&!force)return;
- run.followedGroup=system;
- const rect=system.getBoundingClientRect(),viewportHeight=window.innerHeight||document.documentElement.clientHeight;
- if(force||rect.top<85||rect.top>viewportHeight-200||(!grouped.length&&rect.bottom>viewportHeight-110)){
-  system.scrollIntoView({behavior:window.matchMedia?.('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:grouped.length?'start':'center',inline:'nearest'});
+ const position=systems.findIndex(el=>Number(el.dataset.firstMeasure)<=absoluteBar&&Number(el.dataset.lastMeasure)>=absoluteBar);
+ if(position<0)return;
+ const system=systems[position];
+ if(run.followedGroup!==system||force){
+  systems.forEach(el=>el.classList.toggle(grouped.length?'ensemble-group-current':'score-system-current',el===system));
+  run.followedGroup=system;
+ }
+ const viewport=window.innerHeight||document.documentElement.clientHeight;
+ const bounds=system.getBoundingClientRect();
+ const next=systems[position+1]?.getBoundingClientRect();
+ // Keep the current passage in the upper third, leaving the rest of the
+ // screen for two or more upcoming systems. Do not wait for the next to play.
+ const behindDock=next&&next.top>viewport*.72;
+ const needsAdvance=force||bounds.top<92||bounds.top>viewport*.36||(behindDock&&bounds.top>110);
+ if(needsAdvance){
+  system.scrollIntoView({behavior:window.matchMedia?.('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start',inline:'nearest'});
  }
 }
 function stopSongPractice(){
@@ -781,6 +789,7 @@ async function playSongPractice(){
  songPracticePlayback=run;
  for(let n=0;n<countIn;n++)tick(ctx.currentTime+.14+n*seconds,n===0);
  render();
+ followSongPracticeScore((state.songPracticeScope==='section'&&selection.section?selection.section.startBar-1:0)+1,run,{force:true});
  const status=$('#songPracticeStatus');
  if(status)status.textContent=`Count in: ${countIn} beats · ${Math.round(practiceTempo(score.tempo,state.songPracticeSpeed))} BPM`;
  const schedule=()=>{
