@@ -1,3 +1,21 @@
+# Ukulele Workbench v1.8.9 — Compact mobile notation and look-ahead
+
+Mobile score presentation was redesigned after inspection of the user's Android screenshot. The former ensemble stacked large white panels for every track, repeating long arrangement headings and allowing chord symbols and tempo labels to collide with music. This version:
+- Opens every newly selected song at **Whole arrangement** rather than a brief excerpt. The user may still choose specific sections.
+- Shows **ukulele notation only by default** in all three arrangement modes, including Full Ensemble. Separate optional **Display notation for** buttons reveal individual source-supported bass/piano/percussion staves without changing the audio mixer. The visibility resets on changing songs or arrangement modes.
+- Removes redundant title, tuning and tempo text from individual compact SVG score systems. Small external instrument labels identify optional backing staves.
+- Reduces the blank notation/tab gap, the compact SVG height (347 → 241 logical units for dual notation/tab) and repeated vertical panel borders. Tab rows are tighter while preserving note/fret size.
+- Keeps independent **chord names** and **note names** controls. The chord toggle now suppresses duplicated symbols inside source chord events.
+- Starts following the first bar during the count-in, moving the current staff toward the upper part of the viewport so *upcoming* systems remain visible. As music advances, the page scrolls when the next material approaches the bottom, not after its first notes have already played.
+- Preserves the fixed Pause/Stop transport, synthesized reference playback from recorded samples, individual audio instrument controls and local Songbook storage.
+
+The default is intentionally a reading-friendly ukulele page, *not* a miniature orchestral score. User-selected additional instruments may require more vertical screen space. These arrangements remain licensed/original practice transcriptions and reconstructed parts, not authenticated note-for-note commercial instrumental stems.
+
+## Test coverage
+`npm test` includes mobile layout, compressed dual-staff systems, independent backing-staff visibility, full-score default and proactive scrolling. Manual inspection in a mobile browser and on real Android remains recommended for subjective legibility.
+
+---
+
 # Ukulele Workbench v1.8.7 — Song-specific percussion and touch transport
 
 **What changed:**
