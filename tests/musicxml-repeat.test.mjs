@@ -107,3 +107,9 @@ test('unsupported MusicXML repeat directions are rejected before note import',()
  class Parser{parseFromString(){return {documentElement:root,querySelector:()=>null}}}
  assert.throws(()=>importMultiPartMusicXML('<score-partwise/>',{DOMParserClass:Parser}),/Unsupported MusicXML repeat direction/);
 });
+
+test('a second unmatched backward repeat cannot silently start after the previous repeat',()=>{
+ assert.throws(()=>expandRepeatOrder([
+  {repeatForward:true},{repeatBackward:true},{},{repeatBackward:true}
+ ]),/Nested or ambiguous implicit repeats/);
+});

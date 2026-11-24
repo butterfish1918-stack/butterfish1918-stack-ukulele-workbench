@@ -35,7 +35,9 @@ export function expandRepeatOrder(markers,{maxMeasures=200}={}){
    opened=i;
   }
   if(m.repeatBackward){
-   const start=opened??afterPrevious;
+   if(opened===null&&blocks.length>0)
+    throw Error('Nested or ambiguous implicit repeats require an explicit forward marker');
+   const start=opened??0;
    if(start>i)throw Error('Invalid repeat boundary');
    blocks.push({start,end:i,times:m.times??2});
    opened=null;afterPrevious=i+1;

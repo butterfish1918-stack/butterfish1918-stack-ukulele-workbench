@@ -70,6 +70,6 @@ test('W3C corpus 45b: first and second ending playback follows the written score
  assert.equal(ensemblePlaybackPlan(score).events.length,5);
 });
 test('W3C corpus 45c and 45f: nested and invalid repeat structures are rejected',()=>{
- assert.throws(()=>imported('45c-RepeatMultipleTimes'),/Nested repeats/);
+ assert.throws(()=>imported('45c-RepeatMultipleTimes'),/Nested or ambiguous implicit repeats/);
  assert.throws(()=>imported('45f-Repeats-InvalidEndings'),/Only first and second endings/);
 });
