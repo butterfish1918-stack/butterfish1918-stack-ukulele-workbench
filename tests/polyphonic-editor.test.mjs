@@ -66,6 +66,6 @@ test('editor selection and escaped labels; staff targets identify part, voice an
  const html=renderEnsembleEditor(d,{...loc,eventIndex:0});
  assert.match(html,/&lt;unsafe&gt;/);assert.match(html,/data-action="ensemble-replace"/);
  const staff=renderPolyphonicDocument(d,{editable:true});
- assert.match(staff,/data-poly-edit data-part="P1" data-event-index="0"/);
+ assert.match(staff,/data-poly-edit data-event-index="0"[^>]*data-part="P1"/);
  assert.doesNotMatch(renderPolyphonicDocument(d),/data-poly-edit/);
 });
