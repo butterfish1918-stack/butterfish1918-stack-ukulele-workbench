@@ -1,0 +1,16 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {deflateRawSync} from 'node:zlib';
+import {readCompressedMusicXML,readMusicXMLFile} from '../src/musicxml-container.js';
+import {zipFixture,containerXML} from './mxl-fixture.js';
+const xml='<?xml version="1.0"?><score-partwise version="4.0"/>';
+const parser=class{parseFromString(s){const p=/full-path="([^"]+)"/.exec(s)?.[1];return {querySelector:()=>null,documentElement:{localName:'container',children:[{localName:'rootfiles',children:p?[{localName:'rootfile',getAttribute:n=>n==='full-path'?p:'application/vnd.recordare.musicxml+xml'}]:[]}]}}}};
+const opts={DOMParserClass:parser};
+const files=(path='score.musicxml')=>[['META-INF/container.xml',containerXML(path)],[path,xml]];
+test('MXL stored entries resolve the declared score file',async()=>assert.equal(await readCompressedMusicXML(await zipFixture(files('music/score.musicxml')),opts),xml));
+test('MXL deflated entries are decoded with browser-compatible streams',async()=>assert.equal(await readCompressedMusicXML(await zipFixture(files(),deflateRawSync),opts),xml));
+test('MXL refuses duplicate and traversal paths',async()=>{await assert.rejects(readCompressedMusicXML(await zipFixture([...files(),['score.musicxml',xml]]),opts),/duplicate/);await assert.rejects(readCompressedMusicXML(await zipFixture(files('../score.musicxml')),opts),/Unsafe/)});
+test('MXL refuses a missing root file',async()=>assert.rejects(readCompressedMusicXML(await zipFixture([['META-INF/container.xml',containerXML()]]),opts),/missing/));
+test('MXL refuses tampering and malformed archive',async()=>{const bytes=await zipFixture(files());bytes[30+'META-INF/container.xml'.length]^=1;await assert.rejects(readCompressedMusicXML(bytes,opts),/Corrupt/);await assert.rejects(readCompressedMusicXML(new Uint8Array(40),opts),/directory/)});
+test('MXL rejects unsafe container and oversized expansion',async()=>{await assert.rejects(readCompressedMusicXML(await zipFixture([['META-INF/container.xml','<!DOCTYPE container>'+containerXML()],['score.musicxml',xml]]),opts),/Unsafe/);await assert.rejects(readCompressedMusicXML(await zipFixture([['META-INF/container.xml',containerXML()],['score.musicxml','x'.repeat(2_000_001)]],deflateRawSync),opts),/oversized/)});
+test('shared reader still accepts ordinary uncompressed XML',async()=>{const f=new Blob([xml]);assert.equal(await readMusicXMLFile(f),xml)});

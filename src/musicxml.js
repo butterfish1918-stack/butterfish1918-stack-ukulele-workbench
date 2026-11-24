@@ -2,6 +2,7 @@
  * This is NOT a general MusicXML parser/engraver. Unsupported notation is rejected,
  * never silently dropped. The native JSON backup remains lossless for app data.
  */
+import {normalizeMusicXMLPrologue} from './musicxml-multipart.js';
 import {TUNINGS,notePc,mod} from './music.js';
 import {KEY_SIGNATURES,DURATIONS,baseDuration,isDotted,createScore,appendEvent,validateScore,findEvent,chordNotes,generatedChordNotes} from './score.js';
 import {writtenOctave} from './reading-lessons.js';
@@ -129,7 +130,7 @@ function parseSimpleNote(note,divisions){
 }
 /** Browser-only, bounded reader. It refuses voices, tuplets, unsupported marks and XML entities. */
 export function importMusicXML(xml,{tuning='highG'}={}){
- if(typeof xml!=='string'||xml.length>2_000_000||/<!\s*(?:DOCTYPE|ENTITY)/i.test(xml))throw new Error('Unsupported or unsafe MusicXML document');
+ xml=normalizeMusicXMLPrologue(xml);
  if(typeof DOMParser==='undefined')throw new Error('MusicXML import requires a browser XML parser');
  const doc=new DOMParser().parseFromString(xml,'application/xml');
  if(doc.querySelector('parsererror')||!local(doc.documentElement,'score-partwise'))throw new Error('Invalid MusicXML partwise document');

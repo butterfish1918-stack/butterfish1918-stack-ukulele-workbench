@@ -3,13 +3,19 @@
  * an Android device.
  */
 import {importMultiPartMusicXML,exportMultiPartMusicXML} from '../src/musicxml-multipart.js';
+import {readCompressedMusicXML} from '../src/musicxml-container.js';
+import {zipFixture,containerXML} from './mxl-fixture.js';
 import {renderPolyphonicDocument} from '../src/polyphonic-engraving.js';
 function assert(condition,message){if(!condition)throw Error(message)}
 const status=document.getElementById('browserQaStatus');
 try{
  const response=await fetch('./fixtures/external/45b-RepeatWithAlternatives.musicxml');
  assert(response.ok,'Cannot fetch external XML fixture on local origin');
- const score=importMultiPartMusicXML(await response.text());
+ const raw=await response.text();
+ const score=importMultiPartMusicXML(raw);
+ const zipped=await zipFixture([['META-INF/container.xml',containerXML('scores/example.musicxml')],['scores/example.musicxml',raw]],async bytes=>new Uint8Array(await new Response(new Blob([bytes]).stream().pipeThrough(new CompressionStream('deflate-raw'))).arrayBuffer()));
+ const compressedScore=importMultiPartMusicXML(await readCompressedMusicXML(zipped));
+ assert(JSON.stringify(compressedScore)===JSON.stringify(score),'Compressed MusicXML changed score content');
  assert(JSON.stringify(score.sourceMeasureNumbers)===JSON.stringify([1,2,1,3,4]),'First/second endings incorrect');
  const html=renderPolyphonicDocument(score,{pageWidth:390});
  document.getElementById('imported').innerHTML=html;
@@ -27,7 +33,7 @@ try{
  const doc=document.querySelector('#dense .polyphonic-doc');
  assert(doc&&doc.scrollWidth>doc.clientWidth,'Dense notation should scroll instead of shrinking');
  assert(document.documentElement.scrollWidth<=window.innerWidth+6,'Layout introduces page-wide overflow');
- const result='PASS: native DOMParser; external repeats; linear round-trip; '+window.innerWidth+'px viewport; scrollable dense score';
+ const result='PASS: native DOMParser; compressed MXL; external repeats; linear round-trip; '+window.innerWidth+'px viewport; scrollable dense score';
  status.dataset.status='pass';
  status.textContent=result;
 }catch(error){

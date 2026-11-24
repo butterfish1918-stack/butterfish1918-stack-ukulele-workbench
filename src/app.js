@@ -9,6 +9,7 @@ import {validateScoreDocument,flattenDocumentEvents,planScoreSystems} from './po
 import {ensemblePlaybackPlan} from './ensemble-playback.js';
 import {attachInstrumentPart,SOURCE_INSTRUMENT_IDS} from './source-instruments.js';
 import {importMultiPartMusicXML,exportMultiPartMusicXML} from './musicxml-multipart.js';
+import {readMusicXMLFile} from './musicxml-container.js';
 import {renderPolyphonicDocument} from './polyphonic-engraving.js';
 import {parseChordPro,exportChordPro} from './chordpro.js';
 import {MOBILE_QA_CASES,qaSummary,recordMobileQa} from './mobile-qa.js';
@@ -595,7 +596,7 @@ function songArrangementSwitch(){
    <strong>Attach your own authorized instrument part</strong>
    <p class="small-text">Import a single-instrument score with matching tempo, meter and bar count. Your source replaces the generated study line only in this personal song; it is not automatically verified.</p>
    <div class="score-actions"><label for="songInstrumentKind">Instrument</label><select id="songInstrumentKind">${SOURCE_INSTRUMENT_IDS.map(id=>`<option value="${id}">${id}</option>`).join('')}</select><button class="btn compact" type="button" data-action="song-instrument-import">↑ Import part MusicXML / JSON</button></div>
-   <input id="songInstrumentFile" type="file" accept=".json,.musicxml,.xml,application/json,text/xml" hidden>
+   <input id="songInstrumentFile" type="file" accept=".json,.musicxml,.xml,.mxl,application/json,text/xml,application/vnd.recordare.musicxml" hidden>
    </div>`:''}
  </div>`;
 }
@@ -1317,13 +1318,13 @@ function importedScoreDocumentPanel(){
  const doc=state.scoreDocument;
  return `<section class="panel panel-pad" style="margin-top:18px">
   <div class="panel-title"><h2>Multi-part MusicXML library</h2><span class="sub-label">INDEPENDENT INSTRUMENT VOICES</span></div>
-  <p class="small-text">Import an authorized MusicXML partwise file with separate instruments and rhythmic voices. Complex notation is preserved in a separate document rather than flattened into one misleading ukulele line. The original single-voice Score Studio remains editable separately.</p>
+  <p class="small-text">Import an authorized MusicXML partwise file (.musicxml, .xml or .mxl) with separate instruments and rhythmic voices. Complex notation is preserved in a separate document rather than flattened into one misleading ukulele line. The original single-voice Score Studio remains editable separately.</p>
   <div class="score-actions">
    <button class="btn compact" type="button" data-action="score-import-multipart">Import multi-part MusicXML</button>
    ${doc?`<button class="btn compact gold" type="button" data-action="score-play-multipart">${importedEnsembleRun?'■ Stop ensemble':'▶ Play ensemble'}</button>`:''}
    ${doc?'<button class="btn compact" type="button" data-action="score-export-multipart">Export multi-part MusicXML</button>':''}
   </div>
-  <input type="file" id="multiPartXmlFile" accept=".xml,.musicxml,text/xml,application/xml" hidden>
+  <input type="file" id="multiPartXmlFile" accept=".xml,.musicxml,.mxl,text/xml,application/xml,application/vnd.recordare.musicxml" hidden>
   ${doc?`<h3>${h(doc.title)}</h3><p>${doc.parts.length} instrumental parts · ${doc.measures} measures · ${doc.tempo} BPM · ${h(doc.meter)}. These parts have not been independently source-verified.</p>
    ${doc.sourceMeasureNumbers?`<p class="small-text"><strong>Repeat passages expanded:</strong> ${Math.max(...doc.sourceMeasureNumbers)} written measures become ${doc.measures} playback measures. Bracketed numbers above the score refer to the source measures. MusicXML export writes these measures out in full, without repeat signs.</p>`:''}
    <div class="lesson-list">${doc.parts.map(part=>`<div class="lesson"><div class="lesson-icon">𝄞</div><div><h3>${h(part.name)}</h3>
@@ -1354,7 +1355,7 @@ function scoreStudio(){
  <div class="studio-layout"><section class="panel panel-pad studio-score-sheet">
   <div class="panel-title studio-score-title"><h2>01 / COMPOSITION GRID</h2><span class="sub-label">STANDARD NOTATION · LIVE</span></div>
 
-  <div class="fret-controls studio-score-tools"><div>${tabbar([['notation','Notation'],['dual','Notation + Tab'],['tab','Tab only']],state.display,'data-display')}</div><button class="btn compact ghost" data-action="score-undo" ${canUndo(scoreHistory)?'':'disabled'} title="Undo last score edit (Ctrl/⌘ + Z)">↶ Undo</button><button class="btn compact ghost" data-action="score-redo" ${canRedo(scoreHistory)?'':'disabled'} title="Redo score edit (Ctrl/⌘ + Y or ⌘ + Shift + Z)">↷ Redo</button><button class="btn compact ghost" data-action="score-new">＋ New blank score</button><button class="btn compact" data-action="score-export-xml">↓ MusicXML</button><button class="btn compact" data-action="score-import-xml">↑ Import MusicXML</button><input type="file" id="musicXmlFile" accept=".musicxml,.xml,application/vnd.recordare.musicxml+xml,text/xml,application/xml" hidden><button class="btn compact" data-action="score-import-guitar">↑ Adapt Guitar Notes (JSON)</button><input type="file" id="guitarPartFile" accept=".json,application/json" hidden><button class="btn compact ghost" data-action="score-guitar-template">↓ Guitar Source Template</button></div>
+  <div class="fret-controls studio-score-tools"><div>${tabbar([['notation','Notation'],['dual','Notation + Tab'],['tab','Tab only']],state.display,'data-display')}</div><button class="btn compact ghost" data-action="score-undo" ${canUndo(scoreHistory)?'':'disabled'} title="Undo last score edit (Ctrl/⌘ + Z)">↶ Undo</button><button class="btn compact ghost" data-action="score-redo" ${canRedo(scoreHistory)?'':'disabled'} title="Redo score edit (Ctrl/⌘ + Y or ⌘ + Shift + Z)">↷ Redo</button><button class="btn compact ghost" data-action="score-new">＋ New blank score</button><button class="btn compact" data-action="score-export-xml">↓ MusicXML</button><button class="btn compact" data-action="score-import-xml">↑ Import MusicXML</button><input type="file" id="musicXmlFile" accept=".musicxml,.xml,.mxl,application/vnd.recordare.musicxml,application/vnd.recordare.musicxml+xml,text/xml,application/xml" hidden><button class="btn compact" data-action="score-import-guitar">↑ Adapt Guitar Notes (JSON)</button><input type="file" id="guitarPartFile" accept=".json,application/json" hidden><button class="btn compact ghost" data-action="score-guitar-template">↓ Guitar Source Template</button></div>
   <div class="score-actions"><button class="btn compact ${engravedPreviewEnabled?'gold':'ghost'}" data-action="score-engraving">${engravedPreviewEnabled?'Hide VexFlow preview':'♬ Professional engraving preview (online)'}</button></div>
   ${engravedPreviewEnabled?`<div class="engraving-wrapper"><div class="sub-label">VEXFLOW 5 · OPTIONAL READABLE SCORE PREVIEW</div><div class="engraving-scroll" id="engravingHost" aria-label="Engraved music score"></div><p class="small-text">This preview is fetched only on request and needs internet access. Your editable score and local fallback remain below. Click engraved notes to select the matching event. Tablature and fingering remain in the editable score below.</p></div>`:''}
   <div class="studio-paper-label"><span>${h(score.title||'Untitled score')}</span><small>${score.measures.length} MEASURES · ${h(score.key??'C')} / ${h(score.meter)}</small></div><div class="score-holder score-editor-view">${renderScoreView(score,{mode:state.display,layout:'systems',selectedEventId:state.scoreEventId,playingEventId:state.playingEventId,showNames:state.showHints})}</div>
@@ -1378,7 +1379,7 @@ function scoreStudio(){
  ${selected?.type==='note'?`<div class="score-actions fingering-choice">${positions.map(p=>`<button class="btn compact ${selected.position?.string===p.string&&selected.position?.fret===p.fret?'gold':''}" data-score-position="${p.string}-${p.fret}">${h(TUNINGS[score.tuning].names[p.string])} string · fret ${p.fret}</button>`).join('')}</div>`:''}
  </section></div>
  <div class="studio-transport" aria-label="Score playback and session telemetry"><div class="studio-transport-label">TRANSPORT <b>// REHEARSAL</b></div><div class="studio-transport-controls"><button class="transport-play" id="scorePlaybackToggle" data-action="score-play">${scorePlayback?'■ STOP':'▶ PLAY'}</button><button class="transport-utility" data-action="score-undo" ${canUndo(scoreHistory)?'':'disabled'}>↶ UNDO</button><button class="transport-utility" data-action="score-redo" ${canRedo(scoreHistory)?'':'disabled'}>↷ REDO</button><button class="transport-utility transport-save" data-action="score-save-song">▤ SAVE</button><div class="studio-bpm"><small>BPM</small><strong>${score.tempo}</strong></div></div><div class="studio-telemetry" aria-label="Selected note and score progress"><div class="studio-telemetry-pitch"><small>REFERENCE PITCH</small><strong>${h(refPitch)}</strong><span>${h(refHz)}</span></div><div class="studio-telemetry-progress"><small>BAR ${String(barNumber).padStart(2,'0')} / ${String(score.measures.length).padStart(2,'0')}</small><div class="studio-progress-track"><i style="width:${barRatio}%"></i></div></div></div></div>
- <div class="workspace-grid studio-secondary" style="margin-top:16px"><section class="panel panel-pad"><div class="panel-title"><h2>Keep this arrangement</h2></div><p class="panel-desc">Your working score autosaves locally. Save a snapshot into the Songbook to practise or edit it later, then export a JSON backup to protect against browser-data deletion.</p><div class="score-actions"><button class="btn gold" data-action="score-save-song">▤ Save in Songbook</button><button class="btn" data-nav="songbook">Open Songbook →</button></div><p class="small-text" style="margin-top:10px">Source-based guitar adaptation imports a six-string JSON part with explicitly timed single notes and rewrites it for high-G ukulele; octave shifts are reported. It does not guess guitar riffs from chords, or silently discard simultaneous notes. MusicXML export creates standard single-part score notation, chords and fret indications for supported events. Import accepts only one treble-clef rhythmic voice in 4/4, 3/4 or 6/8, with supported notes, rests and chord voicings. Complex scores, tuplets, transposing instruments, multiple voices and compressed MXL are intentionally rejected. Use JSON Backup to preserve the entire app library.</p></section><section class="panel panel-pad"><h2>What this editor does not claim yet</h2><p class="small-text">This stage supports a single rhythmic voice (including four-note chord stacks), simple meters and bar-aware accidentals. Short notes are beamed by beat; dotted durations, simple ties and major key signatures are supported. Independent polyphonic voices, transposition, broad MusicXML interoperability and professional engraving remain planned. Undo/Redo tracks edits during the current session only. The display shows <strong>sounding pitch</strong>; high-G octave conventions will be a separate setting.</p></section></div>${importedScoreDocumentPanel()}`;
+ <div class="workspace-grid studio-secondary" style="margin-top:16px"><section class="panel panel-pad"><div class="panel-title"><h2>Keep this arrangement</h2></div><p class="panel-desc">Your working score autosaves locally. Save a snapshot into the Songbook to practise or edit it later, then export a JSON backup to protect against browser-data deletion.</p><div class="score-actions"><button class="btn gold" data-action="score-save-song">▤ Save in Songbook</button><button class="btn" data-nav="songbook">Open Songbook →</button></div><p class="small-text" style="margin-top:10px">Source-based guitar adaptation imports a six-string JSON part with explicitly timed single notes and rewrites it for high-G ukulele; octave shifts are reported. It does not guess guitar riffs from chords, or silently discard simultaneous notes. MusicXML export creates standard single-part score notation, chords and fret indications for supported events. Import accepts only one treble-clef rhythmic voice in 4/4, 3/4 or 6/8, with supported notes, rests and chord voicings. Compressed MXL is accepted in supported browsers, but complex scores, tuplets, transposing instruments and multiple voices must use an appropriate conversion or the separate multi-part importer. Use JSON Backup to preserve the entire app library.</p></section><section class="panel panel-pad"><h2>What this editor does not claim yet</h2><p class="small-text">This stage supports a single rhythmic voice (including four-note chord stacks), simple meters and bar-aware accidentals. Short notes are beamed by beat; dotted durations, simple ties and major key signatures are supported. Independent polyphonic voices, transposition, broad MusicXML interoperability and professional engraving remain planned. Undo/Redo tracks edits during the current session only. The display shows <strong>sounding pitch</strong>; high-G octave conventions will be a separate setting.</p></section></div>${importedScoreDocumentPanel()}`;
 }
 function importedDrumHit(midi){return midi===36||midi===35?'kick':midi===38||midi===40?'snare':'hat'}
 function importedSampleRequests(events){
@@ -1949,9 +1950,10 @@ async function loadPersonalInstrumentPart(file){
   const source=currentSongSource(),instrument=$('#songInstrumentKind')?.value;
   if(!source?.score)throw Error('Select a personal song that has a score');
   if(!SOURCE_INSTRUMENT_IDS.includes(instrument))throw Error('Choose a supported instrument');
-  if(file.size>2_000_000)throw Error('Instrument file exceeds 2 MB');
-  const raw=await file.text();
-  const candidate=/\.xml$|\.musicxml$/i.test(file.name)||raw.trimStart().startsWith('<?xml')?
+  const xmlFile=/\.(?:xml|musicxml|mxl)$/i.test(file.name);
+  if(!xmlFile&&file.size>2_000_000)throw Error('Instrument file exceeds 2 MB');
+  const raw=xmlFile?await readMusicXMLFile(file):await file.text();
+  const candidate=xmlFile||raw.trimStart().startsWith('<?xml')?
    importMusicXML(raw,{tuning:'highG'}):JSON.parse(raw);
   const score=candidate?.score??candidate;
   const updated=attachInstrumentPart(source,instrument,score);
@@ -1966,8 +1968,7 @@ async function loadPersonalInstrumentPart(file){
 }
 async function loadMultiPartXmlFile(file){
  try{
-  if(file.size>2_000_000)throw Error('Multi-part MusicXML exceeds 2 MB');
-  const doc=importMultiPartMusicXML(await file.text());
+  const doc=importMultiPartMusicXML(await readMusicXMLFile(file));
   if(!confirm(`Import ${doc.parts.length} instrumental parts and ${doc.measures} playable bars into your separate multi-part library?${doc.sourceMeasureNumbers?' Repeat passages will be expanded and exported as linear measures.':''} The existing editable ukulele score is not replaced.`))return;
   if(!store('scoreDocument',doc))throw Error('Browser storage is full; export a backup');
   stopImportedEnsemble();state.scoreDocument=doc;state.importedEnsembleMuted={};render();toast('Multi-part MusicXML imported with independent voices');
@@ -2013,8 +2014,8 @@ async function loadSongGuitarPartFile(file){
  }catch(error){toast('Guitar part import: '+error.message)}
 }
 async function loadMusicXMLFile(file){
- try{if(file.size>2_000_000)throw new Error('MusicXML exceeds 2 MB');
- const score=importMusicXML(await file.text(),{tuning:state.score.tuning});
+ try{
+ const score=importMusicXML(await readMusicXMLFile(file),{tuning:state.score.tuning});
  if(!confirm(`Import “${score.title}” (${score.measures.length} measures)? This replaces your active score draft. Save your current draft to Songbook first if needed.`))return;
  setScore(score);navigate('score');toast('MusicXML score imported');
  }catch(error){toast(`MusicXML import failed: ${error.message}`)}

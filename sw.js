@@ -1,7 +1,7 @@
 /* Ukulele Workbench offline shell. Keep cache deletion scoped to THIS app:
    other tools on the same GitHub Pages origin must never be touched. */
 const CACHE_PREFIX = 'uke-workbench-';
-const CACHE = `${CACHE_PREFIX}v1.11.4-external-fixtures-layout`;
+const CACHE = `${CACHE_PREFIX}v1.11.5-compressed-musicxml`;
 const SCOPE = new URL(self.registration.scope);
 const SHELL = new URL('./index.html', SCOPE).href;
 const LIBRARY_PATH = new URL('./library/', SCOPE).pathname;
@@ -9,7 +9,7 @@ const ASSETS = [
  './', './index.html', './styles.css', './src/app.js', './src/song-library.js', './src/library-seed.js', './src/music.js',
  './src/score.js', './src/score-view.js', './src/guitar-adaptation.js', './src/arrangement-modes.js', './src/instrument-samples.js', './src/song-instrumentation.js', './src/repertoire-migration.js', './src/song-practice.js', './src/song-playback.js', './src/song-lyrics.js', './src/score-verification.js', './src/technique-lessons.js',
  './src/history.js', './src/progression.js', './src/rhythm-lessons.js',
- './src/reading-lessons.js', './src/musicxml.js', './src/engraving.js',
+ './src/reading-lessons.js', './src/musicxml.js', './src/musicxml-container.js', './src/engraving.js',
  './src/tuner-dsp.js', './src/storage-safety.js', './src/device-qa.js',
  './src/practice-engine.js', './src/guitar-polyphony.js', './src/instrument-voices.js',
  './src/advanced-theory.js', './src/learning-path.js', './src/song-organizer.js',
