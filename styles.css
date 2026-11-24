@@ -580,8 +580,8 @@ input[type=range]{accent-color:var(--lime)}
 .song-organizer input[type=password]{box-sizing:border-box;width:100%;margin:8px 0;padding:8px;min-height:40px}
 .mobile-qa-case{align-items:center;gap:10px}
 .mobile-qa-actions{margin:0!important;flex-shrink:0}
-.polyphonic-doc{display:flex;flex-direction:column;gap:12px;margin:14px 0}
-.polyphonic-svg{display:block;width:100%;max-width:100%;height:auto;overflow:visible;background:#eee8db;border-radius:4px}
+.polyphonic-doc{display:flex;flex-direction:column;gap:12px;margin:14px 0;overflow-x:auto;overscroll-behavior-x:contain;padding-bottom:8px}
+.polyphonic-svg{display:block;flex:none;align-self:flex-start;width:auto;max-width:none;height:auto;overflow:visible;background:#eee8db;border-radius:4px}
 @media(max-width:650px){
  .song-ab-panel,.song-organizer{padding:9px}
  .song-ab-fields .control{flex:1 1 43%}

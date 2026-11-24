@@ -1,3 +1,14 @@
+## 24 November 2026 — v1.11.4 beta: external MusicXML regression and adaptive engraving
+
+- Added eight unchanged, MIT-licensed fixtures from the independently maintained W3C community MusicXML test suite, covering a missing voice tag, multiple rhythmic voices, simultaneous chord notes, ties, repeats, alternative endings, nested repeats and contradictory ending markers. Tests parse the actual MusicXML bytes with a test-only Python XML parser adapter; the shipped app continues using browser DOMParser.
+- Safely accepts standard Recordare MusicXML public DTD prologues by removing only a recognised declaration before parsing; arbitrary external DTDs, XML entities and unsupported entity names remain rejected. No external XML resources are fetched.
+- Expanded simple repeat support to two through eight passes, bounded by the existing 200-measure expansion limit. Detected and rejected an ambiguous implicit repeat interpretation discovered by the external fixtures.
+- Added adaptive SVG staff geometry for imported polyphonic scores: spacing based on distinct rhythmic onsets, aligned attacks across instrumental parts, sideways offsets for adjacent chord noteheads, increased vertical clearance for ledger-heavy passages, and horizontally scrollable fixed-size SVGs on narrow screens.
+- Automated tests cover new renderer spacing, crowded chords and ledger-extreme staff separation, in addition to the external MusicXML suite.
+- This is a limited interoperability regression suite, not certification against MuseScore/Sibelius/Dorico or physical Android acceptance. Rich score metadata, lyrics, arbitrary MusicXML constructs, polished page engraving and real-device audio calibration remain outstanding.
+
+---
+
 ## 23 November 2026 — v1.11.3 Beta: bounded MusicXML repeat expansion
 
 - Added a strict, deterministic repeat planner for MusicXML partwise scores. Standard forward/backward repeat signs are supported for two to four passes; conventional first/second endings are supported for exactly two passes.
