@@ -36,6 +36,9 @@ jobs:
           npm run qa:arrangements
           npm run qa:sources
 
+      - name: Native browser MusicXML and mobile-width smoke
+        run: bash scripts/browser-smoke.sh
+
       - name: Assemble a lean static site
         shell: bash
         run: |
@@ -60,6 +63,9 @@ jobs:
         uses: actions/upload-pages-artifact@v4
         with:
           path: _site
+
+      - name: Wait for uploaded Pages artifact metadata
+        run: sleep 12
 
       - name: Deploy static site
         id: deployment

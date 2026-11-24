@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ukulele Workbench browser integration smoke</title>
+<link rel="stylesheet" href="../styles.css">
+<style>
+body{margin:0;padding:10px;font-family:system-ui}
+.smoke-area{width:320px;max-width:100%;border:1px solid #555;padding:4px;margin-top:10px}
+#browserQaStatus{display:block;white-space:pre-wrap}
+</style></head><body>
+<main><h1>Browser integration QA</h1>
+<output id="browserQaStatus" data-status="running">Running native DOMParser tests</output>
+<div id="imported" class="smoke-area"></div>
+<div id="dense" class="smoke-area"></div>
+</main>
+<script type="module" src="./browser-smoke.js"></script>
+</body></html>
