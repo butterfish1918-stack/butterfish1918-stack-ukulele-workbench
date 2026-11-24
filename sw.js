@@ -1,7 +1,7 @@
 /* Ukulele Workbench offline shell. Keep cache deletion scoped to THIS app:
    other tools on the same GitHub Pages origin must never be touched. */
 const CACHE_PREFIX = 'uke-workbench-';
-const CACHE = `${CACHE_PREFIX}v1.11.5-compressed-musicxml`;
+const CACHE = `${CACHE_PREFIX}v1.11.6-ensemble-editor`;
 const SCOPE = new URL(self.registration.scope);
 const SHELL = new URL('./index.html', SCOPE).href;
 const LIBRARY_PATH = new URL('./library/', SCOPE).pathname;
