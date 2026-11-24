@@ -629,3 +629,7 @@ input[type=range]{accent-color:var(--lime)}
 .ensemble-editor-fields label{display:flex;flex-direction:column;gap:3px;flex:1 1 115px;min-width:0;max-width:100%;font-size:.8rem}
 .ensemble-editor-fields input,.ensemble-editor-fields select{width:100%;min-width:0;max-width:100%;box-sizing:border-box}
 .poly-voice-event[data-poly-edit]:hover .poly-notehead{stroke:#a56e19;stroke-width:3}
+
+.ensemble-editor-fields input[type=checkbox]{width:auto;align-self:flex-start}
+.poly-voice-event.active-note .poly-notehead{fill:#d39b28;stroke:#8d5e08;stroke-width:2.5}
+.poly-voice-event.active-note rect{fill:#d39b28}
