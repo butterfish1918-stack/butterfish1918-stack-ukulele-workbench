@@ -1,3 +1,11 @@
+## 24 November 2026 — v1.11.5 beta: compressed MusicXML import
+
+- Accepts `.mxl` files in single-voice Score Studio, the multi-part library and personal instrumental-part import. ZIP extraction is local and bounded; duplicate or traversal paths, corrupt CRCs, unsupported compression and excessive declared or actual decompression sizes are rejected. Standard Recordare DTD prologues are normalized in both XML importers without fetching external entities.
+- Includes a cached offline import module and seven automated archive tests. The Chromium smoke uses actual native ZIP compression/decompression and compares the imported W3C score with its uncompressed original at both mobile and desktop widths.
+- The XML notation support profile is otherwise unchanged. Export remains uncompressed; comprehensive MuseScore interoperability, independent-voice editing and physical Android acceptance are not yet established.
+
+---
+
 ## 24 November 2026 — v1.11.4 beta: external MusicXML regression and adaptive engraving
 
 - Added eight unchanged, MIT-licensed fixtures from the independently maintained W3C community MusicXML test suite, covering a missing voice tag, multiple rhythmic voices, simultaneous chord notes, ties, repeats, alternative endings, nested repeats and contradictory ending markers. Tests parse the actual MusicXML bytes with a test-only Python XML parser adapter; the shipped app continues using browser DOMParser.
