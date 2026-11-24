@@ -52,8 +52,22 @@ try{
  const noteTarget=app.querySelector('[data-poly-edit][data-part="P1"][data-voice="1"][data-event-index="1"]');
  assert(noteTarget,'No interactive notation target');noteTarget.dispatchEvent(new win.MouseEvent('click',{bubbles:true}));
  assert(app.getElementById('ensembleMidi').value==='64','Selecting notation did not select the right note');
- win.localStorage.removeItem('uw-scoreDocument');frame.remove();
- const result='PASS: native DOMParser; compressed MXL; ensemble editor local save/undo; external repeats; linear round-trip; '+window.innerWidth+'px viewport; scrollable dense score';
+ click('ensemble-save-new');
+ const storedSongs=()=>JSON.parse(win.localStorage.getItem('uw-songs'));
+ const first=storedSongs().find(s=>s.scoreDocument);assert(first,'Missing saved ensemble');
+ field('ensembleTitle','Second arrangement');click('ensemble-metadata');click('ensemble-save-new');
+ assert(storedSongs().filter(s=>s.scoreDocument).length===2,'Second named snapshot missing');
+ assert(storedSongs().find(s=>s.id===first.id).scoreDocument.title===first.title,'First snapshot overwritten');
+ app.querySelector('[data-page="songbook"]').click();
+ app.querySelector('[data-song="'+first.id+'"]').click();
+ assert(app.getElementById('ensemblePracticeStart'),'Saved ensemble practice controls missing');
+ assert(saved().title==='Second arrangement','Songbook preview replaced draft');
+ click('ensemble-song-open');
+ assert(saved().title===first.title,'Wrong saved arrangement reopened');
+ field('ensembleTitle','Revised first');click('ensemble-metadata');click('ensemble-save-update');
+ assert(storedSongs().find(s=>s.id===first.id).title==='Revised first','Linked update did not persist');
+ win.localStorage.removeItem('uw-songs');win.localStorage.removeItem('uw-scoreDocument');frame.remove();
+ const result='PASS: native DOMParser; compressed MXL; ensemble editor local save/undo; named Songbook snapshots; external repeats; linear round-trip; '+window.innerWidth+'px viewport; scrollable dense score';
  status.dataset.status='pass';
  status.textContent=result;
 }catch(error){

@@ -1,6 +1,7 @@
 /** Validate an entire backup before touching persistent data; commit with rollback.
  * This supplements, but cannot replace, regularly exported JSON backups.
  */
+import {validateScoreDocument} from './polyphonic-score.js';
 const isRecord=value=>value!==null&&typeof value==='object'&&!Array.isArray(value);
 const OWN='ukulele-workbench-backup';
 
@@ -11,15 +12,21 @@ export function prepareBackupRestore(data,{validateScore,validateProgression,val
  for(const song of data.songs){
   if(!isRecord(song)||typeof song.id!=='string'||typeof song.title!=='string'||song.title.length>120)throw new Error('Invalid song record');
   if(song.score!==undefined&&song.score!==null)validateScore(song.score);
+  if(song.scoreDocument!==undefined&&song.scoreDocument!==null){
+   if(song.score)throw Error('Song cannot contain both score schemas');
+   validateScoreDocument(song.scoreDocument);
+  }
  }
  for(const item of data.progress)if(!isRecord(item)||!Number.isFinite(item.minutes)||item.minutes<0||item.minutes>1440||typeof item.date!=='string')throw new Error('Invalid practice record');
  if(data.techniqueProgress!==undefined&&!validTechniqueProgress(data.techniqueProgress))throw new Error('Invalid technique progress');
  if(data.rhythmLabProgress!==undefined&&!validRhythmProgress(data.rhythmLabProgress))throw new Error('Invalid rhythm study progress');
  if(data.notationReadingProgress!==undefined&&!validReadingProgress(data.notationReadingProgress))throw new Error('Invalid notation reading progress');
+ if(data.scoreDocument!==undefined&&data.scoreDocument!==null)validateScoreDocument(data.scoreDocument);
  if(data.scoreDraft!==undefined&&data.scoreDraft!==null)validateScore(data.scoreDraft);
  if(data.progressionDraft!==undefined&&data.progressionDraft!==null)validateProgression(data.progressionDraft);
  if(data.rhythm!==undefined&&(!Array.isArray(data.rhythm)||data.rhythm.length!==8||data.rhythm.some(x=>!['','D','U'].includes(x))))throw new Error('Invalid strumming pattern');
  const values={songs:data.songs,progress:data.progress,techniqueProgress:data.techniqueProgress??{},rhythmLabProgress:data.rhythmLabProgress??{},notationReadingProgress:data.notationReadingProgress??{}};
+ if(data.scoreDocument!==undefined)values.scoreDocument=data.scoreDocument;
  if(data.scoreDraft){values.scoreDraft=data.scoreDraft;values.scoreSongId=null;}
  if(data.progressionDraft)values.progressionDraft=data.progressionDraft;
  if(data.rhythm)values.rhythm=data.rhythm;

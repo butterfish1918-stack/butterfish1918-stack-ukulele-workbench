@@ -1,3 +1,12 @@
+## 24 November 2026 — v1.11.7 beta: named ensemble Songbook arrangements
+
+- Save new named schema-2 ensemble snapshots or explicitly update a linked saved arrangement. My Songbook previews, reopens and exports these separately from legacy scores.
+- Practise saved ensemble snapshots directly at selected bar ranges and 50–125% tempo without replacing the active editor draft. Playback preparation is cancellable on navigation or song selection.
+- Validate ensemble snapshots and the active ensemble draft before core backup restoration; both formats remain supported in ordinary and encrypted JSON backups.
+- Four additional model tests and Chromium interaction coverage exercise snapshot isolation, saved arrangement reopening/update, practice range selection and backup validation. Ensemble looping, session history and advanced notation remain outstanding.
+
+---
+
 ## 24 November 2026 — v1.11.6 beta: editable ensemble drafts
 
 - Multi-part Score Studio can create a blank four-bar ensemble, append bars, add instruments and independent rhythmic voices, select notes on the staff, and insert, replace or remove supported notes and rests. Equal-onset, equal-duration notes form chords; conflicting overlaps are rejected. Title, tempo, dynamics and articulation are editable.
