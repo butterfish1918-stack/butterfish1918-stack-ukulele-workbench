@@ -1,3 +1,12 @@
+## 24 November 2026 — v1.11.8 beta: ensemble practice controls
+
+- Repeat a selected bar range continuously, with optional tempo increases of 2, 5 or 10 percentage points per repeat up to a selected limit. Loop cycles use contiguous audio-clock boundaries.
+- Persist instrument mute and volume, range, speed and loop preferences independently for each saved ensemble. Include these preferences in portable backups.
+- Save or resume practice bookmarks and record qualifying sessions of at least eight seconds in shared practice history. Highlight active notes as well as current measures.
+- Five new model tests and expanded browser checks cover scheduling, limits, practice preferences and bookmark restoration. Mixer changes stop playback; physical audio continuity and Android testing remain open.
+
+---
+
 ## 24 November 2026 — v1.11.7 beta: named ensemble Songbook arrangements
 
 - Save new named schema-2 ensemble snapshots or explicitly update a linked saved arrangement. My Songbook previews, reopens and exports these separately from legacy scores.
