@@ -52,7 +52,7 @@ try{
  const noteTarget=app.querySelector('[data-poly-edit][data-part="P1"][data-voice="1"][data-event-index="1"]');
  assert(noteTarget,'No interactive notation target');noteTarget.dispatchEvent(new win.MouseEvent('click',{bubbles:true}));
  assert(app.getElementById('ensembleMidi').value==='64','Selecting notation did not select the right note');
- frame.remove();win.localStorage.removeItem('uw-scoreDocument');
+ win.localStorage.removeItem('uw-scoreDocument');frame.remove();
  const result='PASS: native DOMParser; compressed MXL; ensemble editor local save/undo; external repeats; linear round-trip; '+window.innerWidth+'px viewport; scrollable dense score';
  status.dataset.status='pass';
  status.textContent=result;
