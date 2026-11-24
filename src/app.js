@@ -1415,7 +1415,7 @@ function importedScoreDocumentPanel(){
   <div class="score-actions">
    <button class="btn compact" type="button" data-action="ensemble-new">New ensemble</button>
    <button class="btn compact" type="button" data-action="score-import-multipart">Import multi-part MusicXML</button>
-   ${doc?`<button class="btn compact gold" type="button" data-action="score-play-multipart">${importedEnsembleRun?'■ Stop ensemble':'▶ Play ensemble'}</button>`:''}
+   ${doc?`<button class="btn compact gold" type="button" data-action="score-play-multipart">${importedEnsembleRun||ensembleLoading?'■ Stop ensemble':'▶ Play ensemble'}</button>`:''}
    ${doc?'<button class="btn compact" type="button" data-action="score-export-multipart">Export multi-part MusicXML</button><button class="btn compact gold" type="button" data-action="ensemble-save-new">Save new Songbook arrangement</button>':''}
    ${doc&&ensembleSongId&&songs().some(s=>s.id===ensembleSongId&&s.scoreDocument)?'<button class="btn compact" type="button" data-action="ensemble-save-update">Update saved arrangement</button>':''}
   </div>
@@ -1506,7 +1506,7 @@ async function toggleImportedEnsemble(doc=state.scoreDocument,range={}){
  try{options=ensemblePracticeRange(doc,range);plan=ensemblePlaybackPlan(doc,options)}catch(error){toast('Ensemble: '+error.message);return}
  const audible=plan.events.filter(ev=>ev.instrument!=='unsupported'&&!state.importedEnsembleMuted[ev.partId]);
  if(!audible.length){toast('No supported, unmuted instrumental notes in this score');return}
- const ctx=audio();ensembleLoading=true;render();
+ stopSongPractice();stopScorePlayback();const ctx=audio();ensembleLoading=true;render();
  try{if(ctx.state==='suspended')await ctx.resume()}catch(error){if(generation===ensemblePlayGeneration){ensembleLoading=false;render();toast('Audio permission: '+error.message)}return}
  if(generation!==ensemblePlayGeneration)return;
  const firstBeats=plan.beatsPerBar*4;
@@ -2177,7 +2177,8 @@ async function importBackup(file){
    const verified={};for(const [id,item] of Object.entries(data.mobileQaResults))verified[id]=recordMobileQa(verified,id,item?.status,item?.note||'');
    state.mobileQaResults=verified;store('mobileQaResults',verified)
   }
-  if(data.scoreDocument!==undefined){stopImportedEnsemble();state.scoreDocument=data.scoreDocument;resetEnsembleEditor();}
+  stopImportedEnsemble();resetEnsembleEditor();
+  if(data.scoreDocument!==undefined)state.scoreDocument=data.scoreDocument;
   if(data.progressionDraft)state.progression=structuredClone(data.progressionDraft);
   if(data.scoreDraft){
    stopScorePlayback();state.score=structuredClone(data.scoreDraft);
