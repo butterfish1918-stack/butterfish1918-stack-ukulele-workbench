@@ -622,3 +622,10 @@ input[type=range]{accent-color:var(--lime)}
  .imported-mixer-track button{min-width:108px}
  .song-instrument-source-import .score-actions>*{flex:1 1 40%}
 }
+
+/* Independent ensemble editing; controls wrap instead of widening mobile screens. */
+.ensemble-editor{border:1px solid var(--line,#999);border-radius:8px;padding:12px;margin:12px 0;min-width:0}
+.ensemble-editor-fields{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;margin:8px 0}
+.ensemble-editor-fields label{display:flex;flex-direction:column;gap:3px;flex:1 1 115px;min-width:0;max-width:100%;font-size:.8rem}
+.ensemble-editor-fields input,.ensemble-editor-fields select{width:100%;min-width:0;max-width:100%;box-sizing:border-box}
+.poly-voice-event[data-poly-edit]:hover .poly-notehead{stroke:#a56e19;stroke-width:3}

@@ -10,6 +10,8 @@ import {ensemblePlaybackPlan} from './ensemble-playback.js';
 import {attachInstrumentPart,SOURCE_INSTRUMENT_IDS} from './source-instruments.js';
 import {importMultiPartMusicXML,exportMultiPartMusicXML} from './musicxml-multipart.js';
 import {readMusicXMLFile} from './musicxml-container.js';
+import {createEnsembleDraft,editEnsembleDraft} from './polyphonic-editor.js';
+import {ensembleSelection,renderEnsembleEditor} from './polyphonic-editor-view.js';
 import {renderPolyphonicDocument} from './polyphonic-engraving.js';
 import {parseChordPro,exportChordPro} from './chordpro.js';
 import {MOBILE_QA_CASES,qaSummary,recordMobileQa} from './mobile-qa.js';
@@ -70,6 +72,7 @@ state.songPlaylists=read('songPlaylists',{});
 state.songAnnotations=read('songAnnotations',{});
 state.mobileQaResults=read('mobileQaResults',{});
 state.scoreDocument=read('scoreDocument',null);
+let ensembleEditorSelection={},ensembleUndo=[],ensembleRedo=[];
 try{if(state.scoreDocument)validateScoreDocument(state.scoreDocument)}catch{state.scoreDocument=null}
 state.earSeed=Number(read('earSeed',0))||0;
 state.customTuning=read('customTuning',[67,60,64,69]);
@@ -1314,12 +1317,57 @@ function scoreFretboard(){
  for(let f=1;f<=12;f++)svg+=`<text x="${x0+(f-.5)*spacing}" y="208" text-anchor="middle" fill="#a3bda7" font-size="11">${f}</text>`;
  return svg+'</svg>';
 }
+function resetEnsembleEditor(){ensembleEditorSelection={};ensembleUndo=[];ensembleRedo=[]}
+function commitEnsembleDraft(doc,{record=true}={}){
+ validateScoreDocument(doc);
+ if(!store('scoreDocument',doc))throw Error('Unable to save ensemble; export a backup first');
+ stopImportedEnsemble();
+ if(record&&state.scoreDocument){ensembleUndo.push(state.scoreDocument);if(ensembleUndo.length>20)ensembleUndo.shift();ensembleRedo=[]}
+ state.scoreDocument=doc;
+}
+function handleEnsembleEdit(action){
+ try{
+  if(action==='ensemble-new'){
+   if(state.scoreDocument&&!confirm('Replace the active ensemble draft? Export MusicXML or a full JSON backup first.'))return;
+   commitEnsembleDraft(createEnsembleDraft(),{record:false});resetEnsembleEditor();state.importedEnsembleMuted={};render();toast('New ensemble created');return;
+  }
+  const doc=state.scoreDocument;if(!doc)throw Error('Create or import an ensemble first');
+  if(action==='ensemble-undo'||action==='ensemble-redo'){
+   const from=action==='ensemble-undo'?ensembleUndo:ensembleRedo,to=action==='ensemble-undo'?ensembleRedo:ensembleUndo;
+   if(!from.length)return;
+   const prior=from.at(-1);commitEnsembleDraft(prior,{record:false});from.pop();to.push(doc);ensembleEditorSelection.eventIndex=-1;render();return;
+  }
+  const s=ensembleSelection(doc,ensembleEditorSelection);
+  const value=id=>$('#'+id)?.value;
+  const num=id=>{const raw=value(id);if(raw===undefined||raw.trim()==='')throw Error('Complete all numeric fields');return Number(raw)};
+  const type=action.slice('ensemble-'.length),operation={type,partId:s.partId,voiceId:s.voiceId,barIndex:s.barIndex,eventIndex:s.eventIndex};
+  if(type==='metadata'){operation.title=value('ensembleTitle');operation.tempo=num('ensembleTempo')}
+  if(type==='add-part')operation.instrument=value('ensembleNewInstrument');
+  if(type==='insert'||type==='replace'){
+   const eventType=value('ensembleType');operation.event={type:eventType,onset:num('ensembleOnset'),duration:num('ensembleDuration'),dynamics:value('ensembleDynamics'),articulation:value('ensembleArticulation')};
+   if(eventType==='note')operation.event.midi=num('ensembleMidi');
+  }
+  const next=editEnsembleDraft(doc,operation);
+  commitEnsembleDraft(next);
+  ensembleEditorSelection={partId:s.partId,voiceId:s.voiceId,barIndex:s.barIndex,eventIndex:-1};
+  if(type==='add-part'){ensembleEditorSelection.partId=next.parts.at(-1).id;ensembleEditorSelection.voiceId='1'}
+  if(type==='add-voice')ensembleEditorSelection.voiceId=next.parts.find(p=>p.id===s.partId).voices.at(-1).id;
+  if(type==='append-bar')ensembleEditorSelection.barIndex=next.measures-1;
+  if(type==='insert'||type==='replace'){
+   const events=ensembleSelection(next,ensembleEditorSelection).events,ev=operation.event;
+   ensembleEditorSelection.eventIndex=events.findIndex(x=>x.type===ev.type&&x.midi===ev.midi&&x.onset===ev.onset&&x.duration===ev.duration);
+  }
+  render();toast('Ensemble saved locally');
+ }catch(error){toast('Ensemble edit: '+error.message)}
+}
+
 function importedScoreDocumentPanel(){
  const doc=state.scoreDocument;
  return `<section class="panel panel-pad" style="margin-top:18px">
-  <div class="panel-title"><h2>Multi-part MusicXML library</h2><span class="sub-label">INDEPENDENT INSTRUMENT VOICES</span></div>
+  <div class="panel-title"><h2>Multi-part Score Studio</h2><span class="sub-label">INDEPENDENT INSTRUMENT VOICES</span></div>
   <p class="small-text">Import an authorized MusicXML partwise file (.musicxml, .xml or .mxl) with separate instruments and rhythmic voices. Complex notation is preserved in a separate document rather than flattened into one misleading ukulele line. The original single-voice Score Studio remains editable separately.</p>
   <div class="score-actions">
+   <button class="btn compact" type="button" data-action="ensemble-new">New ensemble</button>
    <button class="btn compact" type="button" data-action="score-import-multipart">Import multi-part MusicXML</button>
    ${doc?`<button class="btn compact gold" type="button" data-action="score-play-multipart">${importedEnsembleRun?'■ Stop ensemble':'▶ Play ensemble'}</button>`:''}
    ${doc?'<button class="btn compact" type="button" data-action="score-export-multipart">Export multi-part MusicXML</button>':''}
@@ -1334,7 +1382,8 @@ function importedScoreDocumentPanel(){
     <button type="button" class="btn compact ${state.importedEnsembleMuted[part.id]?'ghost':'gold'}" data-imported-track="${h(part.id)}" aria-pressed="${!state.importedEnsembleMuted[part.id]}">${h(part.name)}: ${state.importedEnsembleMuted[part.id]?'muted':'on'}</button>
     <label>Level <input type="range" min="0" max="150" step="5" value="${Number(state.importedEnsembleVolumes[part.id]??100)}" data-imported-volume="${h(part.id)}" aria-label="${h(part.name)} volume"></label></div>`).join('')}</div>
    <p class="small-text" id="importedEnsembleStatus" role="status">${importedEnsembleRun?'Playing imported ensemble':'Ready to hear the imported score'}</p>
-   ${renderPolyphonicDocument(doc)}`:''}
+   ${renderEnsembleEditor(doc,ensembleEditorSelection,{canUndo:ensembleUndo.length>0,canRedo:ensembleRedo.length>0})}
+   ${renderPolyphonicDocument(doc,{editable:true})}`:''}
  </section>`;
 }
 function scoreStudio(){
@@ -1575,7 +1624,7 @@ function navigate(page){if(!pageNames[page])return;stopSongMicrophone();stopSong
 function nextMelodyPitch(pc){const matches=scalePositions(state.root,state.scale,state.tuning);const match=matches.find(x=>x.pc===pc && x.midi>=60)||matches.find(x=>x.pc===pc);return match?.midi??60}
 function choosePitch(midi){state.selectedMidi=midi;synth(midi);render()}
 function chooseChordSound(){const chord=harmonizedChords(state.root,state.scale,state.chordExtension)[state.chordDegree];if(!chord)return;const voices=chordVoicings(chord.pcs,state.tuning);const voice=voices[Math.min(state.chordIndex,voices.length-1)];if(voice){const midis=voice.midis.filter(x=>x!==null);const ctx=audio(),at=ctx.currentTime+.03;midis.forEach((m,i)=>synth(m,at+i*.025,.7,.075))}else toast('No matching chord voicing in this position range')}
-function handleClick(e){const node=e.target.closest('[data-prog-degree],[data-prog-move],[data-prog-stroke],[data-prog-duration],[data-prog-remove],[data-event-id],[data-score-position],[data-midi],[data-pc],[data-nav],[data-page],[data-action],[data-degree],[data-extension],[data-labels],[data-display],[data-answer],[data-rhythm-answer],[data-expression-answer],[data-key-answer],[data-sight-answer],[data-step],[data-techfocus],[data-techindex],[data-tech-display],[data-tech-note],[data-tech-rating],[data-repo],[data-repo-section],[data-repertoire-preview],[data-repertoire-section],[data-repertoire],[data-song],[data-song-section],[data-practice-chord],[data-song-arrangement],[data-song-part-toggle],[data-song-toggle-chords],[data-song-toggle-notes],[data-song-toggle-lyrics],[data-song-visible-part],[data-imported-track]');if(!node)return;
+function handleClick(e){const node=e.target.closest('[data-prog-degree],[data-prog-move],[data-prog-stroke],[data-prog-duration],[data-prog-remove],[data-event-id],[data-score-position],[data-midi],[data-pc],[data-nav],[data-page],[data-action],[data-degree],[data-extension],[data-labels],[data-display],[data-answer],[data-rhythm-answer],[data-expression-answer],[data-key-answer],[data-sight-answer],[data-step],[data-techfocus],[data-techindex],[data-tech-display],[data-tech-note],[data-tech-rating],[data-repo],[data-repo-section],[data-repertoire-preview],[data-repertoire-section],[data-repertoire],[data-song],[data-song-section],[data-practice-chord],[data-song-arrangement],[data-song-part-toggle],[data-song-toggle-chords],[data-song-toggle-notes],[data-song-toggle-lyrics],[data-song-visible-part],[data-imported-track],[data-poly-edit]');if(!node)return;
  if(node.dataset.page){navigate(node.dataset.page);return}if(node.dataset.nav){navigate(node.dataset.nav);return}
  if(node.hasAttribute('data-song-toggle-chords')){state.songShowChordNames=!state.songShowChordNames;store('songShowChordNames',state.songShowChordNames);if(songPracticePlayback){songPracticePlayback.followedBar=null;songPracticePlayback.followedGroup=null;}render();if(songPracticePlayback)updateSongPlayhead(songPracticePlayback,songPracticePlayback.selection,songPracticePlayback.score);return}
  if(node.hasAttribute('data-song-toggle-notes')){state.songShowNoteNames=!state.songShowNoteNames;store('songShowNoteNames',state.songShowNoteNames);if(songPracticePlayback){songPracticePlayback.followedBar=null;songPracticePlayback.followedGroup=null;}render();if(songPracticePlayback)updateSongPlayhead(songPracticePlayback,songPracticePlayback.selection,songPracticePlayback.score);return}
@@ -1587,6 +1636,9 @@ function handleClick(e){const node=e.target.closest('[data-prog-degree],[data-pr
   render();
   if(songPracticePlayback)updateSongPlayhead(songPracticePlayback,songPracticePlayback.selection,songPracticePlayback.score);
   return;
+ }
+ if(node.hasAttribute('data-poly-edit')){
+  ensembleEditorSelection={partId:node.dataset.part,voiceId:node.dataset.voice,barIndex:Number(node.dataset.measure)-1,eventIndex:Number(node.dataset.eventIndex)};render();$('#ensembleEvent')?.focus({preventScroll:true});return;
  }
  if(node.dataset.importedTrack){
   const id=node.dataset.importedTrack;
@@ -1738,6 +1790,7 @@ function handleClick(e){const node=e.target.closest('[data-prog-degree],[data-pr
  }break;
  case 'score-import-xml':$('#musicXmlFile')?.click();break;
  case 'score-import-guitar':$('#guitarPartFile')?.click();break;
+ case 'ensemble-new':case 'ensemble-insert':case 'ensemble-replace':case 'ensemble-delete':case 'ensemble-metadata':case 'ensemble-add-part':case 'ensemble-add-voice':case 'ensemble-append-bar':case 'ensemble-undo':case 'ensemble-redo':handleEnsembleEdit(node.dataset.action);break;
  case 'score-import-multipart':$('#multiPartXmlFile')?.click();break;
  case 'score-play-multipart':toggleImportedEnsemble();break;
  case 'score-export-multipart':{
@@ -1896,6 +1949,15 @@ function handleClick(e){const node=e.target.closest('[data-prog-degree],[data-pr
  case 'log-practice':{const note=prompt('What did you practise? (optional)','Reading, scales and technique');if(note===null)return;const duration=prompt('Minutes practised?','20');if(duration===null)return;const mins=Number(duration);if(!Number.isFinite(mins)||mins<1||mins>720){toast('Enter a valid number of minutes');return}store('progress',[...progress(),{date:new Date().toISOString(),minutes:Math.round(mins),note}]);toast('Practice logged');render();}break;
  }}}
 function handleChange(e){const el=e.target;
+ if(state.scoreDocument&&['ensemblePart','ensembleVoice','ensembleBar','ensembleEvent'].includes(el.id)){
+  const s=ensembleSelection(state.scoreDocument,ensembleEditorSelection);
+  ensembleEditorSelection={partId:s.partId,voiceId:s.voiceId,barIndex:s.barIndex,eventIndex:-1};
+  if(el.id==='ensemblePart'){ensembleEditorSelection.partId=el.value;delete ensembleEditorSelection.voiceId}
+  else if(el.id==='ensembleVoice')ensembleEditorSelection.voiceId=el.value;
+  else if(el.id==='ensembleBar')ensembleEditorSelection.barIndex=Number(el.value);
+  else ensembleEditorSelection.eventIndex=Number(el.value);
+  render();return;
+ }
  if(el.dataset.importedVolume){const id=el.dataset.importedVolume;if(!state.scoreDocument?.parts.some(p=>p.id===id))return;const level=Math.max(0,Math.min(150,Math.round(Number(el.value)/5)*5));state.importedEnsembleVolumes={...state.importedEnsembleVolumes,[id]:level};store('importedEnsembleVolumes',state.importedEnsembleVolumes);return;}
  if(el.id==='capoSetting'){state.capo=Number(el.value);store('capo',state.capo);render();return;}
  if(el.id==='leftHandedSetting'){state.leftHanded=el.checked;store('leftHanded',state.leftHanded);render();return;}
@@ -1971,7 +2033,7 @@ async function loadMultiPartXmlFile(file){
   const doc=importMultiPartMusicXML(await readMusicXMLFile(file));
   if(!confirm(`Import ${doc.parts.length} instrumental parts and ${doc.measures} playable bars into your separate multi-part library?${doc.sourceMeasureNumbers?' Repeat passages will be expanded and exported as linear measures.':''} The existing editable ukulele score is not replaced.`))return;
   if(!store('scoreDocument',doc))throw Error('Browser storage is full; export a backup');
-  stopImportedEnsemble();state.scoreDocument=doc;state.importedEnsembleMuted={};render();toast('Multi-part MusicXML imported with independent voices');
+  stopImportedEnsemble();state.scoreDocument=doc;resetEnsembleEditor();state.importedEnsembleMuted={};render();toast('Multi-part MusicXML imported with independent voices');
  }catch(error){toast('Multi-part import: '+error.message)}
 }
 async function loadGuitarPartFile(file){
@@ -2058,7 +2120,7 @@ async function importBackup(file){
    const verified={};for(const [id,item] of Object.entries(data.mobileQaResults))verified[id]=recordMobileQa(verified,id,item?.status,item?.note||'');
    state.mobileQaResults=verified;store('mobileQaResults',verified)
   }
-  if(data.scoreDocument){validateScoreDocument(data.scoreDocument);state.scoreDocument=data.scoreDocument;store('scoreDocument',state.scoreDocument)}
+  if(data.scoreDocument){validateScoreDocument(data.scoreDocument);state.scoreDocument=data.scoreDocument;resetEnsembleEditor();store('scoreDocument',state.scoreDocument)}
   if(data.progressionDraft)state.progression=structuredClone(data.progressionDraft);
   if(data.scoreDraft){
    stopScorePlayback();state.score=structuredClone(data.scoreDraft);

@@ -33,7 +33,27 @@ try{
  const doc=document.querySelector('#dense .polyphonic-doc');
  assert(doc&&doc.scrollWidth>doc.clientWidth,'Dense notation should scroll instead of shrinking');
  assert(document.documentElement.scrollWidth<=window.innerWidth+6,'Layout introduces page-wide overflow');
- const result='PASS: native DOMParser; compressed MXL; external repeats; linear round-trip; '+window.innerWidth+'px viewport; scrollable dense score';
+ // Real app controls, not merely model or HTML snippets.
+ const frame=document.createElement('iframe');
+ frame.style.cssText='position:absolute;left:-10000px;width:390px;height:844px';
+ const loaded=new Promise((resolve,reject)=>{frame.onload=resolve;frame.onerror=reject});
+ frame.src='../index.html';document.body.append(frame);await loaded;
+ const app=frame.contentDocument,win=frame.contentWindow;
+ win.confirm=()=>true;
+ const click=action=>{const node=app.querySelector('[data-action="'+action+'"]');assert(node&&!node.disabled,'Missing enabled editor action '+action);node.click()};
+ const field=(id,value)=>{const node=app.getElementById(id);assert(node,'Missing editor field '+id);node.value=String(value)};
+ const saved=()=>JSON.parse(win.localStorage.getItem('uw-scoreDocument'));
+ click('ensemble-new');click('ensemble-insert');field('ensembleMidi',64);click('ensemble-insert');
+ assert(saved().parts[0].voices[0].measures[0].events.length===2,'Chord insertion not persisted');
+ click('ensemble-add-voice');field('ensembleMidi',67);click('ensemble-insert');
+ assert(saved().parts[0].voices.length===2,'Independent voice not persisted');
+ click('ensemble-undo');assert(saved().parts[0].voices[1].measures[0].events.length===0,'Undo did not persist');
+ click('ensemble-redo');assert(saved().parts[0].voices[1].measures[0].events.length===1,'Redo did not persist');
+ const noteTarget=app.querySelector('[data-poly-edit][data-part="P1"][data-voice="1"][data-event-index="1"]');
+ assert(noteTarget,'No interactive notation target');noteTarget.dispatchEvent(new win.MouseEvent('click',{bubbles:true}));
+ assert(app.getElementById('ensembleMidi').value==='64','Selecting notation did not select the right note');
+ win.localStorage.removeItem('uw-scoreDocument');frame.remove();
+ const result='PASS: native DOMParser; compressed MXL; ensemble editor local save/undo; external repeats; linear round-trip; '+window.innerWidth+'px viewport; scrollable dense score';
  status.dataset.status='pass';
  status.textContent=result;
 }catch(error){

@@ -1,3 +1,11 @@
+## 24 November 2026 — v1.11.6 beta: editable ensemble drafts
+
+- Multi-part Score Studio can create a blank four-bar ensemble, append bars, add instruments and independent rhythmic voices, select notes on the staff, and insert, replace or remove supported notes and rests. Equal-onset, equal-duration notes form chords; conflicting overlaps are rejected. Title, tempo, dynamics and articulation are editable.
+- Transactions validate a copied schema-2 document before local autosave; undo/redo retains up to 20 session edits. Playback and MusicXML export use the edited document. The separate single-voice ukulele draft is preserved.
+- Eight model regression tests and native browser interaction checks cover editor transactions, note selection, local persistence and undo/redo. Tied and tuplet notes have restricted editing to avoid corrupting their structure. Multi-arrangement Songbook persistence and professional engraving remain open.
+
+---
+
 ## 24 November 2026 — v1.11.5 beta: compressed MusicXML import
 
 - Accepts `.mxl` files in single-voice Score Studio, the multi-part library and personal instrumental-part import. ZIP extraction is local and bounded; duplicate or traversal paths, corrupt CRCs, unsupported compression and excessive declared or actual decompression sizes are rejected. Standard Recordare DTD prologues are normalized in both XML importers without fetching external entities.

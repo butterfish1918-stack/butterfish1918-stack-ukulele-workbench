@@ -1,4 +1,10 @@
-# Ukulele Workbench 1.11.1 BETA — Source-backed Ensemble Import and Playback
+# Ukulele Workbench 1.11.6 BETA — Editable Ensemble Score Studio
+
+### Multi-part Score Studio editing
+
+Create a new four-bar ensemble or import an authorized `.musicxml`, `.xml` or `.mxl` file. Choose the instrument, voice, bar and event (or click a staff note). Enter MIDI pitch, zero-based onset and duration in quarter-note beats, dynamics and articulation. Notes with equal onset and duration form a chord; overlapping counterpoint belongs in independent voices. Add instruments, voices and bars as needed. Each valid edit autosaves the active ensemble; Undo/Redo retains up to 20 session changes. Export MusicXML or a full app JSON backup before replacing the draft. Tied and tuplet notes cannot yet be independently deleted or retimed. Named polyphonic Songbook entries are a subsequent milestone.
+
+### Earlier release notes
 
 The user-requested P0/P1/P2 feature set is being integrated into the existing v1.10 feature modules, not replaced by demonstration-only screens.
 
