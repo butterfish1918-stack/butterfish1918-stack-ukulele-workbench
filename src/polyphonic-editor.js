@@ -7,8 +7,8 @@ const epsilon=1e-8;
 function nextId(used,prefix){let i=1;while(used.includes(prefix+i))i++;return prefix+i}
 function requireInstrument(value){if(!ENSEMBLE_INSTRUMENTS.includes(value))throw Error('Choose a supported instrument');return value}
 export function createEnsembleDraft({title='New ensemble',tempo=96,meter='4/4',measures=4}={}){
- const doc={schema:2,title,tempo,meter,measures,parts:[{id:'P1',name:'Ukulele',instrument:'ukulele',voices:[{id:'1',measures:emptyBars(measures)}]}]};
  if(!Number.isInteger(measures)||measures<1||measures>200)throw Error('Invalid bar count');
+ const doc={schema:2,title,tempo,meter,measures,parts:[{id:'P1',name:'Ukulele',instrument:'ukulele',voices:[{id:'1',measures:emptyBars(measures)}]}]};
  validateScoreDocument(doc);return doc;
 }
 function checkBar(events){
@@ -47,7 +47,7 @@ export function editEnsembleDraft(source,operation){
   const index=operation.eventIndex,old=bar.events[index];
   if(type!=='insert'&&(!Number.isInteger(index)||!old))throw Error('Select a note or rest');
   if(type==='delete'){
-   if(old.tieStart||old.tieStop)throw Error('Tied notes cannot be removed individually; unlink the tie first');
+   if(old.tieStart||old.tieStop||old.tuplet)throw Error('Tied or tuplet notes cannot be removed individually in this editor');
    bar.events.splice(index,1);
   }else{
    const input=operation.event;
