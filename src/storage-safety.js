@@ -2,6 +2,7 @@
  * This supplements, but cannot replace, regularly exported JSON backups.
  */
 import {validateScoreDocument} from './polyphonic-score.js';
+import {ensemblePreferenceLibrary} from './ensemble-practice.js';
 const isRecord=value=>value!==null&&typeof value==='object'&&!Array.isArray(value);
 const OWN='ukulele-workbench-backup';
 
@@ -26,6 +27,7 @@ export function prepareBackupRestore(data,{validateScore,validateProgression,val
  if(data.progressionDraft!==undefined&&data.progressionDraft!==null)validateProgression(data.progressionDraft);
  if(data.rhythm!==undefined&&(!Array.isArray(data.rhythm)||data.rhythm.length!==8||data.rhythm.some(x=>!['','D','U'].includes(x))))throw new Error('Invalid strumming pattern');
  const values={songs:data.songs,progress:data.progress,techniqueProgress:data.techniqueProgress??{},rhythmLabProgress:data.rhythmLabProgress??{},notationReadingProgress:data.notationReadingProgress??{}};
+ values.ensembleSongPractice=ensemblePreferenceLibrary(data.songs,data.ensembleSongPractice??{});
  if(data.scoreDocument!==undefined)values.scoreDocument=data.scoreDocument;
  if(data.scoreDraft){values.scoreDraft=data.scoreDraft;values.scoreSongId=null;}
  if(data.progressionDraft)values.progressionDraft=data.progressionDraft;
