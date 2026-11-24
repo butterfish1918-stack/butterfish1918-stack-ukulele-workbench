@@ -1516,7 +1516,7 @@ function stopImportedEnsemble(){
  if(button)button.textContent='▶ Play ensemble';
  const status=$('#importedEnsembleStatus');
  if(status)status.textContent='Ensemble stopped';
- $$('.poly-voice-event.playing').forEach(el=>el.classList.remove('playing'));
+ $('.poly-voice-event.playing,.poly-voice-event.active-note').forEach(el=>el.classList.remove('playing','active-note'));
 }
 async function toggleImportedEnsemble(doc=state.scoreDocument,range={}){
  if(importedEnsembleRun||ensembleLoading){stopImportedEnsemble();render();return}
@@ -1585,6 +1585,9 @@ async function toggleImportedEnsemble(doc=state.scoreDocument,range={}){
   }
   if(now<run.cycle.start)return;
   const pos=ensemblePlayPosition(run.cycle,now,plan);
+  const beatInBar=pos.beat-(pos.bar-plan.startBar)*plan.beatsPerBar;
+  $('.poly-voice-event.playing,.poly-voice-event.active-note').forEach(node=>node.classList.remove('active-note'));
+  $('.poly-voice-event[data-measure="'+pos.bar+'"]').forEach(node=>{const onset=Number(node.dataset.onset),duration=Number(node.dataset.duration);node.classList.toggle('active-note',beatInBar>=onset&&beatInBar<onset+duration)});
   if(run.lastBar!==pos.bar||run.lastCycle!==pos.cycle){
    run.lastBar=pos.bar;run.lastCycle=pos.cycle;
    const status=$('#importedEnsembleStatus');
@@ -2217,6 +2220,7 @@ async function importBackup(file){
   }
   if(!confirm(`Restore ${data.songs.length} song(s) and ${data.progress.length} practice session(s)? This replaces the current local library. Export a backup of your current data first.`))return;
   // A write failure triggers restoration of the previous keys where possible.
+  stopImportedEnsemble();
   commitBackupRestore(localStorage,plan);
   if(overrides!==undefined){if(!store('songGuitarAdaptations',overrides))throw Error('Could not restore guitar adaptations');state.songGuitarAdaptations=overrides}
   if(lyricBackup!==undefined){if(!store('songLyricsById',lyricBackup))throw Error('Could not restore lyric cues');state.songLyricsById=lyricBackup}
