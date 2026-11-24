@@ -13,7 +13,7 @@ const ASSETS = [
  './src/tuner-dsp.js', './src/storage-safety.js', './src/device-qa.js',
  './src/practice-engine.js', './src/guitar-polyphony.js', './src/instrument-voices.js',
  './src/advanced-theory.js', './src/learning-path.js', './src/song-organizer.js',
- './src/polyphonic-score.js', './src/polyphonic-editor.js', './src/polyphonic-editor-view.js', './src/ensemble-songbook.js', './src/musicxml-multipart.js', './src/musicxml-repeat.js', './src/polyphonic-layout.js', './src/polyphonic-engraving.js', './src/ensemble-playback.js', './src/source-instruments.js',
+ './src/polyphonic-score.js', './src/polyphonic-editor.js', './src/polyphonic-editor-view.js', './src/ensemble-songbook.js', './src/ensemble-practice.js', './src/musicxml-multipart.js', './src/musicxml-repeat.js', './src/polyphonic-layout.js', './src/polyphonic-engraving.js', './src/ensemble-playback.js', './src/source-instruments.js',
  './src/microphone-feedback.js', './src/instrument-settings.js', './src/chordpro.js',
  './src/mobile-qa.js', './src/encrypted-backup.js',
  './assets/icon.svg', './assets/icon-192.png', './assets/icon-512.png',
