@@ -10,6 +10,25 @@ const children=(el,name)=>[...(el?.children||[])].filter(e=>e.tagName===name);
 const val=(el,name,fallback='')=>child(el,name)?.textContent?.trim()??fallback;
 const semitones={C:0,D:2,E:4,F:5,G:7,A:9,B:11};
 const dynamicNames=['pp','p','mp','mf','f','ff'];
+/** MusicXML 1.x–4.x conventional public DTD prologues are common in external
+ * exports. Strip ONLY the exact well-known declaration before parsing: never
+ * resolve a DTD or permit internal/external entity definitions. */
+export function normalizeMusicXMLPrologue(input){
+ if(typeof input!=='string'||input.length>2_000_000||/<!ENTITY\b/i.test(input))
+  throw Error('Invalid or unsafe MusicXML input');
+ if(!/<!DOCTYPE\b/i.test(input))return input;
+ const declaration=/<!DOCTYPE\s+score-partwise\s+PUBLIC\s+["']-\/\/Recordare\/\/DTD MusicXML [1-4]\.\d+ Partwise\/\/EN["']\s+["']https?:\/\/(?:www\.)?musicxml\.org\/dtds\/partwise\.dtd["']\s*>/i;
+ const declarations=input.match(/<!DOCTYPE\b[\s\S]*?>/gi)||[];
+ if(declarations.length!==1||!declaration.test(declarations[0])||
+    declaration.exec(declarations[0])[0].length!==declarations[0].length)
+  throw Error('Unsupported or unsafe MusicXML DOCTYPE');
+ const stripped=input.replace(declarations[0],'');
+ if(/<!DOCTYPE\b|<!ENTITY\b/i.test(stripped))throw Error('Unsafe MusicXML document declarations');
+ // Without an external DTD, any non-standard named XML entity is rejected.
+ if(/&(?!(?:amp|lt|gt|apos|quot|#\d+|#x[0-9A-Fa-f]+);)[A-Za-z][\w.-]*;/.test(stripped))
+  throw Error('Unsupported MusicXML entity reference');
+ return stripped;
+}
 function readMeasureRepeats(measure){
  const m={};
  for(const barline of children(measure,'barline')){
@@ -24,7 +43,7 @@ function readMeasureRepeats(measure){
     m.repeatBackward=true;
     const value=repeat.getAttribute('times');
     if(value!==null){
-     if(!/^[2-4]$/.test(value))throw Error('Supported repeat passes are 2–4');
+     if(!/^[2-8]$/.test(value))throw Error('Supported repeat passes are 2–8');
      m.times=Number(value);
     }
    }else throw Error('Unsupported MusicXML repeat direction');
@@ -60,7 +79,7 @@ function repeatPlan(parts){
  return expandRepeatOrder(canonical);
 }
 export function importMultiPartMusicXML(xml,{DOMParserClass=globalThis.DOMParser}={}){
- if(typeof xml!=='string'||xml.length>2_000_000||/<!DOCTYPE|<!ENTITY/i.test(xml))throw Error('Invalid or unsafe MusicXML input');
+ xml=normalizeMusicXMLPrologue(xml);
  if(typeof DOMParserClass!=='function')throw Error('Browser XML parser required');
  const document=new DOMParserClass().parseFromString(xml,'application/xml');
  if(document.querySelector('parsererror'))throw Error('Malformed MusicXML');

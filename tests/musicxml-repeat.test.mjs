@@ -34,7 +34,8 @@ test('repeat expansion rejects nested, incomplete and ambiguous structures',()=>
  assert.throws(()=>expandRepeatOrder([{repeatForward:true},{}]),/missing its backward/);
  assert.throws(()=>expandRepeatOrder([{endingStart:2}]),/Orphaned/);
  assert.throws(()=>expandRepeatOrder([{repeatBackward:true,endingStart:1,endingStop:1},{}]),/Missing second ending/);
- assert.throws(()=>expandRepeatOrder([{repeatForward:true},{repeatBackward:true,times:5}]),/Supported repeat passes/);
+ assert.deepEqual(expandRepeatOrder([{repeatForward:true},{repeatBackward:true,times:5}]).order,[0,1,0,1,0,1,0,1,0,1]);
+ assert.throws(()=>expandRepeatOrder([{repeatForward:true},{repeatBackward:true,times:9}]),/Supported repeat passes/);
  assert.throws(()=>expandRepeatOrder([{repeatBackward:true}],{maxMeasures:1}),/exceeds 200 measures/);
  assert.throws(()=>expandRepeatOrder([
   {repeatForward:true},{endingStart:1,endingStop:1,repeatBackward:true,times:3},

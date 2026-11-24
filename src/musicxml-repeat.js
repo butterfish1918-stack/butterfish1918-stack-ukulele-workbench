@@ -19,8 +19,8 @@ export function expandRepeatOrder(markers,{maxMeasures=200}={}){
   if(m.repeatForward!==undefined&&typeof m.repeatForward!=='boolean'||
      m.repeatBackward!==undefined&&typeof m.repeatBackward!=='boolean')
    throw Error('Invalid repeat direction marker');
-  if(m.times!==undefined&&(!m.repeatBackward||!Number.isInteger(m.times)||m.times<2||m.times>4))
-   throw Error('Supported repeat passes are 2–4');
+  if(m.times!==undefined&&(!m.repeatBackward||!Number.isInteger(m.times)||m.times<2||m.times>8))
+   throw Error('Supported repeat passes are 2–8');
   if(m.endingStart!==undefined&&![1,2].includes(m.endingStart)||
      m.endingStop!==undefined&&![1,2].includes(m.endingStop))
    throw Error('Only first and second endings are supported');
