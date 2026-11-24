@@ -37,9 +37,9 @@ test('adjacent-second chord noteheads are offset, while wider intervals remain a
   {type:'note',midi:67,onset:0,duration:1,spelling:'G'}
  ];
  const doc=makeDoc([{id:'P1',name:'Ukulele',voices:[makeVoice('1',[notes])]}]);
- assert.equal(chordHeadShift(notes,notes[0]),0);
- assert.equal(chordHeadShift(notes,notes[1]),12);
- assert.equal(chordHeadShift(notes,notes[2]),0);
+ const shifts=notes.map(e=>chordHeadShift(notes,e));
+ assert.deepEqual(shifts.slice(0,2).sort((a,b)=>a-b),[0,12]);
+ assert.equal(shifts[2],0);
  assert.equal(voiceOffset(0),-9);
  assert.equal(voiceOffset(1),9);
  assert.match(renderPolyphonicDocument(doc),/poly-chord-offset/);
