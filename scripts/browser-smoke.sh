@@ -9,7 +9,7 @@ fi
 PORT=4182 node scripts/dev-server.mjs >/tmp/uke-browser-server.log 2>&1 &
 server=$!
 profile="$(mktemp -d)"
-cleanup(){kill "$server" 2>/dev/null || true;rm -rf "$profile";}
+cleanup() { kill "$server" 2>/dev/null || true; rm -rf "$profile"; }
 trap cleanup EXIT
 for _ in $(seq 1 30);do
  if curl -fsS http://127.0.0.1:4182/tests/browser-smoke.html >/dev/null;then break;fi
