@@ -75,6 +75,9 @@ state.songAnnotations=read('songAnnotations',{});
 state.mobileQaResults=read('mobileQaResults',{});
 state.scoreDocument=read('scoreDocument',null);
 let ensembleEditorSelection={},ensembleUndo=[],ensembleRedo=[],ensembleSongId=null,ensemblePlayGeneration=0,ensembleLoading=false;
+let ensembleTabTuning=read('ensembleTabTuning','highG'),ensembleTabMaxFret=Number(read('ensembleTabMaxFret',12));
+if(!['off','highG','lowG','baritone'].includes(ensembleTabTuning))ensembleTabTuning='highG';
+if(![12,15,18,24].includes(ensembleTabMaxFret))ensembleTabMaxFret=12;
 try{if(state.scoreDocument)validateScoreDocument(state.scoreDocument)}catch{state.scoreDocument=null}
 state.earSeed=Number(read('earSeed',0))||0;
 state.customTuning=read('customTuning',[67,60,64,69]);
@@ -1155,6 +1158,8 @@ function saveEnsemblePreferences(song,patch){
  if(store('ensembleSongPractice',next))ensembleSongPractice=next;
  return prefs;
 }
+function ensembleTabControls(){return '<div class="ensemble-editor-fields"><label>Ukulele tablature '+uiSelect('ensembleTabTuning',[['off','Notation only'],['highG','High G · GCEA'],['lowG','Low G · GCEA'],['baritone','Baritone · DGBE']],ensembleTabTuning)+'</label><label>Maximum fret '+uiSelect('ensembleTabMaxFret',[12,15,18,24].map(n=>[n,String(n)]),ensembleTabMaxFret)+'</label></div>'}
+function ensembleTabOptions(){return {tablatureTuning:ensembleTabTuning==='off'?null:ensembleTabTuning,maxFret:ensembleTabMaxFret}}
 function ensembleSongPreview(song){
  const doc=song.scoreDocument;
  try{validateScoreDocument(doc)}catch{return '<p role="alert">Invalid saved ensemble. Restore a valid backup.</p>'}
@@ -1168,7 +1173,7 @@ function ensembleSongPreview(song){
  '<p class="small-text">'+stats.sessions+' practice sessions · '+stats.minutes+' minutes · '+stats.loops+' completed repeats'+(bookmark&&bookmark.bar<=doc.measures?' · Last bar '+bookmark.bar:'')+'</p>'+
  '<div class="score-actions"><button class="btn compact" data-action="ensemble-bookmark">Bookmark start bar</button>'+(bookmark&&bookmark.bar<=doc.measures?'<button class="btn compact" data-action="ensemble-resume">Resume bookmarked bar</button>':'')+'</div>'+
  '<div class="score-actions"><button class="btn gold compact" data-action="ensemble-song-play">'+(importedEnsembleRun||ensembleLoading?'■ Stop ensemble':'▶ Play ensemble')+'</button><button class="btn compact" data-action="ensemble-song-open">Edit ensemble in Score Studio</button><button class="btn compact" data-action="ensemble-song-export">Export MusicXML</button></div>'+
- '<p class="small-text" role="status" id="importedEnsembleStatus">Ready to practise saved ensemble</p>'+renderPolyphonicDocument(doc)+'</section>';
+ '<p class="small-text" role="status" id="importedEnsembleStatus">Ready to practise saved ensemble</p>'+ensembleTabControls()+renderPolyphonicDocument(doc,ensembleTabOptions())+'</section>';
 }
 function saveCurrentEnsemble(replace){
  try{
@@ -1444,7 +1449,7 @@ function importedScoreDocumentPanel(){
     <label>Level <input type="range" min="0" max="150" step="5" value="${Number(state.importedEnsembleVolumes[part.id]??100)}" data-imported-volume="${h(part.id)}" aria-label="${h(part.name)} volume"></label></div>`).join('')}</div>
    <p class="small-text" id="importedEnsembleStatus" role="status">${importedEnsembleRun?'Playing imported ensemble':'Ready to hear the imported score'}</p>
    ${renderEnsembleEditor(doc,ensembleEditorSelection,{canUndo:ensembleUndo.length>0,canRedo:ensembleRedo.length>0})}
-   ${renderPolyphonicDocument(doc,{editable:true})}`:''}
+   ${ensembleTabControls()}${renderPolyphonicDocument(doc,{editable:true,...ensembleTabOptions()})}`:''}
  </section>`;
 }
 function scoreStudio(){
@@ -2055,6 +2060,11 @@ function handleClick(e){const node=e.target.closest('[data-prog-degree],[data-pr
  case 'log-practice':{const note=prompt('What did you practise? (optional)','Reading, scales and technique');if(note===null)return;const duration=prompt('Minutes practised?','20');if(duration===null)return;const mins=Number(duration);if(!Number.isFinite(mins)||mins<1||mins>720){toast('Enter a valid number of minutes');return}store('progress',[...progress(),{date:new Date().toISOString(),minutes:Math.round(mins),note}]);toast('Practice logged');render();}break;
  }}}
 function handleChange(e){const el=e.target;
+ if(el.id==='ensembleTabTuning'||el.id==='ensembleTabMaxFret'){
+  if(el.id==='ensembleTabTuning'&&['off','highG','lowG','baritone'].includes(el.value)){ensembleTabTuning=el.value;store('ensembleTabTuning',ensembleTabTuning)}
+  if(el.id==='ensembleTabMaxFret'&&[12,15,18,24].includes(Number(el.value))){ensembleTabMaxFret=Number(el.value);store('ensembleTabMaxFret',ensembleTabMaxFret)}
+  render();return;
+ }
  const preferenceFields={ensemblePracticeStart:'startBar',ensemblePracticeEnd:'endBar',ensemblePracticeSpeed:'speed',ensembleLoop:'loop',ensembleRamp:'ramp',ensembleRampStep:'step',ensembleRampMax:'max'};
  if(Object.hasOwn(preferenceFields,el.id)||el.hasAttribute('data-ensemble-level')){
   const song=songs().find(s=>s.id===state.songOpen&&s.scoreDocument);if(!song)return;

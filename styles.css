@@ -633,3 +633,8 @@ input[type=range]{accent-color:var(--lime)}
 .ensemble-editor-fields input[type=checkbox]{width:auto;align-self:flex-start}
 .poly-voice-event.active-note .poly-notehead{fill:#d39b28;stroke:#8d5e08;stroke-width:2.5}
 .poly-voice-event.active-note rect{fill:#d39b28}
+
+.poly-tab-legend{font-size:.78rem;color:var(--muted,#536157);max-width:100%;white-space:normal;padding:6px 4px}
+.poly-tab-event.active-note .poly-tab-background{fill:#eac36d;stroke:#8d5e08;stroke-width:1.5}
+.poly-tab-event.active-note .poly-tab-number{fill:#33270c}
+.poly-tab-event[data-poly-edit]:hover .poly-tab-background{stroke:#a56e19;stroke-width:2}

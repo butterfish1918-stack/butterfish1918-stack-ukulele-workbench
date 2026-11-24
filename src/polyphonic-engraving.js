@@ -5,6 +5,8 @@
 import {validateScoreDocument} from './polyphonic-score.js';
 import {planPolyphonicLayout,noteStaffOffset,chordHeadShift,voiceOffset} from './polyphonic-layout.js';
 import {midiName,staffYForSpelling} from './music.js';
+import {ensembleInstrument} from './ensemble-playback.js';
+import {planUkuleleTablature,tabEventKey} from './polyphonic-tablature.js';
 const displayName=e=>e.spelling||midiName(e.midi).replace(/-?\d+$/,'');
 const writtenY=(e,top)=>top+noteStaffOffset(e);
 function ledgerMarks(x,y,staffTop){
@@ -14,12 +16,42 @@ function ledgerMarks(x,y,staffTop){
  return out;
 }
 const esc=s=>String(s??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[ch]));
-export function renderPolyphonicDocument(doc,{pageWidth=760,editable=false}={}){
+function renderTabRow(part,tab,top,{startBar,endBar,bars,width,editable}){
+ let svg='<g class="poly-tab-row" data-tab-part="'+esc(part.id)+'" aria-label="'+esc(part.name)+' tablature">';
+ svg+='<text x="5" y="'+(top+18)+'" font-size="10" font-weight="700">TAB</text>';
+ for(let line=0;line<4;line++){
+  const y=top+line*13;
+  svg+='<text x="65" y="'+(y+4)+'" text-anchor="end" font-size="10">'+esc(tab.names[3-line])+'</text><line x1="75" y1="'+y+'" x2="'+(width-5)+'" y2="'+y+'" stroke="#64736b"/>';
+ }
+ for(let bar=startBar;bar<=endBar;bar++){
+  const geometry=bars[bar-startBar],x=geometry.x;
+  svg+='<line x1="'+x+'" y1="'+top+'" x2="'+x+'" y2="'+(top+39)+'" stroke="#36473b"/>';
+  const unresolved=new Map();
+  for(const voice of part.voices){
+   for(const [index,e] of voice.measures[bar-1].events.entries()){
+    if(e.type!=='note')continue;
+    const p=tab.positions.get(tabEventKey(voice.id,bar,index)),ex=geometry.xFor(e.onset);
+    if(!p){const items=unresolved.get(ex)||[];items.push(midiName(e.midi));unresolved.set(ex,items);continue}
+    const ey=top+(3-p.string)*13,label=e.tieStop?'('+p.fret+')':String(p.fret);
+    svg+='<g class="poly-tab-event poly-voice-event" '+(editable?'data-poly-edit style="cursor:pointer" ':'')+'data-part="'+esc(part.id)+'" data-voice="'+esc(voice.id)+'" data-event-index="'+index+'" data-measure="'+bar+'" data-onset="'+e.onset+'" data-duration="'+e.duration+'" data-string="'+(4-p.string)+'" data-fret="'+p.fret+'" data-x="'+ex+'" aria-label="'+esc(midiName(e.midi))+', string '+(4-p.string)+', fret '+p.fret+'"><rect class="poly-tab-background" x="'+(ex-12)+'" y="'+(ey-7)+'" width="24" height="14" rx="2" fill="#f7f4e9"/><text class="poly-tab-number" x="'+ex+'" y="'+(ey+4)+'" text-anchor="middle" font-size="11" font-weight="700" fill="#36473b">'+label+'</text></g>';
+   }
+  }
+  for(const [ex,notes] of unresolved)svg+='<g class="poly-tab-unresolved"><title>'+esc('No compatible fingering: '+notes.join(', '))+'</title><text x="'+ex+'" y="'+(top+57)+'" text-anchor="middle" font-size="12" font-weight="700" fill="#9e372b">?</text></g>';
+ }
+ svg+='<line x1="'+(width-5)+'" y1="'+top+'" x2="'+(width-5)+'" y2="'+(top+39)+'" stroke="#36473b"/></g>';
+ return svg;
+}
+
+export function renderPolyphonicDocument(doc,{pageWidth=760,editable=false,tablatureTuning=null,maxFret=12}={}){
  validateScoreDocument(doc);
- const systems=planPolyphonicLayout(doc,{pageWidth,maxBars:4});
+ const tabs=new Map(),tabErrors=[];
+ if(tablatureTuning)for(const part of doc.parts.filter(p=>ensembleInstrument(p)==='ukulele'))try{tabs.set(part.id,planUkuleleTablature(doc,part.id,{tuning:tablatureTuning,maxFret}))}catch(error){tabErrors.push(part.name+': '+error.message)}
+ const systems=planPolyphonicLayout(doc,{pageWidth,maxBars:4,tablaturePartIds:[...tabs.keys()]});
+ const warningCount=[...tabs.values()].reduce((n,t)=>n+t.unresolvedAttacks,0);
  const [beats,den]=doc.meter.split('/').map(Number),cap=beats*4/den;
  return `<div class="polyphonic-doc" role="group" aria-label="${esc(doc.title)}, ${doc.parts.length} instrumental parts">
- ${systems.map(({startBar,endBar,bars,staffTops,width,height})=>{
+ ${tabs.size?`<p class="poly-tab-legend">Exact-pitch tablature · ${esc(tablatureTuning)} · frets 0–${maxFret}. Parentheses: tied continuation. ? = no compatible fingering found. ${warningCount?`<strong>${warningCount} unresolved note attack(s); original notation and audio unchanged.</strong>`:'All attacks assigned to strings; check hand stretches when practising.'}</p>`:''}${tabErrors.length?`<p role="alert">${esc(tabErrors.join("; "))}</p>`:''}
+ ${systems.map(({startBar,endBar,bars,staffTops,tabTops,width,height})=>{
   let svg=`<svg class="polyphonic-svg" width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="Measures ${startBar} to ${endBar}">`;
   doc.parts.forEach((part,pi)=>{
    const y=staffTops[pi];
@@ -103,6 +135,7 @@ export function renderPolyphonicDocument(doc,{pageWidth=760,editable=false}={}){
     }
    }
    svg+=`<line x1="${width-5}" y1="${y}" x2="${width-5}" y2="${y+44}" stroke="#36473b"/>`;
+   if(tabs.has(part.id))svg+=renderTabRow(part,tabs.get(part.id),tabTops[pi],{startBar,endBar,bars,width,editable});
   });
   return svg+'</svg>';
  }).join('')}</div>`;

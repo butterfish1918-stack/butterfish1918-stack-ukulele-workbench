@@ -32,7 +32,7 @@ export function chordHeadShift(events,event){
   else shifted=0;
  return shifted;
 }
-export function planPolyphonicLayout(doc,{pageWidth=760,maxBars=4,minSpacing=32}={}){
+export function planPolyphonicLayout(doc,{pageWidth=760,maxBars=4,minSpacing=32,tablaturePartIds=[]}={}){
  validateScoreDocument(doc);
  if(!Number.isFinite(pageWidth)||pageWidth<300||
     !Number.isInteger(maxBars)||maxBars<1||maxBars>8||
@@ -68,7 +68,7 @@ export function planPolyphonicLayout(doc,{pageWidth=760,maxBars=4,minSpacing=32}
     }});
    x+=widthBar;
   }
-  const staffTops=[];
+  const staffTops=[],tabTops=[];
   let cursor=42;
   doc.parts.forEach(part=>{
    const events=part.voices.flatMap(voice=>voice.measures.slice(begin,end).flatMap(m=>m.events));
@@ -78,9 +78,10 @@ export function planPolyphonicLayout(doc,{pageWidth=760,maxBars=4,minSpacing=32}
    const top=cursor+Math.max(0,18-min);
    staffTops.push(top);
    cursor=top+Math.max(108,max+40);
+   if(tablaturePartIds.includes(part.id)){tabTops.push(cursor+12);cursor+=96}else tabTops.push(null);
   });
   systems.push({startBar:begin+1,endBar:end,bars,
-   width:Math.max(edge+90,Math.ceil(x+8)),height:Math.ceil(cursor+10),staffTops});
+   width:Math.max(edge+90,Math.ceil(x+8)),height:Math.ceil(cursor+10),staffTops,tabTops});
   begin=end;
  }
  return systems;
