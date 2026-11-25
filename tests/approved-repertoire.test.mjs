@@ -7,18 +7,18 @@ import {BUNDLED_LIBRARY} from '../src/library-seed.js';
 
 const catalog=JSON.parse(readFileSync(new URL('../library/catalog.json',import.meta.url),'utf8'));
 
-test('approved repertoire has exactly the fifteen explicitly selected titles',()=>{
+test('approved repertoire has the fifteen explicitly selected titles and an E-major practice variant',()=>{
  const wanted=['Isolation','Love Will Tear Us Apart','The Passenger','Passover','Spellbound',
   'A Forest','Life on Mars?','Blackbird','Space Oddity','While My Guitar Gently Weeps',
   'Wish You Were Here','Scarborough Fair',"Babe I'm Gonna Leave You",
-  'Everybody Wants to Rule the World',"California Dreamin'"];
+  'Everybody Wants to Rule the World',"California Dreamin'",'Life on Mars? — E-major practice'];
  assert.deepEqual(catalog.repertoire.map(s=>s.title),wanted);
  assert.equal(validateCatalog(catalog),true);
- assert.equal(catalog.entries.length,18);
+ assert.equal(catalog.entries.length,19);
  for(const meta of catalog.entries){
   const file=JSON.parse(readFileSync(new URL('../library/'+meta.file,import.meta.url),'utf8'));
   assert.equal(validateArrangement(file,meta,validateScore),true);
-  if(catalog.repertoire.some(x=>x.id===meta.id && x.id!=='scarborough-fair')){
+  if(catalog.repertoire.some(x=>x.id===meta.id && x.id!=='scarborough-fair' && x.id!=='life-on-mars-e-practice')){
    assert.ok(file.score.measures.length>=48);
    assert.equal(file.revision,2);
    assert.equal(file.arrangementType,'song-form-accompaniment');
@@ -37,13 +37,13 @@ test('import copies metadata only, preserves prior songs and avoids duplicate in
  const old=[{id:'own-1',title:'My composition',score:{original:true}}];
  const first=importApprovedRepertoire(catalog,old,{now:'2026-11-20T12:00:00Z'});
  assert.equal(old.length,1);
- assert.equal(first.length,16);
+ assert.equal(first.length,17);
  assert.equal(first[0],old[0]);
  assert.equal(first[1].title,'Isolation');
  assert.equal(first[1].score,undefined);
  assert.equal(first[1].bpm,null);
  assert.match(first[1].notes,/No notation or tablature has been imported/);
- assert.equal(importApprovedRepertoire(catalog,first).length,16);
+ assert.equal(importApprovedRepertoire(catalog,first).length,17);
  const singles=importApprovedRepertoire(catalog,old,{ids:['blackbird']});
  assert.equal(singles.length,2);
  assert.equal(singles[1].title,'Blackbird');
@@ -89,3 +89,14 @@ test('1882 Northumbrian traditional tune is complete, exact and independently fi
  assert.match(score.notes,/Bruce & Stokoe/);
  assert.match(score.description,/NOT the Simon & Garfunkel/);
 });
+
+ test('E-major practice variant has separately validated chord voicings, tempo, sections and a source link',()=>{
+ const meta=catalog.entries.find(e=>e.id==='life-on-mars-e-practice');
+ const a=JSON.parse(readFileSync(new URL('../library/'+meta.file,import.meta.url),'utf8'));
+ assert.equal(validateArrangement(a,meta,validateScore),true);
+ assert.equal(a.key,'E'); assert.equal(a.bpm,123); assert.equal(a.score.measures.length,64);
+ assert.equal(a.sections.length,6); assert.match(a.notes,/ukuleleroadtrips\.com/);
+ const symbols=new Set(a.score.measures.flatMap(m=>m.events.map(e=>e.symbol)));
+ for(const symbol of ['Emaj7','C#7sus4','B9','Gaug','D#dim','Aadd2'])assert.ok(symbols.has(symbol));
+ assert.equal(catalog.entries.find(e=>e.id==='life-on-mars').revision,2);
+ });

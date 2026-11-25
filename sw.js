@@ -1,7 +1,7 @@
 /* Ukulele Workbench offline shell. Keep cache deletion scoped to THIS app:
    other tools on the same GitHub Pages origin must never be touched. */
 const CACHE_PREFIX = 'uke-workbench-';
-const CACHE = `${CACHE_PREFIX}v1.11.8-ensemble-practice`;
+const CACHE = `${CACHE_PREFIX}v1.11.8-life-on-mars-e-practice`;
 const SCOPE = new URL(self.registration.scope);
 const SHELL = new URL('./index.html', SCOPE).href;
 const LIBRARY_PATH = new URL('./library/', SCOPE).pathname;
@@ -24,7 +24,7 @@ const ASSETS = [
  './library/songs/passover.json',
  './library/songs/spellbound.json',
  './library/songs/a-forest.json',
- './library/songs/life-on-mars.json',
+ './library/songs/life-on-mars.json', './library/songs/life-on-mars-e-practice.json',
  './library/songs/blackbird.json',
  './library/songs/space-oddity.json',
  './library/songs/while-my-guitar-gently-weeps.json',
