@@ -39,7 +39,7 @@ export function practiceTempo(bpm,percent=100){
 export function extractChordSymbols(body,limit=32){
  if(typeof body!=='string')return [];
  const seen=new Set(),result=[];
- const matcher=/(?:^|[\s|\[])\[?([A-G](?:#|b)?(?:maj7|m7|sus2|sus4|m|7)?)\]?(?=$|[\s|\],;])/g;
+ const matcher=/(?:^|[\s|\[])\[?([A-G](?:#|b)?(?:7sus4|maj7|m7|sus2|sus4|add2|dim|aug|m|7|9)?)\]?(?=$|[\s|\],;])/g;
  for(const line of body.split(/\r?\n/)){
   const fromChart=line.includes(':')?line.slice(line.indexOf(':')+1):line;
   for(const match of fromChart.matchAll(matcher)){
@@ -54,7 +54,7 @@ export function extractChordSymbols(body,limit=32){
 /** Ordered chart tokens, including repeated chord symbols. Needed for measure-by-measure harmony. */
 export function chartChordSequence(body,limit=300){
  if(typeof body!=='string')return [];
- const tokens=[],matcher=/(?:^|[\s|\[])\[?([A-G](?:#|b)?(?:maj7|m7|sus2|sus4|m|7)?)\]?(?=$|[\s|\],;])/g;
+ const tokens=[],matcher=/(?:^|[\s|\[])\[?([A-G](?:#|b)?(?:7sus4|maj7|m7|sus2|sus4|add2|dim|aug|m|7|9)?)\]?(?=$|[\s|\],;])/g;
  for(const line of body.split(/\r?\n/)){
   const text=line.includes(':')?line.slice(line.indexOf(':')+1):line;
   for(const match of text.matchAll(matcher)){
@@ -66,12 +66,12 @@ export function chartChordSequence(body,limit=300){
 }
 /** Chord pitch classes for common major/minor/seventh/suspended harmonies. */
 export function chordPitchClasses(symbol){
- const match=/^([A-G])([#b]?)(maj7|m7|sus2|sus4|m|7)?$/.exec(symbol||'');
+ const match=/^([A-G])([#b]?)(7sus4|maj7|m7|sus2|sus4|add2|dim|aug|m|7|9)?$/.exec(symbol||'');
  if(!match)return null;
  const natural={C:0,D:2,E:4,F:5,G:7,A:9,B:11};
  const root=(natural[match[1]]+(match[2]==='#'?1:match[2]==='b'?-1:0)+12)%12;
  const suffix=match[3]||'';
- const chord={'':[0,4,7],m:[0,3,7],'7':[0,4,7,10],m7:[0,3,7,10],maj7:[0,4,7,11],sus2:[0,2,7],sus4:[0,5,7]}[suffix];
+ const chord={'':[0,4,7],m:[0,3,7],'7':[0,4,7,10],m7:[0,3,7,10],maj7:[0,4,7,11],sus2:[0,2,7],sus4:[0,5,7],dim:[0,3,6],aug:[0,4,8],add2:[0,2,4,7],'7sus4':[0,5,7,10],9:[0,4,10,2]}[suffix];
  return chord?chord.map(n=>(root+n)%12):null;
 }
 

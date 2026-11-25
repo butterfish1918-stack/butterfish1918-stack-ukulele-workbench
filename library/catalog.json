@@ -267,6 +267,21 @@
         "complete-tune"
       ],
       "file": "songs/scarborough-fair-traditional-1882.json"
+    },
+    {
+      "id": "life-on-mars-e-practice",
+      "revision": 1,
+      "title": "Life on Mars? — E-major Practice Accompaniment",
+      "artist": "David Bowie",
+      "difficulty": "advanced",
+      "tags": [
+        "song-form",
+        "high-g",
+        "accompaniment",
+        "notation",
+        "adaptation"
+      ],
+      "file": "songs/life-on-mars-e-practice.json"
     }
   ],
   "repertoire": [
@@ -360,6 +375,12 @@
       "title": "California Dreamin'",
       "artist": "The Mamas & the Papas",
       "practiceFocus": "Minor-key harmony and instrumental melody adaptation"
+    },
+    {
+      "id": "life-on-mars-e-practice",
+      "title": "Life on Mars? — E-major practice",
+      "artist": "David Bowie",
+      "practiceFocus": "Tutorial-key chord practice at 123 BPM; independent approximate rhythm and generated fingerings"
     }
   ]
 }
